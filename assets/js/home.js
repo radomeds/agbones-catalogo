@@ -16,6 +16,8 @@ import {
   contarNumeros,
   girarTira,
   desfilarMarcas,
+  abrirDuvidasDeslizando,
+  pontosDaTira,
 } from "./animacao.js";
 
 const grade = document.getElementById("grade-modelos");
@@ -357,6 +359,9 @@ async function iniciar() {
     desfilarMarcas("#marcas-faixa");
     girarTira("#tira-uso", 5);
     girarTira("#lista-depoimentos", 6.5);
+    pontosDaTira("#tira-uso");
+    pontosDaTira("#lista-depoimentos");
+    abrirDuvidasDeslizando();
     prepararAnimacoes();
   } catch (erro) {
     grade.innerHTML =

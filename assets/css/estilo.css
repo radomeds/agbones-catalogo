@@ -237,6 +237,42 @@ p { margin: 0 0 var(--e4); }
   .grifo__traco path { stroke-dashoffset: 0; transition: none; }
 }
 
+/* ---------- Duvidas que abrem deslizando ---------- */
+
+.faq__capa { overflow: hidden; }
+/* enquanto desliza, o navegador nao pode esconder o conteudo do <details>
+   fechado: a altura e quem manda */
+.faq details.faq--mexendo .faq__capa { display: block; }
+
+/* ---------- Bolinhas embaixo das tiras ---------- */
+
+.pontos {
+  display: flex; justify-content: center; gap: 6px;
+  margin-top: var(--e3);
+}
+.ponto {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--borda); transition: width .2s ease, background-color .2s ease;
+}
+.ponto--agora { width: 18px; border-radius: 3px; background: var(--destaque); }
+
+@media (prefers-reduced-motion: reduce) { .ponto { transition: none; } }
+
+/* ---------- Menu com o traco que desliza ---------- */
+
+.link-menu { position: relative; }
+.link-menu::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 2px;
+  background: var(--destaque); border-radius: 2px;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .22s ease;
+}
+.link-menu:hover::after, .link-menu:focus-visible::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .link-menu::after { transition: none; }
+}
+
 /* ---------- Palavra que troca no titulo ---------- */
 
 .rodizio {

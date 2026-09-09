@@ -249,3 +249,99 @@ export function desfilarMarcas(seletor) {
   // quando a fábrica acrescentar uma marca nova
   trilho.style.setProperty("--tempo-desfile", `${originais.length * 3.4}s`);
 }
+
+/* As dúvidas abrem e fecham deslizando. O <details> do navegador troca de
+   estado de uma vez só — some e aparece, sem meio-termo. Aqui a altura é
+   medida e animada, e o <details> continua sendo um <details>: quem chega
+   pelo teclado, pelo leitor de tela ou pelo Ctrl+F encontra tudo igual. */
+export function abrirDuvidasDeslizando(seletor = ".faq details") {
+  const blocos = document.querySelectorAll(seletor);
+  if (!blocos.length || MENOS_MOVIMENTO.matches) return;
+
+  blocos.forEach((bloco) => {
+    const resumo = bloco.querySelector("summary");
+    const corpo = bloco.querySelector("summary + *");
+    if (!resumo || !corpo) return;
+
+    // o corpo precisa de um invólucro para a altura poder ser animada sem
+    // mexer nas margens do texto
+    const capa = document.createElement("div");
+    capa.className = "faq__capa";
+    corpo.replaceWith(capa);
+    capa.append(corpo);
+
+    let animando = false;
+
+    resumo.addEventListener("click", (evento) => {
+      if (animando) { evento.preventDefault(); return; }
+      evento.preventDefault();
+      animando = true;
+      bloco.classList.add("faq--mexendo");
+
+      const abrindo = !bloco.open;
+      if (abrindo) bloco.open = true;
+
+      const de = abrindo ? 0 : capa.scrollHeight;
+      const para = abrindo ? capa.scrollHeight : 0;
+      capa.style.height = `${de}px`;
+
+      const fim = () => {
+        capa.style.height = "";
+        bloco.classList.remove("faq--mexendo");
+        if (!abrindo) bloco.open = false;
+        animando = false;
+      };
+
+      const passo = capa.animate(
+        { height: [`${de}px`, `${para}px`], opacity: abrindo ? [0, 1] : [1, 0] },
+        { duration: 260, easing: "cubic-bezier(.3,.7,.4,1)" },
+      );
+      passo.addEventListener("finish", fim);
+      passo.addEventListener("cancel", fim);
+    });
+  });
+}
+
+/* Bolinhas embaixo da tira, uma por foto, marcando onde o cliente está. Sem
+   elas não dá para saber que a tira anda nem quanto falta. */
+export function pontosDaTira(seletor) {
+  const tira = document.querySelector(seletor);
+  if (!tira) return;
+  const itens = [...tira.children];
+  if (itens.length < 2) return;
+
+  const trilha = document.createElement("div");
+  trilha.className = "pontos";
+  trilha.setAttribute("aria-hidden", "true");
+  itens.forEach(() => {
+    const ponto = document.createElement("span");
+    ponto.className = "ponto";
+    trilha.append(ponto);
+  });
+  tira.after(trilha);
+
+  const marcar = () => {
+    // no desktop a tira vira grade e não rola: aí as bolinhas não têm o que dizer
+    const rola = tira.scrollWidth - tira.clientWidth > 20;
+    trilha.classList.toggle("oculto", !rola);
+    if (!rola) return;
+    const meio = tira.scrollLeft + tira.clientWidth / 2;
+    let maisPerto = 0;
+    let menorDistancia = Infinity;
+    itens.forEach((item, indice) => {
+      const centro = item.offsetLeft + item.offsetWidth / 2;
+      const distancia = Math.abs(centro - meio);
+      if (distancia < menorDistancia) { menorDistancia = distancia; maisPerto = indice; }
+    });
+    trilha.querySelectorAll(".ponto").forEach((ponto, indice) => {
+      ponto.classList.toggle("ponto--agora", indice === maisPerto);
+    });
+  };
+
+  tira.addEventListener("scroll", () => {
+    clearTimeout(tira.dataset.espera);
+    tira.dataset.espera = setTimeout(marcar, 80);
+  }, { passive: true });
+  window.addEventListener("resize", marcar, { passive: true });
+  marcar();
+}
