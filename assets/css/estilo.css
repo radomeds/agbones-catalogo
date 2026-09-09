@@ -1,6 +1,7 @@
 /* Estilo base do site AG Bones. Mobile primeiro. */
 
 @import url("tokens.css");
+@import url("fontes.css");
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -25,7 +26,12 @@ img { max-width: 100%; display: block; }
 
 a { color: var(--destaque); }
 
-h1, h2, h3 { line-height: 1.2; margin: 0 0 var(--e3); letter-spacing: -.02em; }
+h1, h2, h3 {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  line-height: 1.15; margin: 0 0 var(--e3); letter-spacing: -.02em;
+  text-wrap: balance;
+}
 h1 { font-size: clamp(1.9rem, 6vw, 3rem); }
 h2 { font-size: clamp(1.5rem, 4.5vw, 2.1rem); }
 h3 { font-size: 1.1rem; }
@@ -152,7 +158,10 @@ p { margin: 0 0 var(--e4); }
 
 .provas { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--e3); margin-top: var(--e5); }
 .prova { text-align: center; }
-.prova__numero { font-size: 1.5rem; font-weight: 700; color: var(--destaque); }
+.prova__numero {
+  font-family: var(--fonte-titulo); font-size: 1.6rem; font-weight: 800;
+  color: var(--destaque); font-variant-numeric: tabular-nums;
+}
 .prova__rotulo { font-size: .85rem; color: var(--texto-fraco); }
 
 /* ---------- Cartoes de modelo ---------- */

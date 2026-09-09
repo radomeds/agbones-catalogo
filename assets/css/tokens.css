@@ -26,8 +26,13 @@
   --sucesso: #1B7F4B;
   --alerta: #9A6200;
 
-  /* Tipografia — pilha do sistema, nenhuma fonte baixada */
-  --fonte: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Tipografia — as mesmas duas famílias do site em producao: Montserrat nos
+     títulos, Poppins no texto. A pilha do sistema pesava zero, mas dava cara
+     de documento; estas duas dao cara de marca, e e o que a fabrica reconhece
+     como "o site dela". Se a fonte nao chegar, a pilha do sistema assume e
+     nada quebra. */
+  --fonte: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fonte-titulo: "Montserrat", var(--fonte);
 
   /* Espacamento */
   --e1: .25rem;
