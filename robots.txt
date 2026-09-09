@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://radomeds.github.io/agbones-catalogo/sitemap.xml

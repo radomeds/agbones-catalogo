@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Montar meu boné — AG Bonés</title>
+<meta name="description" content="Monte seu boné personalizado: toque na parte do boné, escolha como a arte vai ser aplicada, a cor e a quantidade. O preço aparece na hora.">
+<link rel="icon" href="assets/marca/icon-site-ag.png">
+<link rel="stylesheet" href="assets/css/estilo.css">
+<meta name="theme-color" content="#2F5FD0">
+</head>
+<body class="corpo-configurador">
+
+<a class="pular-para-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="cabecalho cabecalho--enxuto">
+  <div class="container cabecalho__interno">
+    <a class="cabecalho__logo" href="index.html" aria-label="AG Bonés — página inicial">
+      <img src="assets/marca/logo-agbones.svg" alt="AG Bonés" width="255" height="145">
+    </a>
+    <a class="cabecalho__sair" href="index.html">Sair</a>
+  </div>
+</header>
+
+<div class="progresso">
+  <div class="container">
+    <div class="progresso__trilho"><div class="progresso__preenchido" id="progresso-preenchido"></div></div>
+    <ol class="progresso__passos" id="progresso-passos"></ol>
+  </div>
+</div>
+
+<main id="conteudo" class="container etapas">
+
+  <!-- Passo 1 — escolher o modelo -->
+  <section class="etapa" data-passo="1">
+    <h1 class="etapa__pergunta">Qual boné você quer?</h1>
+    <p class="etapa__apoio">Toque no modelo. Dá para trocar depois.</p>
+    <div class="filtros" id="filtros-linha" role="group" aria-label="Filtrar por tipo"></div>
+    <div class="grade-modelos" id="grade-modelos">
+      <p class="etapa__apoio">Carregando os modelos…</p>
+    </div>
+  </section>
+
+  <!-- Passo 2 — o editor: o boné no centro, ferramentas nos painéis -->
+  <section class="etapa oculto" data-passo="2">
+    <div class="editor">
+      <div class="editor__cabecalho">
+        <div>
+          <h1 class="editor__modelo" id="editor-modelo">—</h1>
+          <p class="editor__linha" id="editor-linha">—</p>
+          <p class="editor__sobre oculto" id="editor-sobre"></p>
+        </div>
+        <button class="editor__trocar" type="button" id="botao-trocar-modelo">Trocar</button>
+      </div>
+
+      <!-- O palco: o desenho do boné com as partes que recebem arte -->
+      <div class="palco">
+        <img class="palco__foto" id="palco-foto" src="" alt="" width="200" height="200" loading="lazy">
+        <svg class="palco__bone" id="palco-bone" viewBox="0 0 400 250" role="group" aria-label="Partes do boné">
+          <!-- copa -->
+          <path class="bone__copa" d="M104 176 C104 96 152 54 214 54 C284 54 332 100 332 176 Z"/>
+          <!-- gomos, só para dar leitura de boné -->
+          <path class="bone__linha" d="M214 54 L214 176 M166 64 C154 104 150 142 150 176 M266 66 C280 106 284 142 284 176"/>
+          <!-- aba: larga e curva, como a de um boné de verdade -->
+          <path class="bone__aba" d="M196 176 L104 176 C60 178 26 190 18 201 C11 210 22 218 48 218 C98 218 158 202 196 183 Z"/>
+          <!-- botão do topo -->
+          <circle class="bone__botao" cx="214" cy="54" r="8"/>
+        </svg>
+        <div class="palco__aplicacoes" id="palco-aplicacoes" aria-hidden="true"></div>
+        <div class="palco__marcadores" id="palco-marcadores"></div>
+      </div>
+
+      <div class="palco__acoes">
+        <button class="botao-virar" type="button" id="botao-virar">Ver o lado direito</button>
+      </div>
+
+      <p class="palco__dica" id="palco-dica">Toque numa parte do boné para colocar sua arte.</p>
+      <p class="palco__nota oculto" id="palco-nota"></p>
+
+      <!-- Lista das partes: é o controle principal, o desenho é a orientação -->
+      <div class="partes" id="lista-partes"></div>
+    </div>
+  </section>
+
+  <!-- Passo 3 — revisão e envio -->
+  <section class="etapa oculto" data-passo="3">
+    <h1 class="etapa__pergunta">Confira e envie</h1>
+    <p class="etapa__apoio">Está tudo certo? É só mandar para o WhatsApp que a gente responde.</p>
+
+    <ul class="itens" id="lista-itens"></ul>
+    <p class="resumo__vazio oculto" id="resumo-vazio">Seu pedido está vazio.</p>
+
+    <div class="totais">
+      <div class="totais__linha"><span>Bonés no pedido</span><strong id="total-pecas">0</strong></div>
+      <div class="totais__linha"><span>Fica pronto até</span><strong id="total-prazo">—</strong></div>
+      <div class="totais__linha totais__linha--forte"><span>Total</span><strong id="total-valor">—</strong></div>
+      <p class="totais__nota">O frete é cotado à parte, junto com a proposta.</p>
+    </div>
+
+    <div class="anexos oculto" id="lembrete-anexos">
+      <strong>Leve a arte junto.</strong> Quando abrir o WhatsApp, anexe na conversa:
+      <ul>
+        <li>sua logo, no melhor arquivo que você tiver</li>
+        <li>a imagem de referência do boné, se você fez uma</li>
+      </ul>
+    </div>
+
+    <label class="campo">
+      <span class="campo__rotulo">Seu nome ou o da empresa <span class="campo__dica">opcional</span></span>
+      <input type="text" id="campo-cliente" placeholder="Ex.: Mercado São José">
+    </label>
+
+    <div class="acoes-finais">
+      <button class="botao botao--zap botao--grande botao--largo" type="button" id="botao-whatsapp">
+        Enviar meu pedido pelo WhatsApp
+      </button>
+      <button class="botao botao--vazado botao--largo" type="button" id="botao-outro">Adicionar outro modelo</button>
+      <button class="botao botao--texto botao--largo" type="button" id="botao-copiar">Copiar o resumo</button>
+      <button class="botao botao--texto botao--largo" type="button" id="botao-limpar">Começar de novo</button>
+    </div>
+    <p class="etapa__apoio oculto" id="aviso-copia"></p>
+  </section>
+
+</main>
+
+<!-- Ferramentas do editor: abrem painel, não levam para outra tela -->
+<nav class="ferramentas oculto" id="ferramentas" aria-label="Ferramentas do boné"></nav>
+
+<div class="barra-acao">
+  <div class="container barra-acao__interno">
+    <button class="barra-acao__voltar" type="button" id="botao-voltar" aria-label="Voltar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="barra-acao__resumo">
+      <span class="barra-acao__titulo" id="barra-titulo">Escolha um modelo</span>
+      <span class="barra-acao__detalhe" id="barra-detalhe">para começar</span>
+    </div>
+    <button class="botao botao--grande" type="button" id="botao-avancar">Continuar</button>
+  </div>
+</div>
+
+<!-- Painel que sobe de baixo com as opções da ferramenta tocada -->
+<div class="painel oculto" id="painel" role="dialog" aria-modal="true" aria-labelledby="painel-titulo">
+  <div class="painel__fundo" id="painel-fundo"></div>
+  <div class="painel__folha">
+    <div class="painel__puxador" aria-hidden="true"></div>
+    <div class="painel__topo">
+      <h2 class="painel__titulo" id="painel-titulo" tabindex="-1">—</h2>
+      <button class="painel__fechar" type="button" id="painel-fechar" aria-label="Fechar">✕</button>
+    </div>
+    <div class="painel__corpo" id="painel-corpo"></div>
+    <div class="painel__acoes" id="painel-acoes"></div>
+  </div>
+</div>
+
+<script type="module" src="assets/js/configurador.js"></script>
+</body>
+</html>

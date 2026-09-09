@@ -1,0 +1,1440 @@
+{
+  "_leia": "Catálogo e fichas técnicas da AG Bonés, a partir do Prompt-MAPA. Cada produto declara suas construções, áreas e restrições físicas. O site só oferece uma técnica onde a construção permite. Preço vazio aparece como 'sob consulta'. Campos: 'observacoes' vai para a tela do cliente; 'pendencia' e recado de trabalho, so aparece para quem edita o catalogo. 'genero' e so para a concordancia dos textos (personalizado/personalizada).",
+  "atualizado_em": "2026-09-08",
+  "linhas": [
+    {
+      "id": "premium",
+      "nome": "Linha Premium",
+      "minimo": 25,
+      "status": "definido",
+      "recomendada": "bordado",
+      "_recomendada_leia": "Tecnica mais pedida na linha. Serve so para destacar a sugestao na tela; nao limita as outras."
+    },
+    {
+      "id": "intermediaria",
+      "nome": "Linha Intermediária",
+      "minimo": null,
+      "status": "em_aberto",
+      "_leia": "Existe desde o início, aberta para novos produtos. Sem modelos e sem mínimo, não aparece no site.",
+      "recomendada": "silk-direto"
+    },
+    {
+      "id": "promocional",
+      "nome": "Linha Promocional",
+      "minimo": 50,
+      "status": "definido",
+      "recomendada": "dtf-direto"
+    }
+  ],
+  "minimo_por_categoria": {
+    "_leia": "Regra da casa: chapeu tem minimo proprio, 30 unidades, independente da linha. Vale acima do minimo da linha.",
+    "chapeu": 30
+  },
+  "faixas_quantidade": [
+    {
+      "id": "25-49",
+      "min": 25,
+      "max": 49
+    },
+    {
+      "id": "50-99",
+      "min": 50,
+      "max": 99
+    },
+    {
+      "id": "100-199",
+      "min": 100,
+      "max": 199
+    },
+    {
+      "id": "200-299",
+      "min": 200,
+      "max": 299
+    },
+    {
+      "id": "300+",
+      "min": 300,
+      "max": null
+    }
+  ],
+  "produtos": [
+    {
+      "id": "trucker",
+      "nome": "Trucker",
+      "linha": "premium",
+      "imagem": "assets/produtos/trucker.webp",
+      "precos": {},
+      "descricao": "O trucker tem a frente em tecido e a parte de trás em tela, o que deixa a cabeça arejada. É o modelo mais pedido para equipe, evento e brinde, e aceita bem bordado na frente.",
+      "categoria": "bone",
+      "status": "definido",
+      "construcoes": [
+        {
+          "id": "com-tela",
+          "nome": "Laterais e traseira em tela",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tela",
+            "lateral-direita": "tela",
+            "traseira": "tela",
+            "aba": "tecido"
+          },
+          "fechos": [
+            "plastico"
+          ],
+          "padrao": true,
+          "nota": "Com tela, a fábrica trabalha com o fecho plástico."
+        },
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido",
+            "traseira": "tecido",
+            "aba": "tecido"
+          },
+          "fechos": "todos"
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira"
+        },
+        {
+          "id": "aba",
+          "nome": "Aba"
+        }
+      ],
+      "opcoes": [
+        "aba",
+        "acabamentos"
+      ],
+      "observacoes": [
+        "A frente é a área com mais liberdade de personalização: ela aceita todas as formas de aplicação."
+      ],
+      "genero": "m"
+    },
+    {
+      "id": "americano-tela",
+      "nome": "Americano c/ tela",
+      "linha": "premium",
+      "imagem": "assets/produtos/americano-tela.webp",
+      "precos": {},
+      "descricao": "Formato americano com tela na traseira: mesma pegada do trucker, com a copa um pouco mais fechada. Boa escolha para quem trabalha ao ar livre.",
+      "categoria": "bone",
+      "status": "provisorio",
+      "construcoes": [
+        {
+          "id": "com-tela",
+          "nome": "Laterais e traseira em tela",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tela",
+            "lateral-direita": "tela",
+            "traseira": "tela",
+            "aba": "tecido"
+          },
+          "fechos": [
+            "plastico"
+          ],
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira"
+        },
+        {
+          "id": "aba",
+          "nome": "Aba"
+        }
+      ],
+      "opcoes": [
+        "aba",
+        "acabamentos"
+      ],
+      "pendencia": "Diferenças entre este modelo e o Trucker ainda não levantadas; por ora segue a mesma lógica.",
+      "genero": "m"
+    },
+    {
+      "id": "dad-hat",
+      "nome": "Dad Hat",
+      "linha": "premium",
+      "imagem": "assets/produtos/dad-hat.webp",
+      "precos": {},
+      "descricao": "Copa baixa, aba curva e caimento macio. É o boné do dia a dia, confortável desde a primeira vez, muito procurado por marcas de roupa e público jovem.",
+      "categoria": "bone",
+      "status": "definido",
+      "estrutura": "Desestruturado, de caimento macio.",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido",
+            "traseira": "tecido",
+            "aba": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente",
+          "recomendada": "bordado",
+          "motivo": "A construção mole e desestruturada do Dad Hat favorece o bordado e dá um acabamento mais premium."
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda",
+          "recomendada": "bordado",
+          "motivo": "Bordado pequeno e discreto preserva a estética do modelo."
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita",
+          "recomendada": "bordado",
+          "motivo": "Bordado pequeno e discreto preserva a estética do modelo."
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira"
+        },
+        {
+          "id": "aba",
+          "nome": "Aba"
+        }
+      ],
+      "opcoes": [
+        "acabamentos"
+      ],
+      "pendencia": "Confirmar com a fábrica qual é o fecho padrão do modelo.",
+      "genero": "m"
+    },
+    {
+      "id": "flex",
+      "nome": "Flex",
+      "linha": "premium",
+      "imagem": "assets/produtos/flex.webp",
+      "precos": {},
+      "descricao": "Sem regulagem atrás: o boné se ajusta à cabeça e fica firme. Indicado para uniforme, esporte e quem não quer o boné saindo do lugar.",
+      "categoria": "bone",
+      "status": "definido",
+      "estrutura": "Estruturado, 6 gomos. A frente tem duas peças com costura central.",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido",
+            "traseira": "tecido",
+            "aba": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        },
+        {
+          "id": "com-tela",
+          "nome": "Com tela nas laterais",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tela",
+            "lateral-direita": "tela",
+            "traseira": "tecido",
+            "aba": "tecido"
+          },
+          "fechos": [
+            "plastico"
+          ]
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente",
+          "restricao": {
+            "tipo": "vinco-central",
+            "texto": "A frente é feita de duas peças, com uma costura no meio.",
+            "bloqueia": [
+              "silk-alto"
+            ],
+            "alternativa": "Dá para aplicar o silk em relevo numa das peças da frente, fora do vinco central."
+          }
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira"
+        },
+        {
+          "id": "aba",
+          "nome": "Aba"
+        }
+      ],
+      "opcoes": [
+        "aba",
+        "acabamentos"
+      ],
+      "genero": "m"
+    },
+    {
+      "id": "aba-reta",
+      "nome": "Aba Reta",
+      "linha": "premium",
+      "imagem": "assets/produtos/aba-reta.webp",
+      "precos": {},
+      "descricao": "Aba reta e copa alta, com pegada urbana. Dá bastante área na frente para uma arte grande aparecer.",
+      "categoria": "bone",
+      "status": "provisorio",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido",
+            "traseira": "tecido",
+            "aba": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente",
+          "restricao": {
+            "tipo": "vinco-central",
+            "texto": "A frente é feita de duas peças, com uma costura no meio.",
+            "bloqueia": [
+              "silk-alto"
+            ],
+            "alternativa": "Dá para aplicar o silk em relevo numa das peças da frente, fora do vinco central."
+          }
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira"
+        },
+        {
+          "id": "aba",
+          "nome": "Aba"
+        }
+      ],
+      "opcoes": [
+        "aba",
+        "acabamentos"
+      ],
+      "pendencia": "Diferenças entre este modelo e o Flex ainda não levantadas; por ora segue a mesma lógica.",
+      "genero": "m"
+    },
+    {
+      "id": "bucket",
+      "nome": "Bucket",
+      "linha": "premium",
+      "imagem": "assets/produtos/bucket.webp",
+      "precos": {},
+      "descricao": "Chapéu bucket, de aba mole em volta toda. Protege do sol por todos os lados e é o queridinho de evento e verão.",
+      "categoria": "chapeu",
+      "status": "definido",
+      "estrutura": "Dois lados independentes: cada um pode ter cor e arte próprias, como se fossem dois chapéus em um.",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "lado-a": "tecido",
+            "lado-b": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "lado-a",
+          "nome": "Lado A",
+          "nota": "Cor e arte próprias."
+        },
+        {
+          "id": "lado-b",
+          "nome": "Lado B",
+          "nota": "Outra cor e outra arte."
+        }
+      ],
+      "opcoes": [
+        "acabamentos"
+      ],
+      "observacoes": [
+        "Os dois lados são independentes: cada um pode ter cor e arte próprias. O cliente leva dois visuais numa peça só, é só virar o chapéu."
+      ],
+      "genero": "m"
+    },
+    {
+      "id": "viseira-sport",
+      "nome": "Viseira Sport",
+      "linha": "premium",
+      "imagem": "assets/produtos/viseira-sport.webp",
+      "precos": {},
+      "descricao": "Só a aba, sem copa. Leve e fresca, feita para corrida, quadra e trabalho no sol.",
+      "categoria": "viseira",
+      "status": "em_aberto",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        }
+      ],
+      "opcoes": [],
+      "observacoes": [
+        "A forma de aplicação nesta viseira é confirmada no atendimento."
+      ],
+      "pendencia": "Técnicas específicas da viseira premium ainda não definidas.",
+      "genero": "f"
+    },
+    {
+      "id": "viseira-malha",
+      "nome": "Viseira em Malha",
+      "linha": "premium",
+      "imagem": "assets/produtos/viseira-malha.webp",
+      "precos": {},
+      "descricao": "Viseira em malha, com toque macio e ajuste confortável. Boa para dias quentes e uso prolongado.",
+      "categoria": "viseira",
+      "status": "em_aberto",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        }
+      ],
+      "opcoes": [],
+      "observacoes": [
+        "A forma de aplicação nesta viseira é confirmada no atendimento."
+      ],
+      "pendencia": "Técnicas específicas da viseira premium ainda não definidas.",
+      "genero": "f"
+    },
+    {
+      "id": "japones",
+      "nome": "Japonês",
+      "linha": "promocional",
+      "imagem": "assets/produtos/japones.webp",
+      "precos": {},
+      "descricao": "Modelo simples e econômico, o mais usado em brinde e ação promocional. Sai bem em pedidos grandes com custo baixo por peça.",
+      "categoria": "bone",
+      "status": "definido",
+      "estrutura": "A traseira é uma peça só, então aceita arte centralizada.",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido",
+            "traseira": "tecido",
+            "aba": "tecido"
+          },
+          "fechos": [
+            "plastico"
+          ],
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira",
+          "nota": "Peça única: a arte pode ficar bem no centro."
+        }
+      ],
+      "opcoes": [
+        "aba",
+        "botao-topo"
+      ],
+      "tecnicas": [
+        "dtf-direto"
+      ],
+      "pendencia": "Outras técnicas podem ser liberadas depois.",
+      "genero": "m"
+    },
+    {
+      "id": "gomos-5-6",
+      "nome": "5/6 Gomos",
+      "linha": "promocional",
+      "imagem": "assets/produtos/gomos-5-6.webp",
+      "precos": {},
+      "descricao": "Boné de cinco ou seis gomos, formato clássico que agrada quase todo mundo. Base segura para uniforme e brinde.",
+      "categoria": "bone",
+      "status": "definido",
+      "estrutura": "A traseira tem duas peças, com costura no meio.",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido",
+            "traseira": "tecido",
+            "aba": "tecido"
+          },
+          "fechos": [
+            "plastico"
+          ],
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira",
+          "restricao": {
+            "tipo": "vinco-central",
+            "texto": "A traseira tem duas peças com costura no meio: a arte não pode ficar centralizada em cima da costura.",
+            "bloqueia": [],
+            "alternativa": "A arte fica numa das peças, deslocada para o lado."
+          }
+        }
+      ],
+      "opcoes": [
+        "aba"
+      ],
+      "tecnicas": [
+        "dtf-direto"
+      ],
+      "pendencia": "Outras técnicas podem ser liberadas depois.",
+      "genero": "m"
+    },
+    {
+      "id": "americano",
+      "nome": "Americano",
+      "linha": "promocional",
+      "imagem": "assets/produtos/americano.webp",
+      "precos": {},
+      "descricao": "Formato americano em tecido inteiro, sem tela. Estrutura firme e ótima área na frente para a marca.",
+      "categoria": "bone",
+      "status": "definido",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido",
+            "traseira": "tecido",
+            "aba": "tecido"
+          },
+          "fechos": [
+            "plastico"
+          ],
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira"
+        },
+        {
+          "id": "aba",
+          "nome": "Aba"
+        }
+      ],
+      "opcoes": [
+        "aba"
+      ],
+      "tecnicas": [
+        "dtf-direto"
+      ],
+      "pendencia": "Outras técnicas podem ser liberadas depois.",
+      "genero": "m"
+    },
+    {
+      "id": "viseira",
+      "nome": "Viseira",
+      "linha": "promocional",
+      "imagem": "assets/produtos/viseira.webp",
+      "precos": {},
+      "descricao": "Viseira promocional: leve, barata e prática para distribuir em evento, feira e ação de rua.",
+      "categoria": "viseira",
+      "status": "provisorio",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Tecido",
+          "materiais": {
+            "frente": "tecido",
+            "lateral-esquerda": "tecido",
+            "lateral-direita": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "lateral-esquerda",
+          "nome": "Lateral esquerda"
+        },
+        {
+          "id": "lateral-direita",
+          "nome": "Lateral direita"
+        }
+      ],
+      "opcoes": [],
+      "tecnicas": [
+        "dtf-direto"
+      ],
+      "pendencia": "Áreas e limites a refinar. Outras técnicas podem ser liberadas depois.",
+      "genero": "f"
+    },
+    {
+      "id": "cumbuca",
+      "nome": "Cumbuca",
+      "linha": "promocional",
+      "imagem": "assets/produtos/cumbuca.webp",
+      "precos": {},
+      "descricao": "Copa arredondada e aba curta, com ar despojado. Chama atenção em ação promocional e público jovem.",
+      "categoria": "chapeu",
+      "status": "em_aberto",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "lado-a": "tecido",
+            "lado-b": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "lado-a",
+          "nome": "Lado A"
+        },
+        {
+          "id": "lado-b",
+          "nome": "Lado B"
+        }
+      ],
+      "opcoes": [],
+      "tecnicas": [
+        "dtf-direto"
+      ],
+      "pendencia": "Falta definir a diferença técnica e comercial entre o Bucket premium e a Cumbuca promocional. Seguem cadastrados separados até lá.",
+      "genero": "f"
+    },
+    {
+      "id": "chapeu-australiano",
+      "nome": "Chapéu Australiano",
+      "linha": "promocional",
+      "imagem": "assets/produtos/chapeu-australiano.webp",
+      "precos": {},
+      "descricao": "Chapéu de aba larga em volta, que protege pescoço e orelhas. É o modelo do trabalho no campo e do sol forte.",
+      "categoria": "chapeu",
+      "status": "definido",
+      "construcoes": [
+        {
+          "id": "todo-tecido",
+          "nome": "Todo em tecido",
+          "materiais": {
+            "frente": "tecido",
+            "traseira": "tecido"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente"
+        },
+        {
+          "id": "traseira",
+          "nome": "Traseira"
+        }
+      ],
+      "opcoes": [
+        "saia",
+        "cordao",
+        "botao-aba"
+      ],
+      "tecnicas": [
+        "dtf-direto"
+      ],
+      "genero": "m"
+    },
+    {
+      "id": "chapeu-juta",
+      "nome": "Chapéu de Juta",
+      "linha": "premium",
+      "imagem": "assets/produtos/chapeu-juta.webp",
+      "precos": {},
+      "descricao": "Chapéu de juta, fibra natural de toque rústico. Combina com evento junino, agro e marcas que querem um visual artesanal.",
+      "categoria": "chapeu",
+      "status": "definido",
+      "estrutura": "Chapéu de juta, para praia e verão. A personalização é feita na fita de couro.",
+      "construcoes": [
+        {
+          "id": "juta",
+          "nome": "Juta com fita de couro",
+          "materiais": {
+            "fita": "couro"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "fita",
+          "nome": "Fita de couro",
+          "somente": [
+            "fita-couro"
+          ],
+          "limite": {
+            "tipo": "altura",
+            "min_cm": 2,
+            "max_cm": 4,
+            "status": "revisar",
+            "texto": "A fita é estreita: a arte precisa caber em 2 a 4 cm de altura. Medida provisória, a confirmar com a fábrica."
+          }
+        }
+      ],
+      "opcoes": [
+        "fita"
+      ],
+      "genero": "m"
+    },
+    {
+      "id": "chapeu-palha",
+      "nome": "Chapéu de Palha",
+      "linha": "premium",
+      "imagem": "assets/produtos/chapeu-palha.webp",
+      "precos": {},
+      "descricao": "Chapéu de palha tradicional, fresco e leve. Clássico de festa junina, fazenda e ação ao ar livre.",
+      "categoria": "chapeu",
+      "status": "em_aberto",
+      "construcoes": [
+        {
+          "id": "palha",
+          "nome": "Palha",
+          "materiais": {
+            "frente": "palha"
+          },
+          "fechos": "todos",
+          "padrao": true
+        }
+      ],
+      "areas": [
+        {
+          "id": "frente",
+          "nome": "Frente",
+          "nota": "Possibilidade levantada, ainda não confirmada."
+        }
+      ],
+      "opcoes": [],
+      "observacoes": [
+        "A personalização da palha é combinada caso a caso: mande sua ideia que a gente responde o que dá para fazer."
+      ],
+      "pendencia": "Aplique frontal, forro personalizado, personalização interna e na parte de baixo da aba são possibilidades levantadas, nenhuma confirmada.",
+      "genero": "m"
+    }
+  ],
+  "empresa": {
+    "nome": "AG Bonés",
+    "_leia_whatsapp": "NUMERO DE TESTE no ar enquanto o site nao esta publicado. Quando for para o cliente de verdade, trocar 'whatsapp' pelo valor de 'whatsapp_oficial' — e o numero que a fabrica atende.",
+    "whatsapp": "5584996913662",
+    "whatsapp_oficial": "5584988051491",
+    "email": "agbonescomercial@gmail.com",
+    "cnpj": "03.813.918/0001-48",
+    "endereco": "Granja Bulandeira, 5570, Caixa postal 144, Zona Rural, Caicó/RN",
+    "atendimento": "Segunda a sexta, 7h às 18h",
+    "instagram": "agbones_store",
+    "facebook": "agbonescaico",
+    "missao": "Fabricar com excelência, entregando estilo, confiança e satisfação a cada cliente.",
+    "visao": "Ser referência nacional em produtos personalizados que unem identidade, estilo e responsabilidade com o meio ambiente.",
+    "valores": [
+      "Desafio",
+      "Comprometimento",
+      "Autoconfiança",
+      "Resultado"
+    ],
+    "anos": 25
+  },
+  "arte": {
+    "_leia": "Regras da arte do cliente. 'prazo_extra_dias' e 'custo_vetorizacao' nulos aparecem como 'sob consulta' e nao entram na conta.",
+    "formatos_vetor": [
+      "AI",
+      "CDR",
+      "EPS",
+      "SVG",
+      "PDF"
+    ],
+    "formatos_imagem": [
+      "PNG",
+      "JPG",
+      "WEBP"
+    ],
+    "largura_minima_px": 1000,
+    "prazo_extra_dias": null,
+    "custo_vetorizacao": null,
+    "origens": [
+      {
+        "id": "vetor",
+        "nome": "Tenho o arquivo original da minha logo",
+        "ajuda": "É o arquivo que o designer entregou. O nome termina em .ai, .cdr, .eps, .svg ou .pdf. Com ele, seu pedido anda mais rápido.",
+        "redesenho": false
+      },
+      {
+        "id": "imagem",
+        "nome": "Tenho só uma imagem ou um print",
+        "ajuda": "Foto, print, imagem salva do Instagram ou aquele boné que você criou com inteligência artificial. Serve — a gente redesenha para poder produzir.",
+        "redesenho": true
+      },
+      {
+        "id": "criar",
+        "nome": "Não tenho nada ainda",
+        "ajuda": "Sem problema. Nossa equipe cria a arte a partir da sua ideia e manda para você aprovar.",
+        "redesenho": true
+      }
+    ]
+  },
+  "cores": [
+    {
+      "id": "preto",
+      "nome": "Preto",
+      "hex": "#141414"
+    },
+    {
+      "id": "branco",
+      "nome": "Branco",
+      "hex": "#FFFFFF"
+    },
+    {
+      "id": "azul-marinho",
+      "nome": "Azul-marinho",
+      "hex": "#16264A"
+    },
+    {
+      "id": "azul-royal",
+      "nome": "Azul-royal",
+      "hex": "#1B4FA0"
+    },
+    {
+      "id": "vermelho",
+      "nome": "Vermelho",
+      "hex": "#B3202C"
+    },
+    {
+      "id": "vinho",
+      "nome": "Vinho",
+      "hex": "#6B1F2E"
+    },
+    {
+      "id": "cinza",
+      "nome": "Cinza",
+      "hex": "#8A8F98"
+    },
+    {
+      "id": "chumbo",
+      "nome": "Chumbo",
+      "hex": "#3A3F47"
+    },
+    {
+      "id": "bege",
+      "nome": "Bege",
+      "hex": "#D8C7A6"
+    },
+    {
+      "id": "caqui",
+      "nome": "Caqui",
+      "hex": "#7A6A4F"
+    },
+    {
+      "id": "verde-musgo",
+      "nome": "Verde-musgo",
+      "hex": "#3E4A32"
+    },
+    {
+      "id": "verde-bandeira",
+      "nome": "Verde-bandeira",
+      "hex": "#1E6B45"
+    },
+    {
+      "id": "amarelo",
+      "nome": "Amarelo",
+      "hex": "#E8B92E"
+    },
+    {
+      "id": "laranja",
+      "nome": "Laranja",
+      "hex": "#D96A20"
+    },
+    {
+      "id": "rosa",
+      "nome": "Rosa",
+      "hex": "#D96A94"
+    },
+    {
+      "id": "roxo",
+      "nome": "Roxo",
+      "hex": "#5B3A8C"
+    }
+  ],
+  "tecnicas": [
+    {
+      "id": "bordado",
+      "nome": "Bordado",
+      "icone": "agulha",
+      "explicacao": "Logo costurada com linha, sem enchimento por baixo.",
+      "materiais": [
+        "tecido",
+        "tela"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "bordado-emborrachado",
+      "nome": "Bordado emborrachado premium",
+      "icone": "agulha",
+      "explicacao": "Bordado sobre borracha: fica alto e bem cheio. Acabamento premium.",
+      "materiais": [
+        "tecido"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "silk-direto",
+      "nome": "Silk direto",
+      "icone": "tinta",
+      "explicacao": "Tinta aplicada no tecido, com acabamento liso.",
+      "materiais": [
+        "tecido"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "silk-alto",
+      "nome": "Silk em alto-relevo",
+      "icone": "relevo",
+      "explicacao": "Tinta em alto-relevo: a arte fica levantada, com toque. Acabamento premium.",
+      "materiais": [
+        "tecido"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "dtf-direto",
+      "nome": "DTF direto",
+      "icone": "tinta",
+      "explicacao": "Impressão colorida aplicada com prensa direto na peça. Aceita qualquer desenho, foto e degradê.",
+      "materiais": [
+        "tecido"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "pintura",
+      "nome": "Pintura direta",
+      "icone": "tinta",
+      "explicacao": "Pintura aplicada direto no tecido.",
+      "materiais": [
+        "tecido"
+      ],
+      "status": "provisorio",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "aplique",
+      "nome": "Aplique",
+      "icone": "aplique",
+      "explicacao": "Recorte de tecido costurado na peça.",
+      "materiais": [
+        "tecido",
+        "tela"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "aplique-dtf",
+      "nome": "Aplique com DTF",
+      "icone": "aplique",
+      "explicacao": "Recorte de tecido costurado, com a arte impressa em DTF.",
+      "materiais": [
+        "tecido",
+        "tela"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "aplique-silk",
+      "nome": "Aplique com silk em relevo",
+      "icone": "aplique",
+      "explicacao": "Recorte de tecido costurado, com a arte em silk levantado.",
+      "materiais": [
+        "tecido"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "aplique-relevo",
+      "nome": "Aplique com relevo",
+      "icone": "aplique",
+      "explicacao": "Aplique com enchimento, que deixa a peça em alto-relevo.",
+      "materiais": [
+        "tecido"
+      ],
+      "status": "definido",
+      "acrescimo_unidade": null
+    },
+    {
+      "id": "fita-couro",
+      "nome": "Arte na fita de couro",
+      "icone": "relevo",
+      "explicacao": "A arte é aplicada sobre a fita de couro do chapéu.",
+      "materiais": [
+        "couro"
+      ],
+      "status": "provisorio",
+      "acrescimo_unidade": null
+    }
+  ],
+  "_leia_descricoes": "As descrições dos modelos são texto de partida, escritos a partir do que cada formato é. REVISAR com a fábrica antes de divulgar.",
+  "medicao": {
+    "_leia": "Cole aqui os códigos quando criar as contas. Vazio = nada é carregado nem enviado, e o site não fica mais pesado por isso.",
+    "google_analytics": "",
+    "meta_pixel": ""
+  },
+  "status_possiveis": {
+    "definido": "Confirmado pela fábrica.",
+    "provisorio": "Levantado, ainda precisa de confirmação.",
+    "em_aberto": "Ainda será definido.",
+    "revisar": "Precisa de confirmação técnica ou de medida com a fábrica."
+  },
+  "materiais": [
+    {
+      "id": "tecido",
+      "nome": "Tecido",
+      "status": "definido"
+    },
+    {
+      "id": "tela",
+      "nome": "Tela",
+      "status": "definido",
+      "nota": "Vazada: nem toda técnica se aplica."
+    },
+    {
+      "id": "juta",
+      "nome": "Juta",
+      "status": "definido"
+    },
+    {
+      "id": "palha",
+      "nome": "Palha",
+      "status": "definido"
+    },
+    {
+      "id": "couro",
+      "nome": "Couro",
+      "status": "definido",
+      "nota": "Usado na fita do chapéu de juta."
+    }
+  ],
+  "fechos": {
+    "_leia": "REVISAR COM A FÁBRICA: confirmar a lista real e os nomes. O modelo com tela só aceita o fecho plástico.",
+    "status": "revisar",
+    "valores": [
+      {
+        "id": "plastico",
+        "nome": "Fecho plástico"
+      },
+      {
+        "id": "velcro",
+        "nome": "Velcro"
+      },
+      {
+        "id": "fivela-metal",
+        "nome": "Fivela metálica"
+      },
+      {
+        "id": "elastico",
+        "nome": "Elástico"
+      },
+      {
+        "id": "corrediça",
+        "nome": "Corrediça metálica"
+      }
+    ]
+  },
+  "abas": {
+    "_leia": "Outras variações podem ser acrescentadas depois.",
+    "valores": [
+      {
+        "id": "tradicional",
+        "nome": "Aba tradicional"
+      },
+      {
+        "id": "sanduiche",
+        "nome": "Aba sanduíche"
+      }
+    ]
+  },
+  "acabamentos": {
+    "_leia": "Componentes independentes do layout, conforme o mapa.",
+    "valores": [
+      {
+        "id": "vies",
+        "nome": "Viés personalizado"
+      },
+      {
+        "id": "forro",
+        "nome": "Forro personalizado"
+      }
+    ]
+  },
+  "fitas": {
+    "_leia": "Cores da fita de couro do chapéu de juta.",
+    "valores": [
+      {
+        "id": "preto",
+        "nome": "Preto"
+      },
+      {
+        "id": "caramelo",
+        "nome": "Caramelo"
+      }
+    ]
+  },
+  "saias": {
+    "_leia": "A saia é o tecido que cobre o pescoço. Tamanhos e formatos ainda serão cadastrados.",
+    "status": "em_aberto",
+    "valores": [
+      {
+        "id": "com",
+        "nome": "Com saia"
+      },
+      {
+        "id": "sem",
+        "nome": "Sem saia"
+      }
+    ]
+  },
+  "botoes_aba": {
+    "_leia": "Cor do botão da aba, tratada como variável independente.",
+    "valores": [
+      {
+        "id": "preto",
+        "nome": "Preto"
+      },
+      {
+        "id": "branco",
+        "nome": "Branco"
+      }
+    ]
+  },
+  "cordoes": {
+    "_leia": "Variações de cordão ainda serão cadastradas.",
+    "status": "em_aberto",
+    "valores": [
+      {
+        "id": "com",
+        "nome": "Com cordão"
+      },
+      {
+        "id": "sem",
+        "nome": "Sem cordão"
+      }
+    ]
+  },
+  "marcas": {
+    "_leia": "Marcas que ja produziram com a AG Bones. Vieram do site antigo; conferir com a fabrica antes de acrescentar outras.",
+    "titulo": "As grandes marcas produzem com a gente",
+    "valores": [
+      {
+        "nome": "Pitú",
+        "imagem": "assets/marcas/pitu.webp"
+      },
+      {
+        "nome": "Shell",
+        "imagem": "assets/marcas/shell.webp"
+      },
+      {
+        "nome": "Volkswagen",
+        "imagem": "assets/marcas/volkswagen.webp"
+      },
+      {
+        "nome": "Honda",
+        "imagem": "assets/marcas/honda.webp"
+      },
+      {
+        "nome": "BYD",
+        "imagem": "assets/marcas/byd.webp"
+      },
+      {
+        "nome": "RAM",
+        "imagem": "assets/marcas/ram.webp"
+      },
+      {
+        "nome": "Goodyear",
+        "imagem": "assets/marcas/goodyear.webp"
+      },
+      {
+        "nome": "Kibon",
+        "imagem": "assets/marcas/kibon.webp"
+      },
+      {
+        "nome": "TIM",
+        "imagem": "assets/marcas/tim.webp"
+      }
+    ]
+  },
+  "depoimentos": {
+    "_leia": "Avaliacoes publicas do Google, como estavam no site antigo. Texto do cliente, palavra por palavra.",
+    "fonte": "Google",
+    "nota": "Excelente",
+    "quantidade": 12,
+    "valores": [
+      {
+        "nome": "jussier fernandes",
+        "texto": "Uso um boné desse lugar e é incrível a qualidade e durabilidade. Bonito, um modelo confortável, com acabamento de personalização perfeito!"
+      },
+      {
+        "nome": "GERMANNA BARBOSA",
+        "texto": "Sem dúvidas, uma empresa responsável, entrega produtos de qualidade e com o melhor atendimento. Super indico, de olhos fechados!"
+      },
+      {
+        "nome": "LUIS FARIAS",
+        "texto": "Tive ótima experiência tanto para solicitar o pedido e acompanhar, quanto para receber. Adoro o produto, uso no dia a dia e recomendaria para outras pessoas."
+      },
+      {
+        "nome": "Hil",
+        "texto": "Ecobags com ótima qualidade e atendimento excelente. Recomendo!"
+      },
+      {
+        "nome": "José Maria Medeiros",
+        "texto": "Bom atendimento. Pontualidade no prazo."
+      },
+      {
+        "nome": "MARIA SILVA",
+        "texto": "Incrível! Dei uma ecobag de presente para minha mãe com uma mensagem que reflete muito nossa ligação. Foi um momento emocionante e muito especial, ela amou!"
+      }
+    ]
+  },
+  "fabrica": {
+    "_leia": "Fotos da propria fabrica, do site antigo. Sao a prova de 'fabricacao propria'.",
+    "fotos": [
+      {
+        "imagem": "assets/fabrica/bordado.webp",
+        "texto": "Bordadeira industrial: a logo sai daqui, ponto por ponto."
+      },
+      {
+        "imagem": "assets/fabrica/costura.webp",
+        "texto": "Costura própria em Caicó/RN, sem terceirizar a produção."
+      },
+      {
+        "imagem": "assets/fabrica/equipe.webp",
+        "texto": "A equipe que faz o seu pedido, na nossa sede."
+      }
+    ]
+  },
+  "uso": {
+    "_leia": "Gente usando o produto. Ordem importa: a primeira aparece no topo da home.",
+    "fotos": [
+      "assets/uso/uso-01.webp",
+      "assets/uso/uso-02.webp",
+      "assets/uso/uso-03.webp",
+      "assets/uso/uso-04.webp",
+      "assets/uso/uso-05.webp",
+      "assets/uso/uso-06.webp",
+      "assets/uso/uso-07.webp",
+      "assets/uso/uso-08.webp",
+      "assets/uso/uso-09.webp",
+      "assets/uso/uso-10.webp"
+    ]
+  },
+  "instagram": {
+    "_leia": "Ultimos posts do perfil, como imagem propria. NAO e o widget do Instagram: aquele carrega script de terceiro e foi o que emperrou o site antigo. Para renovar, rodar ferramentas/atualizar-instagram.ps1 — ele baixa os posts novos, reduz e reescreve esta lista sozinho.",
+    "atualizado_em": "2026-09-08",
+    "perfil": "agbones_store",
+    "posts": [
+      {
+        "imagem": "assets/instagram/post-01.webp",
+        "link": "https://www.instagram.com/p/DcjpDdhlqsh/"
+      },
+      {
+        "imagem": "assets/instagram/post-02.webp",
+        "link": "https://www.instagram.com/p/DcduB-aFnB4/"
+      },
+      {
+        "imagem": "assets/instagram/post-03.webp",
+        "link": "https://www.instagram.com/p/DcTh4krFqZC/"
+      },
+      {
+        "imagem": "assets/instagram/post-04.webp",
+        "link": "https://www.instagram.com/p/DcOY2QPllJK/"
+      },
+      {
+        "imagem": "assets/instagram/post-05.webp",
+        "link": "https://www.instagram.com/p/DcJPSQTFhi3/"
+      },
+      {
+        "imagem": "assets/instagram/post-06.webp",
+        "link": "https://www.instagram.com/p/Db_mdYylqYl/"
+      },
+      {
+        "imagem": "assets/instagram/post-07.webp",
+        "link": "https://www.instagram.com/p/Db5zDxgFuzn/"
+      },
+      {
+        "imagem": "assets/instagram/post-08.webp",
+        "link": "https://www.instagram.com/p/Dbs7uPsFhBr/"
+      }
+    ]
+  }
+}

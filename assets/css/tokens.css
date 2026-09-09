@@ -1,0 +1,61 @@
+/* Tokens da identidade AG Bones.
+   Mesma paleta do sistema interno (agbones-sistema).
+   O azul da logo (#6699FF) reprova em contraste sobre branco,
+   entao o tema claro usa o azul fechado e o escuro usa o da logo. */
+
+:root {
+  color-scheme: light dark;
+
+  /* Marca */
+  --azul: #2F5FD0;
+  --azul-logo: #6699FF;
+  --azul-escuro: #1F4099;
+
+  /* Superficies e texto — tema claro */
+  --fundo: #FFFFFF;
+  --fundo-alt: #F4F6FA;
+  --cartao: #FFFFFF;
+  --borda: #DCE2ED;
+  --texto: #12161D;
+  --texto-fraco: #69738A;
+  --destaque: var(--azul);
+  --destaque-texto: #FFFFFF;
+  --sombra: 0 1px 2px rgba(18, 22, 29, .06), 0 8px 24px rgba(18, 22, 29, .06);
+
+  /* Semanticas */
+  --sucesso: #1B7F4B;
+  --alerta: #9A6200;
+
+  /* Tipografia — pilha do sistema, nenhuma fonte baixada */
+  --fonte: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Espacamento */
+  --e1: .25rem;
+  --e2: .5rem;
+  --e3: .75rem;
+  --e4: 1rem;
+  --e5: 1.5rem;
+  --e6: 2rem;
+  --e7: 3rem;
+  --e8: 4.5rem;
+
+  --raio: 12px;
+  --raio-p: 8px;
+  --largura: 1120px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #0E1116;
+    --fundo-alt: #151A22;
+    --cartao: #171D26;
+    --borda: #2A3341;
+    --texto: #EDF1F7;
+    --texto-fraco: #9AA6BA;
+    --destaque: var(--azul-logo);
+    --destaque-texto: #0E1116;
+    --sombra: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    --sucesso: #4ED08A;
+    --alerta: #E3B341;
+  }
+}

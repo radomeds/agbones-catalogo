@@ -1,0 +1,24 @@
+# Cabeçalhos para Cloudflare Pages e Netlify.
+# Nenhum efeito no servidor local; valem quando o site estiver hospedado.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+# As fotos dos modelos mudam pouco: cache longo economiza dados do cliente
+/assets/produtos/*
+  Cache-Control: public, max-age=2592000
+
+/assets/marca/*
+  Cache-Control: public, max-age=2592000
+
+/assets/css/*
+  Cache-Control: public, max-age=86400
+
+/assets/js/*
+  Cache-Control: public, max-age=86400
+
+# O catálogo muda quando a fábrica muda preço ou modelo: cache curto
+/dados/*
+  Cache-Control: public, max-age=300

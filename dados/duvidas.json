@@ -1,0 +1,66 @@
+{
+  "_leia": "Perguntas do site. A home mostra as marcadas com destaque; a página duvidas.html mostra todas. Editar aqui muda nos dois lugares.",
+  "atualizado_em": "2026-09-08",
+  "perguntas": [
+    {
+      "pergunta": "Vocês fazem pedido pequeno?",
+      "resposta": "AUTOMATICA_MINIMOS",
+      "destaque": true
+    },
+    {
+      "pergunta": "Quanto custa um boné personalizado?",
+      "resposta": "O preço depende do modelo, da quantidade e da forma de aplicação da arte. Monte o pedido no site: onde já temos tabela, o valor aparece na hora; no que ainda não tem, o pedido segue como “sob consulta” e respondemos no WhatsApp no mesmo dia útil.",
+      "destaque": true
+    },
+    {
+      "pergunta": "Posso mandar a minha logo?",
+      "resposta": "Pode e deve. Aceitamos PNG, JPG, PDF, AI, CDR ou SVG. Se você só tiver a imagem em baixa resolução, nossa equipe redesenha antes de produzir.",
+      "destaque": true
+    },
+    {
+      "pergunta": "Fiz a imagem do boné com IA. Serve?",
+      "resposta": "Serve como referência, e é ótima nesse papel: mostra o modelo, a posição da logo e o clima que você quer. O que ela não substitui é o arquivo de produção. A IA redesenha sua logo do jeito dela, muda a tipografia e cria efeito que bordado não faz. Mande a imagem junto com a sua logo separada, no melhor arquivo que tiver — no configurador a gente confere o arquivo na hora e já diz se dá para produzir direto ou se vamos redesenhar.",
+      "destaque": true
+    },
+    {
+      "pergunta": "Não tenho a logo em vetor. E agora?",
+      "resposta": "Nós redesenhamos. Mande o que tiver — o PNG do Instagram, uma foto da fachada, um print. Nossa equipe recria em vetor e envia o layout com a logo aplicada no modelo escolhido para você aprovar antes de qualquer produção. Isso soma alguns dias ao prazo, então, se existir o arquivo original com o seu designer, vale pedir.",
+      "destaque": true
+    },
+    {
+      "pergunta": "Que tipos de personalização existem?",
+      "resposta": "AUTOMATICA_TECNICAS",
+      "destaque": true
+    },
+    {
+      "pergunta": "Vocês entregam fora do Rio Grande do Norte?",
+      "resposta": "Entregamos em todo o Brasil. O frete é cotado à parte, por transportadora ou Correios, e informado junto com o orçamento.",
+      "destaque": true
+    },
+    {
+      "pergunta": "Dá para ver o boné antes de produzir?",
+      "resposta": "Sim. Enviamos o layout com a sua logo aplicada no modelo escolhido e só começamos a produção depois que você aprova.",
+      "destaque": true
+    },
+    {
+      "pergunta": "Quanto tempo demora para ficar pronto?",
+      "resposta": "20 dias úteis, contados do aceite do orçamento com a primeira parcela paga. Se a arte precisar ser redesenhada, some o tempo dessa etapa — por isso vale mandar o arquivo original da logo já no primeiro contato.",
+      "destaque": false
+    },
+    {
+      "pergunta": "Como funciona o pagamento?",
+      "resposta": "PIX, boleto ou transferência em 50% na aprovação e 50% na entrega; ou cartão em até 10x, com acréscimo. Emitimos nota fiscal em todo pedido.",
+      "destaque": false
+    },
+    {
+      "pergunta": "Posso pedir cores diferentes no mesmo pedido?",
+      "resposta": "Pode. Monte um item para cada combinação no configurador e mande tudo junto — o mínimo vale por modelo, e a gente confirma a divisão no atendimento.",
+      "destaque": false
+    },
+    {
+      "pergunta": "Vocês têm loja física?",
+      "resposta": "Somos fábrica, em Caicó/RN, e atendemos por WhatsApp para todo o Brasil. Quem é da região pode combinar uma visita pelo mesmo WhatsApp.",
+      "destaque": false
+    }
+  ]
+}

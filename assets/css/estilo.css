@@ -1,0 +1,1055 @@
+/* Estilo base do site AG Bones. Mobile primeiro. */
+
+@import url("tokens.css");
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* o cabecalho e fixo: sem isto, clicar num link de ancora deixa o titulo
+     da secao escondido atras dele */
+  scroll-padding-top: 76px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--texto);
+  background: var(--fundo);
+  -webkit-text-size-adjust: 100%;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: var(--destaque); }
+
+h1, h2, h3 { line-height: 1.2; margin: 0 0 var(--e3); letter-spacing: -.02em; }
+h1 { font-size: clamp(1.9rem, 6vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 4.5vw, 2.1rem); }
+h3 { font-size: 1.1rem; }
+p { margin: 0 0 var(--e4); }
+
+.container {
+  width: 100%;
+  max-width: var(--largura);
+  margin-inline: auto;
+  padding-inline: var(--e4);
+}
+
+.secao { padding-block: var(--e7); }
+.secao--alt { background: var(--fundo-alt); }
+.secao__titulo { text-align: center; margin-bottom: var(--e2); }
+.secao__linha { text-align: center; color: var(--texto-fraco); max-width: 60ch; margin: 0 auto var(--e6); }
+
+.oculto { display: none !important; }
+
+.pular-para-conteudo {
+  position: absolute; left: -9999px;
+  background: var(--destaque); color: var(--destaque-texto);
+  padding: var(--e2) var(--e4); border-radius: var(--raio-p);
+}
+.pular-para-conteudo:focus { left: var(--e4); top: var(--e2); z-index: 60; }
+
+:focus-visible { outline: 3px solid var(--destaque); outline-offset: 2px; }
+
+/* ---------- Cabecalho ---------- */
+
+.cabecalho {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--fundo) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--borda);
+}
+.cabecalho__interno {
+  display: flex; align-items: center; gap: var(--e4);
+  min-height: 64px;
+}
+.cabecalho__logo { display: flex; align-items: center; }
+.cabecalho__logo img { height: 38px; width: auto; }
+.cabecalho__nav { margin-left: auto; display: flex; align-items: center; gap: var(--e4); }
+.cabecalho__nav a { color: var(--texto-fraco); text-decoration: none; font-size: .95rem; }
+.cabecalho__nav a:hover { color: var(--texto); }
+/* o link do menu nao pode roubar a cor do botao */
+.cabecalho__nav a.botao { color: var(--destaque-texto); }
+.cabecalho__nav a.botao--vazado { color: var(--texto); }
+.cabecalho__nav a.botao--vazado:hover { color: var(--destaque); }
+.cabecalho__nav .link-menu { display: none; }
+@media (min-width: 760px) { .cabecalho__nav .link-menu { display: inline; } }
+
+/* ---------- Botoes ---------- */
+
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--e2);
+  padding: .7rem 1.2rem;
+  border: 1px solid transparent;
+  border-radius: var(--raio-p);
+  font: inherit; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  background: var(--destaque); color: var(--destaque-texto);
+  transition: filter .15s ease, transform .15s ease;
+}
+.botao:hover { filter: brightness(1.08); }
+.botao:active { transform: translateY(1px); }
+.botao[disabled] { opacity: .5; cursor: not-allowed; }
+.botao--vazado { background: transparent; color: var(--texto); border-color: var(--borda); }
+.botao--vazado:hover { border-color: var(--destaque); color: var(--destaque); }
+.botao--zap { background: #1FA855; color: #fff; }
+.botao--grande { padding: .95rem 1.6rem; font-size: 1.05rem; }
+.botao--largo { width: 100%; }
+
+/* ---------- Hero ---------- */
+
+/* No celular: título curto, foto do produto e botão dentro da primeira tela.
+   Quem vende boné vende pela imagem — texto sozinho não segura ninguém. */
+.hero { padding-block: var(--e5) var(--e6); }
+.hero__selo {
+  display: inline-block; margin-bottom: var(--e3);
+  padding: .3rem .8rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--destaque) 14%, transparent);
+  color: var(--destaque); font-size: .82rem; font-weight: 600;
+}
+.hero h1 { font-size: clamp(1.8rem, 8vw, 3rem); }
+.hero__texto { font-size: 1.1rem; color: var(--texto-fraco); max-width: 46ch; }
+.hero__figura { margin: var(--e4) 0 0; }
+.hero__figura img {
+  border-radius: var(--raio); box-shadow: var(--sombra);
+  /* a foto de gente e retrato 4:5. Inteira, ela empurra o botao para fora da
+     primeira tela do celular; cortada em 4:3 sobra o rosto, que e o que
+     importa, e o "Montar meu pedido" continua visivel sem rolar */
+  width: 100%; aspect-ratio: 1; height: auto;
+  object-fit: cover; object-position: 50% 12%;
+}
+.hero__acoes { display: grid; gap: var(--e3); margin-top: var(--e4); }
+
+@media (min-width: 760px) {
+  /* Da tablet para cima volta a valer o desenho de duas colunas */
+  .hero { padding-block: var(--e8) var(--e7); }
+  /* as quatro linhas da coluna de texto esticavam ate a altura da foto e
+     abriam buracos entre o titulo e o texto: min-content junta tudo */
+  /* o gap do grid vale tambem entre as linhas: com ele, cada pedaco do texto
+     ficava a 3rem do seguinte e o titulo boiava longe do paragrafo. Aqui o
+     espaco horizontal continua, e o vertical volta a ser o das margens */
+  /* Duas armadilhas do grid aqui. O gap vale tambem entre linhas: com ele,
+     cada pedaco do texto ficava a 3rem do seguinte. E a foto, sendo mais alta
+     que o texto, esticava as linhas dele — por isso as quatro primeiras sao
+     min-content e a ultima absorve a sobra. */
+  .hero__grade {
+    display: grid; grid-template-columns: 1.05fr .95fr;
+    column-gap: var(--e7); row-gap: 0;
+    grid-template-rows: repeat(4, min-content) 1fr;
+  }
+  .hero__selo, .hero__acoes { justify-self: start; }
+  .provas { align-self: start; }
+  .hero__conteudo { display: contents; }
+  .hero__figura { grid-column: 2; grid-row: 1 / span 5; margin: 0; align-self: center; }
+  .hero__figura img { aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; }
+  .hero__selo, .hero h1, .hero__texto, .hero__acoes, .provas { grid-column: 1; }
+  .hero__acoes { grid-auto-flow: column; justify-content: start; }
+  .hero__acoes .botao--largo { width: auto; }
+}
+
+.provas { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--e3); margin-top: var(--e5); }
+.prova { text-align: center; }
+.prova__numero { font-size: 1.5rem; font-weight: 700; color: var(--destaque); }
+.prova__rotulo { font-size: .85rem; color: var(--texto-fraco); }
+
+/* ---------- Cartoes de modelo ---------- */
+
+.filtros { display: flex; flex-wrap: wrap; gap: var(--e2); justify-content: center; margin-bottom: var(--e3); }
+/* A linha e a segunda pergunta: vem menor, para nao competir com o tipo de peca. */
+.filtros--linha { margin-bottom: var(--e5); }
+.filtros--linha .filtro { font-size: .86rem; padding: 8px 14px; }
+.filtro {
+  padding: .45rem .9rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--borda); background: var(--cartao);
+  color: var(--texto-fraco); font: inherit; font-size: .9rem;
+}
+.filtro[aria-pressed="true"] { background: var(--destaque); border-color: var(--destaque); color: var(--destaque-texto); font-weight: 600; }
+
+.grade-modelos {
+  display: grid; gap: var(--e4);
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 640px) { .grade-modelos { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 960px) { .grade-modelos { grid-template-columns: repeat(4, 1fr); } }
+
+.modelo {
+  display: flex; flex-direction: column; text-align: left;
+  background: var(--cartao); border: 1px solid var(--borda);
+  border-radius: var(--raio); overflow: hidden;
+  color: inherit; text-decoration: none;
+  font: inherit; cursor: pointer; padding: 0;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.modelo:hover { border-color: var(--destaque); box-shadow: var(--sombra); transform: translateY(-2px); }
+.modelo[aria-pressed="true"] { border-color: var(--destaque); box-shadow: 0 0 0 2px var(--destaque) inset; }
+.modelo__foto {
+  width: 100%;
+  /* height: auto e flex: none são obrigatórios: sem eles o atributo
+     height="400" da imagem vence o aspect-ratio dentro do cartão flex,
+     a foto estica para 400px de altura e o boné sai cortado nas laterais */
+  height: auto; flex: none;
+  aspect-ratio: 1 / 1;
+  /* contain, não cover: a foto tem o boné inteiro com fundo branco.
+     Cortar para preencher come justamente a aba */
+  object-fit: contain;
+  /* as fotos de produto têm fundo branco: usar branco aqui também faz a
+     imagem casar com o cartão em vez de criar uma moldura cinza em volta */
+  background: #fff;
+}
+.modelo__corpo { padding: var(--e3); }
+.modelo__nome { font-weight: 600; font-size: 1rem; line-height: 1.3; }
+.modelo__linha { font-size: .82rem; color: var(--texto-fraco); }
+
+/* ---------- Entrada dos elementos ao rolar ---------- */
+
+/* Quem esconde e a classe .entra, posta pelo JavaScript. Se ele nao rodar, o
+   conteudo aparece normalmente — animacao nunca pode ser condicao para ler. */
+.entra {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .5s ease-out, transform .5s cubic-bezier(.2, .7, .3, 1);
+  transition-delay: var(--atraso, 0ms);
+  will-change: opacity, transform;
+}
+.entra.entrou { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .entra, .entra.entrou { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Traco desenhado sob a ultima palavra do titulo ---------- */
+
+.grifo { position: relative; white-space: nowrap; }
+.grifo__traco {
+  position: absolute; left: -2%; bottom: -.12em; width: 104%; height: .38em;
+  color: var(--destaque); opacity: .55; overflow: visible;
+}
+.grifo__traco path {
+  stroke-dasharray: 320; stroke-dashoffset: 320;
+  transition: stroke-dashoffset 1.1s ease-out .35s;
+}
+.grifo--desenhado .grifo__traco path { stroke-dashoffset: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grifo__traco path { stroke-dashoffset: 0; transition: none; }
+}
+
+/* ---------- Palavra que troca no titulo ---------- */
+
+.rodizio {
+  display: inline-block; color: var(--destaque);
+  transition: opacity .26s ease, transform .26s ease;
+}
+.rodizio--saindo { opacity: 0; transform: translateY(-.35em); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rodizio { transition: none; }
+  .rodizio--saindo { opacity: 1; transform: none; }
+}
+
+/* ---------- Faixa de marcas que desliza sozinha ---------- */
+
+@keyframes desfilar {
+  from { transform: translateX(0); }
+  /* a lista e duplicada: andar metade dela volta ao ponto exato de partida */
+  to   { transform: translateX(-50%); }
+}
+/* A faixa e a janela; o trilho e quem anda dentro dela. Fazendo a faixa
+   andar, ela precisava ser mais larga que a tela e a pagina inteira ganhava
+   barra de rolagem para o lado. */
+.marcas__faixa--desfila { overflow: hidden; display: block; }
+.marcas__trilho {
+  display: flex; align-items: center; gap: var(--e6); width: max-content;
+  animation: desfilar var(--tempo-desfile, 30s) linear infinite;
+}
+.marcas__faixa--desfila:hover .marcas__trilho { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marcas__faixa--desfila { overflow-x: auto; }
+  .marcas__trilho { animation: none; }
+}
+
+/* ---------- Microinteracoes ---------- */
+
+/* O cartao sobe um pouco ao passar o mouse: mostra que da para clicar. */
+.modelo, .depoimento, .insta__item, .tira__foto {
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.modelo:hover, .insta__item:hover, .tira__foto:hover { transform: translateY(-4px); }
+.modelo:hover { box-shadow: 0 10px 28px rgba(18, 22, 29, .12); }
+
+.botao { transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease; }
+.botao:hover { transform: translateY(-2px); }
+.botao:active { transform: translateY(0); }
+
+/* O zap flutuante pulsa devagar: e a saida de quem nao quer montar nada. */
+@keyframes respirar {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(31, 168, 85, .5); }
+  70%      { box-shadow: 0 0 0 14px rgba(31, 168, 85, 0); }
+}
+.zap-flutuante, .barra-home__zap { animation: respirar 3.2s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .modelo, .depoimento, .insta__item, .tira__foto, .botao { transition: none; }
+  .modelo:hover, .insta__item:hover, .tira__foto:hover, .botao:hover { transform: none; }
+  .zap-flutuante, .barra-home__zap { animation: none; }
+}
+
+/* ---------- Ultimos posts do Instagram ---------- */
+
+.insta { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--e2); }
+.insta__item {
+  position: relative; display: block; overflow: hidden;
+  border-radius: var(--raio-p); background: var(--fundo-alt);
+  aspect-ratio: 1;
+}
+.insta__item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.insta__marca {
+  position: absolute; right: 8px; top: 8px; width: 22px; height: 22px;
+  color: #fff; opacity: 0; transition: opacity .2s ease;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .6));
+}
+.insta__marca svg { width: 100%; height: 100%; fill: currentColor; }
+.insta__item:hover .insta__marca, .insta__item:focus-visible .insta__marca { opacity: 1; }
+
+.secao__acao { text-align: center; margin-top: var(--e5); }
+
+@media (min-width: 560px) { .insta { grid-template-columns: repeat(4, 1fr); gap: var(--e3); } }
+
+/* ---------- Marcas que ja produziram com a gente ---------- */
+
+.marcas { padding-block: var(--e5); border-block: 1px solid var(--borda); background: var(--fundo); }
+.marcas__titulo {
+  font-size: .82rem; font-weight: 600; text-align: center; margin: 0 0 var(--e4);
+  color: var(--texto-fraco); text-transform: uppercase; letter-spacing: .06em;
+}
+/* Rola de lado no celular: nove logos em grade viram nove fileiras. */
+.marcas__faixa {
+  display: flex; align-items: center; gap: var(--e6);
+  overflow-x: auto; scrollbar-width: none;
+  padding-inline: var(--e4); margin-inline: calc(var(--e4) * -1);
+}
+.marcas__faixa::-webkit-scrollbar { display: none; }
+.marcas__logo {
+  flex: none; width: auto; height: 42px; object-fit: contain;
+  /* cinza para nao competir com o produto; ganha cor ao passar o dedo/mouse */
+  filter: grayscale(1); opacity: .65; transition: filter .2s, opacity .2s;
+}
+.marcas__logo:hover { filter: none; opacity: 1; }
+
+/* ---------- Tira de fotos que rola de lado ---------- */
+
+.tira {
+  display: flex; gap: var(--e3); overflow-x: auto;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding-inline: var(--e4); margin-inline: calc(var(--e4) * -1);
+  padding-bottom: var(--e2);
+}
+.tira::-webkit-scrollbar { display: none; }
+.tira__foto {
+  flex: none; width: 62%; max-width: 260px; height: auto;
+  border-radius: var(--raio); object-fit: cover; scroll-snap-align: start;
+  background: var(--fundo-alt);
+}
+
+/* ---------- A fabrica por dentro ---------- */
+
+.fabrica { display: grid; gap: var(--e4); }
+.fabrica__item { margin: 0; }
+.fabrica__item img {
+  width: 100%; height: auto; border-radius: var(--raio);
+  background: var(--fundo-alt);
+}
+.fabrica__item figcaption {
+  color: var(--texto-fraco); font-size: .92rem; margin-top: var(--e2);
+}
+
+/* ---------- Missao e valores ---------- */
+
+.sobre { margin-top: var(--e6); text-align: center; }
+.sobre__missao {
+  font-size: 1.15rem; line-height: 1.5; max-width: 52ch; margin: 0 auto;
+}
+.sobre__valores {
+  list-style: none; padding: 0; margin: var(--e4) 0 0;
+  display: flex; flex-wrap: wrap; gap: var(--e2); justify-content: center;
+}
+.sobre__valores li {
+  padding: .3rem .9rem; border-radius: 999px;
+  border: 1px solid var(--borda); color: var(--texto-fraco);
+  font-size: .88rem; font-weight: 600;
+}
+
+/* ---------- Depoimentos ---------- */
+
+.tira--depoimentos { scroll-snap-type: x mandatory; align-items: stretch; }
+.depoimento {
+  flex: none; width: 82%; max-width: 340px; margin: 0;
+  display: flex; flex-direction: column; gap: var(--e2);
+  padding: var(--e4); border: 1px solid var(--borda); border-radius: var(--raio);
+  background: var(--cartao); box-shadow: var(--sombra); scroll-snap-align: start;
+}
+.depoimento__estrelas { color: #E8A33D; letter-spacing: .1em; font-size: .95rem; }
+.depoimento__texto { margin: 0; font-size: .95rem; line-height: 1.55; }
+.depoimento__autor { margin-top: auto; color: var(--texto-fraco); font-size: .88rem; font-weight: 600; }
+
+@media (min-width: 760px) {
+  .fabrica { grid-template-columns: repeat(3, 1fr); }
+  .tira { flex-wrap: wrap; overflow: visible; padding-inline: 0; margin-inline: 0; }
+  .tira__foto { width: calc(25% - var(--e3)); max-width: none; }
+  .tira--depoimentos { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .depoimento { width: auto; max-width: none; }
+  .marcas__faixa { flex-wrap: wrap; justify-content: center; gap: var(--e6); }
+  .marcas__logo { height: 46px; }
+}
+
+/* ---------- Passos ---------- */
+
+.passos { display: grid; gap: var(--e4); counter-reset: passo; }
+@media (min-width: 760px) { .passos { grid-template-columns: repeat(4, 1fr); } }
+.passo { background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--raio); padding: var(--e4); }
+.passo::before {
+  counter-increment: passo; content: counter(passo);
+  display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: var(--e3);
+  border-radius: 50%; background: var(--destaque); color: var(--destaque-texto); font-weight: 700;
+}
+.passo p { margin: 0; color: var(--texto-fraco); font-size: .95rem; }
+
+/* ---------- Condicoes e FAQ ---------- */
+
+.cartoes { display: grid; gap: var(--e4); }
+@media (min-width: 760px) { .cartoes { grid-template-columns: repeat(3, 1fr); } }
+.cartao { background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--raio); padding: var(--e5); }
+.cartao ul { margin: 0; padding-left: 1.1rem; color: var(--texto-fraco); }
+.cartao li + li { margin-top: var(--e2); }
+
+.faq { max-width: 760px; margin-inline: auto; }
+.faq details {
+  background: var(--cartao); border: 1px solid var(--borda);
+  border-radius: var(--raio-p); padding: var(--e4); margin-bottom: var(--e3);
+}
+.faq summary { cursor: pointer; font-weight: 600; }
+.faq details[open] summary { margin-bottom: var(--e3); }
+.faq p { margin: 0; color: var(--texto-fraco); }
+
+/* ---------- Rodape ---------- */
+
+.rodape { background: var(--fundo-alt); border-top: 1px solid var(--borda); padding-block: var(--e6); font-size: .92rem; }
+.rodape__grade { display: grid; gap: var(--e5); }
+@media (min-width: 760px) { .rodape__grade { grid-template-columns: 1.2fr 1fr 1fr; } }
+.rodape p, .rodape li { color: var(--texto-fraco); }
+.rodape ul { list-style: none; margin: 0; padding: 0; }
+.rodape li + li { margin-top: var(--e2); }
+.rodape__creditos { margin-top: var(--e5); padding-top: var(--e4); border-top: 1px solid var(--borda); color: var(--texto-fraco); font-size: .85rem; }
+
+/* ---------- Botao flutuante do WhatsApp ---------- */
+
+.zap-flutuante {
+  position: fixed; right: var(--e4); bottom: var(--e4); z-index: 50;
+  width: 54px; height: 54px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #1FA855; color: #fff; box-shadow: var(--sombra);
+  text-decoration: none;
+}
+.zap-flutuante svg { width: 28px; height: 28px; fill: currentColor; }
+
+/* ---------- Tema escuro: ajustes pontuais ---------- */
+
+@media (prefers-color-scheme: dark) {
+  /* a logo tem texto preto fixo no SVG; inverter devolve legibilidade
+     e a rotacao de matiz mantem o azul da marca */
+  .cabecalho__logo img, .rodape img { filter: invert(1) hue-rotate(180deg); }
+}
+
+
+/* =========================================================
+   HOME — alvos de toque e ação sempre à mão no celular
+   ========================================================= */
+
+.corpo-home { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+
+/* Barra fixa: no celular a ação principal não pode depender de rolagem */
+.barra-home {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  display: flex; align-items: center; gap: var(--e3);
+  padding: var(--e3) var(--e4) calc(var(--e3) + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--fundo) 94%, transparent);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--borda);
+}
+.barra-home .botao { flex: 1; min-height: 52px; }
+.barra-home__zap {
+  flex: none; width: 52px; height: 52px; border-radius: var(--raio-p);
+  display: grid; place-items: center;
+  background: #1FA855; color: #fff;
+}
+.barra-home__zap svg { width: 26px; height: 26px; fill: currentColor; }
+
+@media (min-width: 760px) {
+  .corpo-home { padding-bottom: 0; }
+  .barra-home { display: none; }
+}
+/* no celular a barra substitui o botão redondo flutuante */
+@media (max-width: 759px) { .zap-flutuante { display: none; } }
+
+/* Alvo de toque de 44px em tudo que se toca na home */
+.filtro { min-height: 48px; padding-inline: .95rem; }
+.filtros--linha .filtro { min-height: 40px; padding-inline: .8rem; }
+/* Uma fileira por grupo, rolando de lado. Quebrando em duas, os dois grupos
+   somavam cinco fileiras e empurravam a primeira foto para fora da tela. O
+   ultimo botao aparece cortado, e e isso que avisa que tem mais para o lado. */
+.filtros {
+  flex-wrap: nowrap; justify-content: flex-start;
+  overflow-x: auto; scrollbar-width: none;
+  padding-inline: var(--e4); margin-inline: calc(var(--e4) * -1);
+}
+.filtros::-webkit-scrollbar { display: none; }
+.filtro { flex: none; }
+.faq summary { min-height: 48px; display: flex; align-items: center; gap: var(--e2); }
+.rodape a { display: inline-flex; align-items: center; min-height: 44px; }
+@media (min-width: 760px) {
+  .cabecalho__nav a:not(.botao) { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* A barra fixa já carrega a ação principal no celular: repetir o mesmo botão
+   logo acima dela é ruído. Ali fica só a saída alternativa. */
+@media (max-width: 759px) {
+  .hero__acoes .botao:not(.botao--vazado) { display: none; }
+}
+
+/* =========================================================
+   EDITOR DE BONÉ — o produto no centro, ferramentas em painel
+   Pensado para o celular: nada de rolagem longa, cada ajuste
+   abre uma folha por cima e volta para o boné.
+   ========================================================= */
+
+.corpo-configurador { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+.corpo-configurador.com-ferramentas { padding-bottom: calc(168px + env(safe-area-inset-bottom, 0px)); }
+.corpo-configurador.sem-barra { padding-bottom: var(--e6); }
+.com-painel { overflow: hidden; }
+
+.cabecalho--enxuto .cabecalho__interno { min-height: 56px; }
+.cabecalho__sair {
+  margin-left: auto; color: var(--texto-fraco);
+  text-decoration: none; min-height: 48px; display: flex; align-items: center;
+}
+
+/* ---------- Progresso ---------- */
+
+.progresso {
+  position: sticky; top: 56px; z-index: 30;
+  background: var(--fundo); border-bottom: 1px solid var(--borda);
+  padding-block: var(--e3) var(--e2);
+}
+.progresso__trilho { height: 4px; border-radius: 999px; background: var(--borda); overflow: hidden; }
+.progresso__preenchido {
+  height: 100%; width: 33%; background: var(--destaque);
+  border-radius: 999px; transition: width .3s ease;
+}
+.progresso__passos { display: flex; justify-content: space-between; list-style: none; margin: var(--e2) 0 0; padding: 0; }
+.progresso__passo { font-size: .78rem; color: var(--texto-fraco); }
+.progresso__passo--feito { color: var(--destaque); }
+.progresso__passo--atual { color: var(--texto); font-weight: 700; }
+
+/* ---------- Etapas ---------- */
+
+.etapas { padding-block: var(--e5) var(--e6); max-width: 720px; }
+.etapa__pergunta { font-size: clamp(1.5rem, 6vw, 2rem); margin-bottom: var(--e2); }
+.etapa__apoio { color: var(--texto-fraco); margin-bottom: var(--e4); }
+
+/* ---------- Cabeçalho do editor ---------- */
+
+.editor__cabecalho { display: flex; align-items: flex-start; gap: var(--e3); margin-bottom: var(--e3); }
+.editor__modelo { font-size: 1.5rem; margin: 0; }
+.editor__linha { color: var(--texto-fraco); margin: 0; font-size: .92rem; }
+/* O que a fabrica diz da peca. Duas linhas no maximo: o editor precisa caber
+   numa tela de celular, e a informacao completa esta na ficha do modelo. */
+.editor__sobre {
+  color: var(--texto-fraco); margin: var(--e1) 0 0; font-size: .85rem; line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.editor__trocar {
+  margin-left: auto; min-height: 44px; padding-inline: var(--e4);
+  border: 1px solid var(--borda); border-radius: 999px;
+  background: var(--cartao); color: var(--texto); font: inherit; cursor: pointer;
+}
+.editor__trocar:hover { border-color: var(--destaque); color: var(--destaque); }
+
+/* ---------- Palco: o boné e as partes ---------- */
+
+.palco {
+  position: relative;
+  background: var(--fundo-alt); border: 1px solid var(--borda);
+  border-radius: var(--raio); overflow: hidden;
+  aspect-ratio: 7 / 5;
+}
+.palco__bone { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bone__copa { fill: color-mix(in srgb, var(--destaque) 22%, var(--cartao)); stroke: var(--destaque); stroke-width: 2.5; }
+.bone__aba { fill: color-mix(in srgb, var(--destaque) 38%, var(--cartao)); stroke: var(--destaque); stroke-width: 2.5; }
+.bone__linha { stroke: color-mix(in srgb, var(--destaque) 45%, transparent); stroke-width: 1.5; fill: none; }
+.bone__botao { fill: var(--destaque); }
+
+/* a foto do modelo fica de canto, como referência do que se está montando */
+.palco__foto {
+  position: absolute; right: var(--e3); bottom: var(--e3); z-index: 2;
+  width: 84px; height: 84px; object-fit: cover;
+  border-radius: var(--raio-p); border: 2px solid var(--cartao);
+  box-shadow: var(--sombra); background: var(--cartao);
+}
+.palco__marcadores { position: absolute; inset: 0; z-index: 3; }
+
+.marcador {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--destaque); background: var(--cartao); color: var(--destaque);
+  font-size: 1.2rem; font-weight: 700; line-height: 1; cursor: pointer;
+  display: grid; place-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+  transition: transform .12s ease;
+}
+.marcador:hover { transform: translate(-50%, -50%) scale(1.08); }
+.marcador--preenchido { background: var(--destaque); color: var(--destaque-texto); }
+
+.palco__dica { color: var(--texto-fraco); font-size: .9rem; margin: var(--e3) 0; text-align: center; }
+
+/* ---------- Lista de partes ---------- */
+
+/* Duas por linha já no celular: as cinco partes cabem sem empurrar
+   as ferramentas para fora da tela. */
+.partes { display: grid; gap: var(--e2); grid-template-columns: 1fr 1fr; }
+.parte {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  min-height: 60px; padding: var(--e3); text-align: left;
+  border: 2px solid var(--borda); border-radius: var(--raio-p);
+  background: var(--cartao); color: var(--texto); font: inherit; cursor: pointer;
+}
+.parte:hover { border-color: var(--texto-fraco); }
+.parte--preenchida { border-color: var(--destaque); background: color-mix(in srgb, var(--destaque) 8%, var(--cartao)); }
+.parte__nome { font-weight: 600; font-size: .92rem; }
+.parte__valor {
+  color: var(--texto-fraco); font-size: .8rem; max-width: 100%;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.parte--preenchida .parte__valor { color: var(--destaque); font-weight: 600; }
+.parte__acao { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---------- Barra de ferramentas ---------- */
+
+.ferramentas {
+  position: fixed; left: 0; right: 0; z-index: 41;
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  display: flex; gap: var(--e2); overflow-x: auto;
+  padding: var(--e2) var(--e4);
+  background: color-mix(in srgb, var(--fundo) 94%, transparent);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--borda);
+  scrollbar-width: none;
+}
+.ferramentas::-webkit-scrollbar { display: none; }
+.ferramenta {
+  position: relative; flex: 1 0 auto; min-width: 76px; min-height: 56px;
+  display: grid; place-items: center; gap: 2px;
+  border: 1px solid transparent; border-radius: var(--raio-p);
+  background: transparent; color: var(--texto-fraco); font: inherit; cursor: pointer;
+}
+.ferramenta:hover { color: var(--texto); background: var(--fundo-alt); }
+.ferramenta__icone { width: 22px; height: 22px; }
+.ferramenta__nome { font-size: .74rem; }
+.ferramenta--preenchida { color: var(--destaque); }
+.ferramenta--preenchida::after {
+  content: ""; position: absolute; top: 6px; right: 14px;
+  width: 7px; height: 7px; border-radius: 50%; background: var(--destaque);
+}
+
+/* ---------- Painel que sobe de baixo ---------- */
+
+.painel { position: fixed; inset: 0; z-index: 60; }
+.painel__fundo {
+  position: absolute; inset: 0; background: rgba(0, 0, 0, .45);
+  opacity: 0; transition: opacity .2s ease;
+}
+.painel--aberto .painel__fundo { opacity: 1; }
+.painel__folha {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  max-height: 88vh; display: flex; flex-direction: column;
+  background: var(--fundo);
+  border-radius: var(--raio) var(--raio) 0 0;
+  padding: var(--e2) var(--e4) calc(var(--e4) + env(safe-area-inset-bottom, 0px));
+  transform: translateY(100%); transition: transform .22s ease;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, .25);
+}
+.painel--aberto .painel__folha { transform: translateY(0); }
+@media (min-width: 760px) {
+  .painel__folha {
+    left: 50%; right: auto; bottom: auto; top: 50%;
+    width: min(560px, 92vw); max-height: 86vh;
+    border-radius: var(--raio);
+    transform: translate(-50%, -50%) scale(.96); opacity: 0;
+  }
+  .painel--aberto .painel__folha { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+.painel__puxador {
+  width: 44px; height: 5px; border-radius: 999px;
+  background: var(--borda); margin: var(--e2) auto var(--e3);
+}
+.painel__topo { display: flex; align-items: center; gap: var(--e3); margin-bottom: var(--e3); }
+.painel__titulo { font-size: 1.2rem; margin: 0; flex: 1; }
+.painel__subtitulo { font-size: 1rem; margin: var(--e5) 0 var(--e2); }
+.painel__fechar {
+  flex: none; width: 44px; height: 44px; border-radius: 50%;
+  border: 0; background: var(--fundo-alt); color: var(--texto-fraco);
+  font-size: 1.1rem; cursor: pointer;
+}
+.painel__fechar:hover { color: var(--texto); }
+.painel__apoio { color: var(--texto-fraco); font-size: .92rem; margin-bottom: var(--e4); }
+.painel__corpo { overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
+.painel__acoes { display: grid; gap: var(--e2); padding-top: var(--e4); }
+
+/* ---------- Cartões de escolha ---------- */
+
+.cartoes-escolha { display: grid; gap: var(--e3); }
+.cartoes-escolha--lista { grid-template-columns: 1fr; }
+.cartao-escolha {
+  display: flex; align-items: flex-start; gap: var(--e3);
+  min-height: 64px; padding: var(--e4);
+  border: 2px solid var(--borda); border-radius: var(--raio);
+  background: var(--cartao); cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.cartao-escolha:hover { border-color: var(--texto-fraco); }
+.cartao-escolha:has(input:checked) {
+  border-color: var(--destaque);
+  background: color-mix(in srgb, var(--destaque) 8%, var(--cartao));
+}
+.cartao-escolha:has(input:focus-visible) { outline: 3px solid var(--destaque); outline-offset: 2px; }
+.cartao-escolha__icone { width: 28px; height: 28px; flex: none; color: var(--destaque); }
+.cartao-escolha__texto { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.cartao-escolha__nome { font-weight: 600; font-size: 1.02rem; }
+.cartao-escolha__ajuda { color: var(--texto-fraco); font-size: .88rem; line-height: 1.45; }
+
+/* Aviso da construcao da peca: costura no meio, tela vazada, fita estreita.
+   Vem antes das opcoes, para o cliente nao escolher o que nao cabe. */
+.restricao {
+  background: color-mix(in srgb, var(--alerta) 10%, var(--cartao));
+  border: 1px solid color-mix(in srgb, var(--alerta) 40%, var(--cartao));
+  border-left: 3px solid var(--alerta);
+  border-radius: var(--raio-p);
+  padding: var(--e3);
+  margin-bottom: var(--e4);
+  color: var(--texto);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+.restricao + .restricao { margin-top: calc(var(--e4) * -1 + var(--e2)); }
+
+/* Marca a tecnica que a fabrica usa mais naquela parte. */
+.selo-recomendado {
+  display: inline-block;
+  vertical-align: 2px;
+  background: color-mix(in srgb, var(--destaque) 14%, var(--cartao));
+  color: var(--destaque);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.cartao-escolha__marca {
+  flex: none; width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--borda); position: relative; margin-top: 2px;
+}
+/* Redondo e escolha unica; quadrado avisa que da para marcar mais de uma. */
+.cartao-escolha:has(input[type="checkbox"]) .cartao-escolha__marca { border-radius: 7px; }
+.cartao-escolha:has(input:checked) .cartao-escolha__marca { background: var(--destaque); border-color: var(--destaque); }
+.cartao-escolha:has(input:checked) .cartao-escolha__marca::after {
+  content: ""; position: absolute; inset: 0; background: var(--destaque-texto);
+  clip-path: polygon(41% 66%, 79% 28%, 86% 35%, 41% 80%, 15% 54%, 22% 47%);
+}
+
+/* ---------- Cores ---------- */
+
+.cores { display: grid; gap: var(--e3); grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+.cor { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+.cor__amostra {
+  width: 100%; aspect-ratio: 1; border-radius: var(--raio-p);
+  border: 1px solid var(--borda);
+  box-shadow: inset 0 -8px 14px rgba(0, 0, 0, .12);
+  transition: transform .12s ease;
+}
+.cor__nome { font-size: .78rem; color: var(--texto-fraco); text-align: center; line-height: 1.2; }
+.cor:has(input:checked) .cor__amostra { outline: 3px solid var(--destaque); outline-offset: 2px; transform: scale(1.05); }
+.cor:has(input:checked) .cor__nome { color: var(--texto); font-weight: 600; }
+
+/* ---------- Arquivo da arte ---------- */
+
+.bloco-arquivo { margin-top: var(--e2); }
+.area-arquivo {
+  display: flex; flex-direction: column; align-items: center; gap: var(--e2);
+  padding: var(--e5) var(--e4); text-align: center;
+  border: 2px dashed var(--borda); border-radius: var(--raio);
+  background: var(--fundo-alt); cursor: pointer;
+}
+.area-arquivo:hover { border-color: var(--destaque); }
+.area-arquivo__icone { width: 30px; height: 30px; color: var(--destaque); }
+.area-arquivo__texto { font-weight: 600; }
+.area-arquivo__dica { color: var(--texto-fraco); font-size: .85rem; }
+
+.veredito {
+  margin-top: var(--e3); padding: var(--e4);
+  border-left: 4px solid var(--borda); border-radius: var(--raio-p);
+  background: var(--fundo-alt);
+}
+.veredito__titulo { font-weight: 700; margin-bottom: var(--e1); }
+.veredito__detalhe { color: var(--texto-fraco); font-size: .9rem; line-height: 1.5; }
+.veredito--ok { border-color: var(--sucesso); }
+.veredito--ok .veredito__titulo { color: var(--sucesso); }
+.veredito--atencao { border-color: var(--alerta); }
+.veredito--atencao .veredito__titulo { color: var(--alerta); }
+.veredito--redesenho { border-color: var(--destaque); }
+.veredito--redesenho .veredito__titulo { color: var(--destaque); }
+.veredito--conferindo { border-color: var(--texto-fraco); }
+
+/* ---------- Quantidade ---------- */
+
+.atalhos-quantidade { display: flex; flex-wrap: wrap; gap: var(--e2); margin-bottom: var(--e4); }
+.atalho {
+  flex: 1 1 auto; min-width: 88px; min-height: 52px;
+  border: 2px solid var(--borda); border-radius: var(--raio-p);
+  background: var(--cartao); color: var(--texto);
+  font: inherit; font-size: 1.05rem; font-weight: 600; cursor: pointer;
+}
+.atalho[aria-pressed="true"] { border-color: var(--destaque); background: var(--destaque); color: var(--destaque-texto); }
+
+.contador { display: flex; align-items: stretch; gap: var(--e3); }
+.contador__botao {
+  width: 60px; flex: none;
+  border: 2px solid var(--borda); border-radius: var(--raio-p);
+  background: var(--cartao); color: var(--texto);
+  font-size: 1.8rem; line-height: 1; cursor: pointer;
+}
+.contador__botao:hover { border-color: var(--destaque); color: var(--destaque); }
+.contador__campo {
+  flex: 1; min-width: 0; text-align: center;
+  font: inherit; font-size: 1.6rem; font-weight: 700;
+  padding: var(--e3); color: var(--texto); background: var(--cartao);
+  border: 2px solid var(--borda); border-radius: var(--raio-p);
+  appearance: textfield; -moz-appearance: textfield;
+}
+.contador__campo::-webkit-outer-spin-button,
+.contador__campo::-webkit-inner-spin-button { appearance: none; margin: 0; }
+
+/* ---------- Campos ---------- */
+
+.campo { display: block; margin-top: var(--e5); }
+.campo__rotulo { display: block; font-weight: 600; margin-bottom: var(--e2); }
+.campo__dica { color: var(--texto-fraco); font-size: .85rem; font-weight: 400; }
+.campo input, .campo textarea {
+  width: 100%; padding: var(--e3) var(--e4); font: inherit; font-size: 1rem;
+  color: var(--texto); background: var(--cartao);
+  border: 2px solid var(--borda); border-radius: var(--raio-p); min-height: 52px;
+}
+.aviso {
+  margin-top: var(--e4); padding: var(--e3) var(--e4);
+  border-left: 4px solid var(--alerta); border-radius: var(--raio-p);
+  background: var(--fundo-alt); color: var(--texto-fraco); font-size: .95rem;
+}
+.aviso--erro { border-color: #C0392B; color: #C0392B; }
+
+/* ---------- Revisão ---------- */
+
+.itens { list-style: none; margin: 0; padding: 0; }
+.item { display: flex; gap: var(--e3); align-items: flex-start; padding: var(--e4) 0; border-bottom: 1px solid var(--borda); }
+.item__foto { width: 64px; height: 64px; flex: none; border-radius: var(--raio-p); object-fit: cover; background: var(--fundo-alt); }
+.item__texto { flex: 1; min-width: 0; }
+.item__nome { font-weight: 600; margin-bottom: 2px; }
+.item__detalhe { color: var(--texto-fraco); font-size: .85rem; }
+.item__preco { font-weight: 700; margin-top: var(--e2); }
+.item__remover {
+  flex: none; width: 44px; height: 44px;
+  border: 0; background: transparent; color: var(--texto-fraco);
+  font-size: 1.2rem; cursor: pointer; border-radius: 50%;
+}
+.item__remover:hover { color: #C0392B; background: var(--fundo-alt); }
+
+.totais { margin-top: var(--e5); padding: var(--e5); background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--raio); }
+.totais__linha { display: flex; justify-content: space-between; gap: var(--e3); padding: var(--e2) 0; }
+.totais__linha span { color: var(--texto-fraco); }
+.totais__linha--forte { border-top: 1px solid var(--borda); margin-top: var(--e2); padding-top: var(--e3); font-size: 1.3rem; }
+.totais__linha--forte span { color: var(--texto); font-weight: 600; }
+.totais__nota { color: var(--texto-fraco); font-size: .85rem; margin: var(--e3) 0 0; }
+
+.anexos {
+  margin-top: var(--e4); padding: var(--e4);
+  border: 1px dashed var(--borda); border-radius: var(--raio-p);
+  color: var(--texto-fraco); font-size: .9rem;
+}
+.anexos strong { color: var(--texto); }
+.anexos ul { margin: var(--e2) 0 0; padding-left: 1.1rem; }
+
+.acoes-finais { display: grid; gap: var(--e3); margin-top: var(--e5); }
+.botao--texto { background: transparent; color: var(--texto-fraco); border-color: transparent; font-weight: 500; }
+.botao--texto:hover { color: var(--texto); }
+
+/* ---------- Barra fixa de ação ---------- */
+
+.barra-acao {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  background: color-mix(in srgb, var(--fundo) 94%, transparent);
+  backdrop-filter: blur(10px); border-top: 1px solid var(--borda);
+  padding: var(--e3) 0 calc(var(--e3) + env(safe-area-inset-bottom, 0px));
+}
+.sem-barra .barra-acao { display: none; }
+.barra-acao__interno { display: flex; align-items: center; gap: var(--e3); }
+.barra-acao__voltar {
+  flex: none; width: 48px; height: 48px; border-radius: 50%;
+  border: 1px solid var(--borda); background: var(--cartao); color: var(--texto);
+  cursor: pointer; display: grid; place-items: center;
+}
+.barra-acao__voltar svg { width: 22px; height: 22px; }
+.barra-acao__resumo { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.barra-acao__titulo { font-weight: 700; font-size: .98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.barra-acao__detalhe { color: var(--texto-fraco); font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.barra-acao .botao { flex: none; min-height: 52px; padding-inline: 1.4rem; white-space: nowrap; }
+
+/* ---------- Utilidades ---------- */
+
+.invisivel { visibility: hidden; }
+.oculto-visual {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.grade-modelos { grid-template-columns: repeat(2, 1fr); gap: var(--e3); }
+@media (min-width: 560px) { .grade-modelos { grid-template-columns: repeat(3, 1fr); } }
+
+@keyframes tremer {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+.botao--tremendo { animation: tremer .3s ease 2; }
+
+/* nada pode parar embaixo das barras fixas quando a página rola sozinha */
+.corpo-configurador :is(h1, h2, .campo, .cartao-escolha, .parte, .palco, .totais, .item) {
+  scroll-margin-top: 124px;
+  scroll-margin-bottom: 180px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botao--tremendo { animation: none; }
+  .progresso__preenchido, .painel__folha, .painel__fundo, .marcador { transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* Alvo de toque de 44px em tudo que se toca, nas duas páginas */
+.cabecalho__logo { min-height: 48px; }
+.pular-para-conteudo { min-height: 48px; display: inline-flex; align-items: center; }
+.filtro { min-height: 48px; padding-inline: 1.1rem; }
+.faq summary { min-height: 48px; display: flex; align-items: center; gap: var(--e2); }
+.rodape a { display: inline-flex; align-items: center; min-height: 44px; }
+@media (min-width: 760px) {
+  .cabecalho__nav a:not(.botao) { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* ---------- A logo do cliente desenhada no boné ---------- */
+
+.palco__aplicacoes { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.aplicacao {
+  position: absolute; transform: translate(-50%, -50%);
+  max-height: 30%; object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .25));
+}
+.palco__nota {
+  color: var(--texto-fraco); font-size: .82rem; line-height: 1.5;
+  text-align: center; margin: 0 0 var(--e4);
+  padding: var(--e2) var(--e4);
+  border-left: 3px solid var(--borda); background: var(--fundo-alt);
+  border-radius: var(--raio-p);
+}
+
+/* Com a logo na tela, o marcador não pode tapar a arte: vira um anel
+   tracejado por onde a logo aparece, sem perder o alvo de toque. */
+.marcador--vazado {
+  background: transparent;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--destaque) 70%, transparent);
+  box-shadow: none;
+  width: 52px; height: 52px;
+}
+.marcador--vazado:hover {
+  background: color-mix(in srgb, var(--destaque) 12%, transparent);
+}
+
+/* ---------- Rodapé no celular ---------- */
+
+/* 180px de logo é quase metade da tela do celular */
+.rodape img { width: 130px; height: auto; }
+@media (min-width: 760px) { .rodape img { width: 160px; } }
+
+/* o alvo de toque de 44px nos links esticava o rodapé para 720px */
+.rodape { padding-block: var(--e5); }
+.rodape__grade { gap: var(--e4); }
+.rodape li + li { margin-top: 0; }
+.rodape ul li:not(:has(a)) { padding-block: var(--e2); }
+
+/* ---------- Virar o boné para o outro lado ---------- */
+
+.palco__acoes { display: flex; justify-content: center; margin-top: var(--e3); }
+.botao-virar {
+  min-height: 44px; padding: 0 var(--e5);
+  border: 1px solid var(--borda); border-radius: 999px;
+  background: var(--cartao); color: var(--texto-fraco);
+  font: inherit; font-size: .9rem; cursor: pointer;
+}
+.botao-virar:hover { border-color: var(--destaque); color: var(--destaque); }
+/* espelha só o desenho: os marcadores têm posição própria e o texto neles
+   ficaria invertido se herdassem a transformação */
+.palco--direito .palco__bone { transform: scaleX(-1); }
+
+/* =========================================================
+   FICHA DO MODELO — a página que o Google vai indexar
+   ========================================================= */
+
+.migalhas { color: var(--texto-fraco); font-size: .88rem; margin-bottom: var(--e5); }
+.migalhas a { color: var(--texto-fraco); }
+.migalhas a:hover { color: var(--destaque); }
+
+.ficha { display: grid; gap: var(--e5); }
+@media (min-width: 860px) {
+  .ficha { grid-template-columns: 1fr 1fr; gap: var(--e7); align-items: start; }
+}
+.ficha__figura { margin: 0; }
+.ficha__figura img {
+  width: 100%; height: auto; background: #fff;
+  border: 1px solid var(--borda); border-radius: var(--raio);
+}
+.ficha__texto h1 { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+.ficha__linha { color: var(--destaque); font-weight: 600; margin-bottom: var(--e3); }
+.ficha__descricao { font-size: 1.08rem; color: var(--texto-fraco); }
+/* Como a peca e feita, do jeito que a fabrica descreve. Fica ao lado da
+   descricao, mas com um traco para nao virar um paragrafo so. */
+.ficha__estrutura {
+  border-left: 3px solid var(--destaque);
+  padding-left: var(--e3);
+  margin: var(--e4) 0;
+  color: var(--texto);
+}
+.ficha__pontos { margin: 0 0 var(--e5); padding-left: 1.1rem; color: var(--texto-fraco); }
+.ficha__pontos li + li { margin-top: var(--e2); }
+.ficha__tecnicas { list-style: none; padding: var(--e5); margin: 0; }
+.ficha__tecnicas li + li { margin-top: var(--e4); padding-top: var(--e4); border-top: 1px solid var(--borda); }
+.ficha__tecnicas strong { color: var(--texto); }
+
+/* Links das fichas no rodapé: malha interna para o Google e atalho para quem
+   quer ler sobre o modelo antes de montar. */
+.rodape__modelos { margin-top: var(--e5); padding-top: var(--e4); border-top: 1px solid var(--borda); }
+.rodape__modelos h3 { font-size: .95rem; margin-bottom: var(--e2); }
+.rodape__modelos ul {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--e4);
+}
+@media (min-width: 640px) { .rodape__modelos ul { grid-template-columns: repeat(4, 1fr); } }
+.rodape__modelos a { font-size: .88rem; }
