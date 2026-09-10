@@ -247,7 +247,7 @@ export function desfilarMarcas(seletor) {
   faixa.classList.add("marcas__faixa--desfila");
   // o tempo acompanha a quantidade de logos, para a velocidade não mudar
   // quando a fábrica acrescentar uma marca nova
-  trilho.style.setProperty("--tempo-desfile", `${originais.length * 3.4}s`);
+  trilho.style.setProperty("--tempo-desfile", `${originais.length * 4.6}s`);
 }
 
 /* As dúvidas abrem e fecham deslizando. O <details> do navegador troca de
@@ -344,4 +344,30 @@ export function pontosDaTira(seletor) {
   }, { passive: true });
   window.addEventListener("resize", marcar, { passive: true });
   marcar();
+}
+
+/* Linha fina no topo mostrando quanto da página já foi lida. Numa home de
+   treze telas, é o que diz "falta pouco" para quem está rolando. */
+export function barraDeLeitura() {
+  if (MENOS_MOVIMENTO.matches) return;
+  const barra = document.createElement("div");
+  barra.className = "leitura";
+  barra.setAttribute("aria-hidden", "true");
+  document.body.prepend(barra);
+
+  let agendado = false;
+  const medir = () => {
+    agendado = false;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const parte = total > 0 ? Math.min(1, window.scrollY / total) : 0;
+    barra.style.setProperty("--lido", `${(parte * 100).toFixed(1)}%`);
+  };
+  // uma medida por quadro, no máximo: rolagem dispara dezenas de eventos
+  window.addEventListener("scroll", () => {
+    if (agendado) return;
+    agendado = true;
+    requestAnimationFrame(medir);
+  }, { passive: true });
+  window.addEventListener("resize", medir, { passive: true });
+  medir();
 }

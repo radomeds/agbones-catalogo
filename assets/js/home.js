@@ -18,6 +18,7 @@ import {
   desfilarMarcas,
   abrirDuvidasDeslizando,
   pontosDaTira,
+  barraDeLeitura,
 } from "./animacao.js";
 
 const grade = document.getElementById("grade-modelos");
@@ -362,6 +363,7 @@ async function iniciar() {
     pontosDaTira("#tira-uso");
     pontosDaTira("#lista-depoimentos");
     abrirDuvidasDeslizando();
+    barraDeLeitura();
     prepararAnimacoes();
   } catch (erro) {
     grade.innerHTML =

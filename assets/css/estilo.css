@@ -307,14 +307,110 @@ p { margin: 0 0 var(--e4); }
    barra de rolagem para o lado. */
 .marcas__faixa--desfila { overflow: hidden; display: block; }
 .marcas__trilho {
-  display: flex; align-items: center; gap: var(--e6); width: max-content;
+  display: flex; align-items: center; gap: var(--e8); width: max-content;
   animation: desfilar var(--tempo-desfile, 30s) linear infinite;
+}
+/* as pontas somem no nada, em vez de cortarem o logo pela metade */
+.marcas__faixa--desfila {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 .marcas__faixa--desfila:hover .marcas__trilho { animation-play-state: paused; }
 
 @media (prefers-reduced-motion: reduce) {
   .marcas__faixa--desfila { overflow-x: auto; }
   .marcas__trilho { animation: none; }
+}
+
+/* ---------- Movimento pela pagina ---------- */
+
+/* A foto do topo respira. E o primeiro sinal de que a pagina esta viva —
+   antes mesmo de o cliente rolar. */
+@keyframes flutuar {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+.hero__figura img { animation: flutuar 6s ease-in-out infinite; }
+
+/* Um brilho macio atras da foto, girando devagar. Da profundidade sem pesar:
+   e um gradiente, nao uma imagem. */
+/* clip, e nao hidden: hidden criaria um contexto de rolagem e o brilho, que
+   passa da borda de proposito, daria barra lateral na pagina inteira */
+.hero { position: relative; overflow: clip; }
+.hero::before {
+  content: ""; position: absolute; z-index: -1;
+  inset: -10% -20% auto auto; width: 62vw; height: 62vw; max-width: 620px; max-height: 620px;
+  background: radial-gradient(circle at 50% 50%,
+    color-mix(in srgb, var(--destaque) 22%, transparent), transparent 62%);
+  filter: blur(28px);
+  animation: brilhar 14s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes brilhar {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: .85; }
+  50%      { transform: translate(-6%, 5%) scale(1.12); opacity: 1; }
+}
+
+/* O selo do topo pulsa de leve, como quem chama atencao sem gritar. */
+@keyframes selo {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--destaque) 40%, transparent); }
+  70%      { box-shadow: 0 0 0 10px transparent; }
+}
+.hero__selo { animation: selo 3.4s ease-out infinite; }
+
+/* A foto do modelo se aproxima quando o cliente passa por cima: mostra que o
+   cartao responde, e da vontade de tocar. */
+.modelo { overflow: hidden; }
+.modelo__foto { transition: transform .45s cubic-bezier(.2, .7, .3, 1); }
+.modelo:hover .modelo__foto,
+.modelo:focus-visible .modelo__foto { transform: scale(1.07); }
+
+.insta__item img, .tira__foto, .fabrica__item img {
+  transition: transform .45s cubic-bezier(.2, .7, .3, 1);
+}
+.insta__item:hover img, .fabrica__item:hover img { transform: scale(1.06); }
+
+/* Um claro atravessa o botao principal de tempos em tempos. */
+.botao:not(.botao--vazado):not(.botao--texto) { position: relative; overflow: hidden; }
+.botao:not(.botao--vazado):not(.botao--texto)::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .32), transparent);
+  transform: skewX(-18deg);
+  animation: reluzir 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes reluzir {
+  0%, 62% { left: -60%; }
+  84%     { left: 130%; }
+  100%    { left: 130%; }
+}
+
+/* Os numeros dos quatro passos sobem e descem, em tempos diferentes, para nao
+   parecerem quatro relogios batendo juntos. */
+@keyframes boiar {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.passo::before { animation: boiar 4.2s ease-in-out infinite; }
+.passo:nth-child(2)::before { animation-delay: .5s; }
+.passo:nth-child(3)::before { animation-delay: 1s; }
+.passo:nth-child(4)::before { animation-delay: 1.5s; }
+
+/* Quanto falta para o fim da pagina, na linha mais fina possivel. */
+.leitura {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 60;
+  width: var(--lido, 0%);
+  background: linear-gradient(90deg, var(--azul-logo), var(--destaque));
+  transition: width .1s linear;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__figura img, .hero::before, .hero__selo,
+  .passo::before, .botao::after { animation: none; }
+  .modelo__foto, .insta__item img, .tira__foto, .fabrica__item img { transition: none; }
+  .modelo:hover .modelo__foto, .insta__item:hover img, .fabrica__item:hover img { transform: none; }
+  .leitura { display: none; }
 }
 
 /* ---------- Microinteracoes ---------- */
@@ -366,10 +462,11 @@ p { margin: 0 0 var(--e4); }
 
 /* ---------- Marcas que ja produziram com a gente ---------- */
 
-.marcas { padding-block: var(--e5); border-block: 1px solid var(--borda); background: var(--fundo); }
+.marcas { padding-block: var(--e6); border-block: 1px solid var(--borda); background: var(--fundo); overflow: hidden; }
 .marcas__titulo {
-  font-size: .82rem; font-weight: 600; text-align: center; margin: 0 0 var(--e4);
-  color: var(--texto-fraco); text-transform: uppercase; letter-spacing: .06em;
+  font-family: var(--fonte-titulo);
+  font-size: .86rem; font-weight: 700; text-align: center; margin: 0 0 var(--e5);
+  color: var(--texto-fraco); text-transform: uppercase; letter-spacing: .08em;
 }
 /* Rola de lado no celular: nove logos em grade viram nove fileiras. */
 .marcas__faixa {
@@ -378,12 +475,29 @@ p { margin: 0 0 var(--e4); }
   padding-inline: var(--e4); margin-inline: calc(var(--e4) * -1);
 }
 .marcas__faixa::-webkit-scrollbar { display: none; }
+/* Coloridos e grandes. Em cinza eles pareciam apagados, e um logo apagado
+   nao prova nada — sao nove marcas conhecidas, e e isso que convence. */
 .marcas__logo {
-  flex: none; width: auto; height: 42px; object-fit: contain;
-  /* cinza para nao competir com o produto; ganha cor ao passar o dedo/mouse */
-  filter: grayscale(1); opacity: .65; transition: filter .2s, opacity .2s;
+  flex: none; width: auto; height: 68px; object-fit: contain;
+  transition: transform .25s ease;
 }
-.marcas__logo:hover { filter: none; opacity: 1; }
+.marcas__logo:hover { transform: scale(1.12); }
+/* no tema escuro os logos escuros (RAM, Volkswagen) sumiriam no fundo: um
+   halo claro por tras devolve o contraste sem virar caixa branca */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .marcas__logo {
+    /* varias camadas do mesmo halo: uma so nao da conta do RAM e do Goodyear,
+       que sao praticamente pretos e sumiriam no fundo */
+    filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff)
+            drop-shadow(0 0 5px rgba(255, 255, 255, .95))
+            drop-shadow(0 0 12px rgba(255, 255, 255, .7));
+  }
+}
+:root[data-theme="dark"] .marcas__logo {
+  filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff)
+          drop-shadow(0 0 5px rgba(255, 255, 255, .95))
+          drop-shadow(0 0 12px rgba(255, 255, 255, .7));
+}
 
 /* ---------- Tira de fotos que rola de lado ---------- */
 
@@ -448,7 +562,7 @@ p { margin: 0 0 var(--e4); }
   .tira--depoimentos { display: grid; grid-template-columns: repeat(3, 1fr); }
   .depoimento { width: auto; max-width: none; }
   .marcas__faixa { flex-wrap: wrap; justify-content: center; gap: var(--e6); }
-  .marcas__logo { height: 46px; }
+  .marcas__logo { height: 82px; }
 }
 
 /* ---------- Passos ---------- */
