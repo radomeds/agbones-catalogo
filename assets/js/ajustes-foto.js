@@ -607,6 +607,11 @@ const poligonoLimpo = (pontos) => (Array.isArray(pontos) && pontos.length >= 3 ?
 
 function limparModelo(c) {
   const saida = {};
+  // o mockup do ChatGPT: a foto e o mapa de partes vêm da ferramenta
+  // integrar-mockup.py; o ADM não mexe, só guarda
+  if (c.original) saida.original = c.original;
+  if (c.mapa && c.mapa.imagem) saida.mapa = copia(c.mapa);
+  if (c.mockup) saida.mockup = c.mockup;
   const partes = {};
   Object.entries(c.partes || {}).forEach(([nome, pontos]) => {
     const limpo = poligonoLimpo(pontos);

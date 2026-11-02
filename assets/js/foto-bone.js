@@ -40,7 +40,8 @@ export function juntarFotos(publicados, rascunho) {
       ...fino,
       partes: { ...(base.partes || {}), ...(fino.partes || {}) },
       escuros: { ...(base.escuros || {}), ...(fino.escuros || {}) },
-      // fixo e chão são listas de polígonos: o rascunho troca a lista inteira
+      // fixo e chão são listas de polígonos: o rascunho troca a lista inteira;
+      // o mapa do mockup vem inteiro do publicado (o ADM não desenha mapa)
       arte: { ...(base.arte || {}), ...(fino.arte || {}) },
     };
   });
@@ -169,9 +170,11 @@ function carregarImagem(endereco) {
   });
 }
 
-function pixelsDe(imagem) {
+function pixelsDe(imagem, { chapado = false } = {}) {
   const tela = quadro();
   const c = tela.getContext("2d", { willReadFrequently: true });
+  // o mapa de partes não pode misturar cor na borda de uma parte com a outra
+  c.imageSmoothingEnabled = !chapado;
   c.drawImage(imagem, 0, 0, LADO, LADO);
   return c.getImageData(0, 0, LADO, LADO);
 }
@@ -261,10 +264,19 @@ export class FotoDoBone {
 
   imagensDe(id) {
     if (!this.imagens.has(id)) {
+      // o mockup novo (do ChatGPT) traz a própria foto de fundo branco e um mapa
+      // com uma cor chapada por parte; os outros usam a foto do catálogo
+      const conf = this.ajustes[id] || {};
+      const mapa = conf.mapa && conf.mapa.imagem;
       const promessa = Promise.all([
-        carregarImagem(`assets/produtos/${id}.webp`),
+        carregarImagem(conf.original || `assets/produtos/${id}.webp`),
         carregarImagem(`assets/produtos/montagem/${id}.webp`),
-      ]).then(([original, limpa]) => ({ original: pixelsDe(original), limpa: pixelsDe(limpa) }));
+        mapa ? carregarImagem(mapa) : null,
+      ]).then(([original, limpa, desenhoDoMapa]) => ({
+        original: pixelsDe(original),
+        limpa: pixelsDe(limpa),
+        mapa: desenhoDoMapa ? pixelsDe(desenhoDoMapa, { chapado: true }) : null,
+      }));
       promessa.catch(() => this.imagens.delete(id));
       this.imagens.set(id, promessa);
     }
@@ -316,6 +328,29 @@ export class FotoDoBone {
     if (resto) {
       nomes.push(resto);
       for (let i = 0; i < PIXELS; i++) if (limpa[i * 4 + 3] > 0) rotulo[i] = 1;
+    }
+    // o mapa de partes do mockup: cada pixel vai para a parte da cor mais perto
+    if (imagens.mapa && conf.mapa && conf.mapa.cores) {
+      const cores = Object.entries(conf.mapa.cores).map(([hex, parte]) => {
+        const n = parseInt(String(hex).replace("#", ""), 16);
+        let indice = 0;
+        if (parte) {
+          indice = nomes.indexOf(parte) + 1;
+          if (!indice) indice = nomes.push(parte);
+        }
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255, indice];
+      });
+      const m = imagens.mapa.data;
+      for (let i = 0, p = 0; i < PIXELS; i++, p += 4) {
+        if (limpa[p + 3] === 0 || m[p + 3] < 128) continue;
+        let melhor = -1;
+        let menor = 3 * 90 * 90; // longe de toda cor do mapa: fica como estava
+        cores.forEach(([r, g, b, indice]) => {
+          const d = (m[p] - r) ** 2 + (m[p + 1] - g) ** 2 + (m[p + 2] - b) ** 2;
+          if (d < menor) { menor = d; melhor = indice; }
+        });
+        if (melhor >= 0) rotulo[i] = melhor;
+      }
     }
     Object.entries(conf.partes || {}).forEach(([parte, poligono]) => {
       if (!Array.isArray(poligono) || poligono.length < 3) return;

@@ -1,5 +1,5 @@
 {
-  "_leia": "Onde fica cada parte do boné na foto de cada modelo (pixels da foto de 640) e o lugar da logo. partes: polígonos pintados com a cor de cada parte (o resto do boné é a frente, ou a copa). escuros: a parte só pega o que for mais escuro que esse limite. fixo: fica como na foto. chao: o vão debaixo da aba (o claro vira sombra). arte: o lugar da logo. Gerado pela tela ajustes-3d.html, aba Foto; confira lá antes de editar à mão.",
+  "_leia": "Onde fica cada parte do boné na foto de cada modelo (pixels da foto de 640) e o lugar da logo. partes: polígonos pintados com a cor de cada parte (o resto do boné é a frente, ou a copa). escuros: a parte só pega o que for mais escuro que esse limite. fixo: fica como na foto. chao: o vão debaixo da aba (o claro vira sombra). arte: o lugar da logo. original e mapa: mockup do ChatGPT (ferramentas/integrar-mockup.py), com a foto própria e um PNG de cores chapadas, uma por parte (cores: hex -> parte; null fica como na foto). Gerado pela tela ajustes-3d.html, aba Foto; confira lá antes de editar à mão.",
   "modelos": {
     "trucker": {
       "partes": {
