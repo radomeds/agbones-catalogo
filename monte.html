@@ -21,12 +21,11 @@
   <a class="monte-topo__logo" href="index.html" aria-label="AG Bonés — página inicial">
     <img src="assets/marca/logo-agbones.svg" alt="AG Bonés" width="255" height="145">
   </a>
-  <nav class="passos" aria-label="Passos">
-    <button type="button" class="passos__item" data-ir="modelo"><span>1</span>Modelo</button>
-    <button type="button" class="passos__item" data-ir="cores"><span>2</span>Cores</button>
-    <button type="button" class="passos__item" data-ir="logo"><span>3</span>Logo</button>
-    <button type="button" class="passos__item" data-ir="pedido"><span>4</span>Pedido</button>
-  </nav>
+  <button type="button" class="monte-topo__modelo" id="trocar-modelo" aria-haspopup="dialog">
+    <span class="monte-topo__rotulo">Modelo</span>
+    <strong id="nome-modelo">Escolher</strong>
+    <span class="monte-topo__seta" aria-hidden="true">▾</span>
+  </button>
 </header>
 
 <main class="monte">
@@ -35,9 +34,10 @@
     <canvas id="tela-foto" class="palco__retrato" role="img" aria-label="Foto do boné com as cores e a logo escolhidas"></canvas>
     <canvas id="tela-3d" class="palco__tela" aria-label="Boné em 3D. Arraste para girar." hidden></canvas>
     <img id="foto-reserva" class="palco__reserva" alt="" hidden>
-    <p class="palco__nome" id="nome-modelo"></p>
-    <p class="palco__dica sumiu" id="dica-giro" aria-live="polite">Arraste para girar</p>
-    <button type="button" class="palco__girar" id="girar-3d" aria-pressed="false">Girar em 3D</button>
+    <p class="palco__dica sumiu" id="dica-giro" aria-live="polite"></p>
+    <button type="button" class="palco__girar" id="girar-3d" aria-pressed="false">
+      <span aria-hidden="true">⟲</span> <span id="girar-texto">3D</span>
+    </button>
     <div class="palco__vistas" role="group" aria-label="Ver o boné de" hidden>
       <button type="button" data-vista="frente">Frente</button>
       <button type="button" data-vista="laterais">Lado</button>
@@ -45,27 +45,35 @@
     </div>
   </section>
 
-  <section class="painel" id="painel">
+  <section class="painel" id="painel" aria-label="Escolhas do boné">
 
-    <div class="etapa" data-etapa="modelo">
-      <h1 class="etapa__titulo">Escolha o modelo</h1>
-      <div class="fichas" id="filtro-tipo" role="group" aria-label="Tipo de peça"></div>
-      <div class="modelos" id="lista-modelos"><p class="apoio">Carregando os modelos…</p></div>
-    </div>
+    <nav class="abas" role="tablist" aria-label="O que mudar">
+      <button type="button" class="abas__item" role="tab" id="aba-cores" aria-controls="etapa-cores" data-aba="cores">
+        <i class="abas__marca" id="marca-cores" aria-hidden="true"></i>Cores
+      </button>
+      <button type="button" class="abas__item" role="tab" id="aba-logo" aria-controls="etapa-logo" data-aba="logo">
+        <i class="abas__marca" id="marca-logo" aria-hidden="true"></i>Logo
+      </button>
+      <button type="button" class="abas__item" role="tab" id="aba-pedido" aria-controls="etapa-pedido" data-aba="pedido">
+        <i class="abas__marca" id="marca-pedido" aria-hidden="true"></i>Pedido
+      </button>
+    </nav>
 
-    <div class="etapa" data-etapa="cores" hidden>
-      <h2 class="etapa__titulo">Escolha as cores</h2>
-      <p class="apoio">Primeiro toque na parte, depois na cor.</p>
+    <!-- Cores -->
+    <div class="etapa" id="etapa-cores" role="tabpanel" aria-labelledby="aba-cores" data-etapa="cores">
+      <p class="rotulo">Parte</p>
       <div class="fichas fichas--rolar" id="lista-partes" role="group" aria-label="Parte do boné"></div>
+      <p class="rotulo"><span id="cor-escolhida">Cor</span></p>
       <div class="amostras" id="lista-cores" role="group" aria-label="Cores"></div>
-      <p class="cor-escolhida" id="cor-escolhida"></p>
-      <h3 class="etapa__subtitulo">Ou uma combinação pronta</h3>
-      <div class="combinacoes" id="lista-combinacoes"></div>
+      <div id="bloco-combinacoes">
+        <p class="rotulo">Combinações prontas</p>
+        <div class="fichas fichas--rolar" id="lista-combinacoes" role="group" aria-label="Combinações prontas"></div>
+      </div>
     </div>
 
-    <div class="etapa" data-etapa="logo" hidden>
-      <h2 class="etapa__titulo">Coloque a sua logo</h2>
-      <div class="escolha-logo" role="group" aria-label="Como colocar a logo">
+    <!-- Logo -->
+    <div class="etapa" id="etapa-logo" role="tabpanel" aria-labelledby="aba-logo" data-etapa="logo" hidden>
+      <div class="escolha-logo" id="escolha-logo" role="group" aria-label="Como colocar a logo">
         <label class="botao-grande" id="botao-enviar">
           <input type="file" id="arquivo-logo" accept="image/*" class="oculto-visual">
           <span class="botao-grande__icone" aria-hidden="true">⬆</span>
@@ -75,71 +83,100 @@
         <button type="button" class="botao-grande" id="botao-nome">
           <span class="botao-grande__icone" aria-hidden="true">Aa</span>
           <span>Escrever um nome</span>
-          <small>da empresa, do time, do evento</small>
+          <small>da empresa, time ou evento</small>
         </button>
       </div>
 
-      <div class="ajuste" id="ajuste-nome" hidden>
-        <label class="campo">
-          <span>O que vai escrito</span>
-          <input type="text" id="texto-nome" maxlength="28" placeholder="Ex.: Fazenda Boa Vista" autocomplete="off">
+      <div class="logo-atual" id="logo-atual" hidden>
+        <div class="logo-atual__miniatura"><canvas id="miniatura-logo" width="160" height="96"></canvas></div>
+        <div class="logo-atual__texto">
+          <strong id="logo-atual-nome"></strong>
+          <small id="logo-atual-detalhe"></small>
+        </div>
+        <label class="botao-mini" id="trocar-logo">
+          <input type="file" id="arquivo-troca" accept="image/*" class="oculto-visual">Trocar
         </label>
-        <div class="fichas fichas--rolar" id="lista-letras" role="group" aria-label="Estilo de letra"></div>
-        <div class="amostras amostras--pequenas" id="cores-nome" role="group" aria-label="Cor da letra"></div>
+        <button type="button" class="botao-mini botao-mini--fraco" id="tirar-logo">Tirar</button>
       </div>
 
-      <div class="ajuste" id="ajuste-logo" hidden>
+      <div id="ajuste-nome" hidden>
+        <label class="campo-curto">
+          <span class="rotulo">O que vai escrito</span>
+          <input type="text" id="texto-nome" maxlength="28" placeholder="Ex.: Fazenda Boa Vista" autocomplete="off">
+        </label>
+        <p class="rotulo">Letra</p>
+        <div class="fichas fichas--rolar" id="lista-letras" role="group" aria-label="Estilo de letra"></div>
+        <p class="rotulo">Cor da letra</p>
+        <div class="amostras amostras--linha" id="cores-nome" role="group" aria-label="Cor da letra"></div>
+      </div>
+
+      <div id="ajuste-logo" hidden>
         <label class="trava">
           <input type="checkbox" id="tirar-fundo" checked>
           <span>Tirar o fundo branco da imagem</span>
         </label>
       </div>
 
-      <div class="ajuste" id="ajuste-tamanho" hidden>
-        <label class="campo">
-          <span>Tamanho na frente</span>
+      <div id="ajuste-lugar" hidden>
+        <p class="rotulo">Onde vai</p>
+        <div class="fichas fichas--rolar" id="lista-lugares" role="group" aria-label="Onde a logo vai"></div>
+        <p class="nota" id="nota-lugar" hidden></p>
+
+        <label class="campo-curto" id="campo-tamanho">
+          <span class="rotulo">Tamanho</span>
           <input type="range" id="tamanho-logo" min="0.5" max="1.4" step="0.05" value="1">
         </label>
-        <button type="button" class="botao-texto" id="tirar-logo">Tirar a logo</button>
-      </div>
 
-      <h3 class="etapa__subtitulo">Como a logo vai ser feita</h3>
-      <div class="tecnicas" id="lista-tecnicas" role="radiogroup" aria-label="Técnica"></div>
+        <p class="rotulo">Como vai ser feita</p>
+        <div class="tecnicas" id="lista-tecnicas" role="radiogroup" aria-label="Técnica"></div>
+        <button type="button" class="botao-texto" id="mais-tecnicas" aria-expanded="false" hidden></button>
+        <p class="nota" id="explica-tecnica"></p>
+      </div>
     </div>
 
-    <div class="etapa" data-etapa="pedido" hidden>
-      <h2 class="etapa__titulo">Quantos você quer?</h2>
+    <!-- Pedido -->
+    <div class="etapa" id="etapa-pedido" role="tabpanel" aria-labelledby="aba-pedido" data-etapa="pedido" hidden>
+      <p class="rotulo">Quantidade</p>
       <div class="quantidade">
         <button type="button" class="quantidade__botao" id="menos" aria-label="Menos 5">−</button>
         <input type="number" id="quantidade" inputmode="numeric" min="1" step="1" aria-label="Quantidade">
         <button type="button" class="quantidade__botao" id="mais" aria-label="Mais 5">+</button>
       </div>
       <div class="fichas" id="atalhos-quantidade" role="group" aria-label="Quantidades comuns"></div>
-      <p class="aviso" id="aviso-minimo" hidden></p>
+      <p class="aviso-minimo" id="aviso-minimo" hidden></p>
 
-      <label class="campo">
-        <span>Seu nome ou da empresa</span>
+      <label class="campo-curto">
+        <span class="rotulo">Seu nome ou da empresa</span>
         <input type="text" id="nome-cliente" autocomplete="organization" placeholder="Para a fábrica saber quem é">
       </label>
 
-      <dl class="resumo" id="resumo"></dl>
+      <ul class="resumo" id="resumo"></ul>
 
-      <div class="acoes-pedido">
-        <button type="button" class="botao botao--zap botao--grande botao--largo" id="enviar-whatsapp">Enviar pedido no WhatsApp</button>
-        <button type="button" class="botao botao--vazado botao--largo" id="baixar-foto">Baixar a foto do boné</button>
-        <p class="apoio">Na conversa, anexe a foto do boné e a sua logo. A fábrica confere e manda o orçamento.</p>
-      </div>
+      <button type="button" class="botao botao--vazado botao--largo" id="baixar-foto">Baixar a foto do boné</button>
+      <p class="nota nota--centro">Na conversa, anexe a foto do boné e a sua logo. A fábrica confere e manda o orçamento.</p>
     </div>
 
-    <div class="rodape-passos">
-      <button type="button" class="botao botao--vazado" id="voltar">Voltar</button>
-      <button type="button" class="botao botao--principal" id="proximo">Próximo</button>
-    </div>
   </section>
 
 </main>
 
-<p class="monte-antigo"><a href="catalogo.html">Prefere a versão anterior, com todas as partes do boné?</a></p>
+<div class="barra-monte">
+  <p class="barra-monte__info" id="info-barra"></p>
+  <button type="button" class="botao botao--principal barra-monte__acao" id="proximo">Próximo</button>
+</div>
+
+<!-- Escolher o modelo: uma folha que sobe de baixo -->
+<div class="folha" id="folha-modelos" role="dialog" aria-modal="true" aria-labelledby="titulo-modelos" hidden>
+  <div class="folha__fundo" data-fechar></div>
+  <div class="folha__caixa">
+    <div class="folha__topo">
+      <h1 class="folha__titulo" id="titulo-modelos">Escolha o modelo</h1>
+      <button type="button" class="folha__fechar" id="fechar-modelos" aria-label="Fechar" data-fechar>✕</button>
+    </div>
+    <div class="fichas fichas--rolar" id="filtro-tipo" role="group" aria-label="Tipo de peça"></div>
+    <div class="modelos" id="lista-modelos"><p class="nota">Carregando os modelos…</p></div>
+  </div>
+</div>
 
 <script type="module" src="assets/js/monte.js"></script>
 </body>

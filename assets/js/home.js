@@ -103,7 +103,7 @@ function montarGrade(catalogo) {
     grade.append(
       montarCartaoModelo(catalogo, produto, {
         como: "link",
-        href: `catalogo.html?modelo=${encodeURIComponent(produto.id)}`,
+        href: `monte.html?modelo=${encodeURIComponent(produto.id)}`,
       }),
     );
   });

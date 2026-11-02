@@ -2,6 +2,17 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<script>
+  // O editor agora é um só: o monte.html. Quem chega aqui por link antigo vai para lá,
+  // levando o modelo escolhido. "?versao=anterior" deixa abrir esta tela velha (testes).
+  (function () {
+    var pedido = new URLSearchParams(location.search);
+    if (pedido.get("versao") === "anterior") return;
+    var modelo = pedido.get("modelo");
+    location.replace("monte.html" + (modelo ? "?modelo=" + encodeURIComponent(modelo) : "") + location.hash);
+  })();
+</script>
+<link rel="canonical" href="monte.html">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Montar meu boné — AG Bonés</title>
 <meta name="description" content="Monte seu boné personalizado: toque na parte do boné, escolha como a arte vai ser aplicada, a cor e a quantidade. O preço aparece na hora.">
