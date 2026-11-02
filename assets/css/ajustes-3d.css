@@ -1,0 +1,148 @@
+/* Tela de ajuste fino do 3D (uso interno): prévia de um lado, réguas do outro. */
+
+.corpo-ajustes { background: var(--fundo-alt); color: var(--texto); min-height: 100dvh; }
+
+.aj-topo { padding: var(--e4); max-width: var(--largura); margin: 0 auto; }
+.aj-topo h1 { font: 700 1.35rem var(--fonte-titulo); margin: var(--e2) 0 var(--e1); }
+.aj-topo p { margin: 0; color: var(--texto-fraco); font-size: .92rem; }
+.aj-topo__voltar { color: var(--destaque); font-weight: 600; text-decoration: none; font-size: .9rem; }
+
+.aj {
+  display: grid;
+  gap: var(--e4);
+  padding: 0 var(--e4) var(--e7);
+  max-width: var(--largura);
+  margin: 0 auto;
+}
+@media (min-width: 900px) {
+  .aj { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; }
+  .aj-palco { position: sticky; top: var(--e4); }
+}
+
+.aj-palco {
+  background: var(--cartao);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: var(--e2);
+}
+.aj-palco__tela {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 62dvh;
+  border-radius: var(--raio-p);
+  background: radial-gradient(circle at 50% 40%, #fff, #e9edf4);
+  touch-action: none;
+}
+.aj-palco__vistas { display: flex; flex-wrap: wrap; gap: var(--e1); margin-top: var(--e2); }
+.aj-palco__vistas button,
+.aj-grupo__titulo button {
+  min-height: 40px;
+  padding: 0 .8rem;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 600 .82rem var(--fonte);
+  cursor: pointer;
+}
+.aj-palco__vistas button:hover { border-color: var(--destaque); color: var(--destaque); }
+
+.aj-foto { margin: var(--e3) 0 0; display: flex; gap: var(--e3); align-items: center; }
+.aj-foto img { width: 112px; height: 112px; object-fit: contain; background: #fff; border-radius: var(--raio-p); border: 1px solid var(--borda); }
+.aj-foto figcaption { color: var(--texto-fraco); font-size: .82rem; }
+
+.aj-painel {
+  background: var(--cartao);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: var(--e4);
+}
+.aj-linha { display: grid; gap: var(--e1); margin-bottom: var(--e3); }
+.aj-linha--dupla { grid-template-columns: auto 1fr; gap: var(--e4); align-items: end; }
+.aj-linha label, .aj-linha--dupla label { display: block; font-weight: 600; font-size: .85rem; margin-bottom: var(--e1); }
+.aj-linha select {
+  min-height: 44px;
+  padding: 0 .7rem;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-p);
+  background: var(--fundo);
+  color: var(--texto);
+  font: 500 1rem var(--fonte);
+}
+.aj-linha input[type="color"] { width: 56px; height: 44px; border: 1px solid var(--borda); border-radius: var(--raio-p); padding: 2px; background: var(--fundo); }
+.aj-linha input[type="file"] { font: .85rem var(--fonte); max-width: 100%; }
+
+.aj-grupo { border-top: 1px solid var(--borda); padding-top: var(--e3); margin-top: var(--e3); }
+.aj-grupo__titulo { display: flex; justify-content: space-between; align-items: center; gap: var(--e2); margin: 0 0 var(--e2); font: 700 1rem var(--fonte-titulo); }
+
+.aj-regua { display: grid; grid-template-columns: 1fr auto; gap: 0 var(--e2); align-items: center; margin-bottom: var(--e2); }
+.aj-regua label { font-size: .88rem; }
+.aj-regua output { font: 600 .82rem var(--fonte); color: var(--texto-fraco); min-width: 3.2em; text-align: right; font-variant-numeric: tabular-nums; }
+.aj-regua.mexida output { color: var(--destaque); }
+.aj-regua input[type="range"] { grid-column: 1 / -1; width: 100%; min-height: 32px; accent-color: var(--destaque); }
+
+.aj-situacao { min-height: 1.4em; margin: var(--e3) 0; font-size: .88rem; color: var(--texto-fraco); }
+.aj-situacao.tem-rascunho { color: var(--alerta); }
+
+.aj-botoes { display: grid; gap: var(--e2); }
+@media (min-width: 520px) { .aj-botoes { grid-template-columns: 1fr 1fr; } }
+
+.aj-ajuda { margin-top: var(--e4); font-size: .9rem; }
+.aj-ajuda summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+.aj-ajuda li { margin-bottom: var(--e1); }
+
+/* ---------- as abas: Foto (a prévia que o cliente vê primeiro) e 3D ---------- */
+
+.aj[hidden] { display: none; }
+.aj-abas { display: flex; gap: var(--e1); margin-top: var(--e3); }
+.aj-abas button {
+  min-height: 44px;
+  padding: 0 1.2rem;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 600 .9rem var(--fonte);
+  cursor: pointer;
+}
+.aj-abas button[aria-selected="true"] { background: var(--destaque); border-color: var(--destaque); color: #fff; }
+
+/* ---------- aba Foto: a foto do boné com as marcas por cima ---------- */
+
+.ajf-quadro {
+  position: relative;
+  width: min(100%, 62dvh);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  border-radius: var(--raio-p);
+  /* xadrez claro: mostra onde a foto ficou transparente (o fundo e o chão) */
+  background: repeating-conic-gradient(#f1f3f7 0 25%, #fff 0 50%) 0 0 / 24px 24px;
+}
+.ajf-quadro canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ajf-quadro__marcas { touch-action: none; cursor: crosshair; border-radius: var(--raio-p); }
+.ajf-quadro__marcas:focus-visible { outline: 3px solid var(--destaque); outline-offset: 2px; }
+.ajf-dica { margin: var(--e2) 0 0; min-height: 2.6em; font-size: .85rem; color: var(--texto-fraco); }
+
+.ajf-marcar { display: flex; gap: var(--e2); align-items: center; font-size: .88rem; min-height: 40px; cursor: pointer; }
+.ajf-marcar input { width: 20px; height: 20px; accent-color: var(--destaque); }
+
+.ajf-alvos, .ajf-acoes { display: flex; flex-wrap: wrap; gap: var(--e1); }
+.ajf-acoes { margin-top: var(--e2); }
+.ajf-alvos button, .ajf-acoes button {
+  min-height: 40px;
+  padding: 0 .85rem;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 600 .82rem var(--fonte);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+}
+.ajf-alvos button[aria-pressed="true"] { border-color: var(--destaque); box-shadow: inset 0 0 0 1px var(--destaque); color: var(--destaque); }
+.ajf-alvos button.vazio { border-style: dashed; color: var(--texto-fraco); }
+.ajf-alvos .ajf-cor { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.ajf-acoes button:disabled { opacity: .5; cursor: default; }

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ajuste fino da prévia — AG Bonés</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/marca/icon-site-ag.png">
+<link rel="stylesheet" href="assets/css/estilo.css">
+<link rel="stylesheet" href="assets/css/ajustes-3d.css">
+<script type="importmap">
+{ "imports": { "three": "./assets/js/terceiros/three/three.module.min.js" } }
+</script>
+</head>
+<body class="corpo-ajustes">
+
+<header class="aj-topo">
+  <a href="monte.html" class="aj-topo__voltar">← Monte seu boné</a>
+  <h1>Ajuste fino da prévia do boné</h1>
+  <p>Uso interno. Escolha o modelo, acerte onde fica cada parte e a logo, confira e publique.</p>
+  <div class="aj-abas" role="tablist" aria-label="O que ajustar">
+    <button type="button" role="tab" id="aba-botao-foto" aria-controls="aba-foto" aria-selected="true">Foto</button>
+    <button type="button" role="tab" id="aba-botao-3d" aria-controls="aba-3d" aria-selected="false">3D</button>
+  </div>
+</header>
+
+<main class="aj" id="aba-foto" role="tabpanel" aria-labelledby="aba-botao-foto">
+  <section class="aj-palco" aria-label="Prévia pela foto">
+    <div class="ajf-quadro">
+      <canvas id="f-tela" class="ajf-quadro__foto" aria-hidden="true"></canvas>
+      <canvas id="f-marcas" class="ajf-quadro__marcas" tabindex="0" aria-label="Foto do boné. Arraste os pontos para acertar a parte escolhida, ou o meio da logo para mudar o lugar dela. Setas do teclado mexem o ponto escolhido."></canvas>
+    </div>
+    <p class="ajf-dica" id="f-dica"></p>
+  </section>
+
+  <section class="aj-painel" aria-label="Ajustes da foto">
+    <div class="aj-linha">
+      <label for="f-modelo">Modelo</label>
+      <select id="f-modelo"></select>
+    </div>
+    <div class="aj-linha aj-linha--dupla">
+      <div>
+        <label for="f-cor">Cor do boné</label>
+        <input type="color" id="f-cor" value="#7a1f2b">
+      </div>
+      <div>
+        <label for="f-logo">Logo de teste</label>
+        <input type="file" id="f-logo" accept="image/*">
+      </div>
+    </div>
+    <label class="ajf-marcar"><input type="checkbox" id="f-cada-cor"> Pintar cada parte de uma cor (para ver a divisa)</label>
+
+    <div class="aj-grupo">
+      <h2 class="aj-grupo__titulo">O que mexer</h2>
+      <div class="ajf-alvos" id="f-alvos" role="group" aria-label="O que mexer"></div>
+      <div class="ajf-acoes" id="f-acoes"></div>
+    </div>
+
+    <div class="aj-grupo" id="f-grupo-arte">
+      <h2 class="aj-grupo__titulo">Logo</h2>
+      <div id="f-reguas-arte"></div>
+    </div>
+
+    <div class="aj-grupo" id="f-grupo-escuro" hidden>
+      <h2 class="aj-grupo__titulo">Só o escuro</h2>
+      <div id="f-reguas-escuro"></div>
+    </div>
+
+    <div class="aj-grupo">
+      <h2 class="aj-grupo__titulo">Luz</h2>
+      <div id="f-reguas-luz"></div>
+    </div>
+
+    <p class="aj-situacao" id="f-situacao" role="status"></p>
+
+    <div class="aj-botoes">
+      <button type="button" class="botao botao--vazado" id="f-padrao">Voltar este modelo ao publicado</button>
+      <button type="button" class="botao botao--vazado" id="f-descartar">Descartar o rascunho</button>
+      <button type="button" class="botao" id="f-copiar">Copiar os ajustes</button>
+      <button type="button" class="botao" id="f-baixar">Baixar montagem-fotos.json</button>
+    </div>
+
+    <details class="aj-ajuda">
+      <summary>Como usar esta aba</summary>
+      <ol>
+        <li>Escolha o modelo e, em <strong>O que mexer</strong>, a parte (aba, laterais, botão…) ou a <strong>Logo</strong>.</li>
+        <li>Na foto, arraste as <strong>bolinhas cheias</strong> para o contorno da parte. A <strong>bolinha vazada</strong> no meio de cada lado cria um ponto novo. Para tirar um ponto, toque nele e em <strong>Tirar o ponto</strong>.</li>
+        <li>Na logo, arraste o <strong>meio</strong> para mudar o lugar e as <strong>bolinhas da borda</strong> para mudar a largura e a altura. As réguas fazem o resto: girar, entortar, curvar.</li>
+        <li><strong>Vão debaixo da aba</strong>: o que estiver dentro e não tiver cor vira sombra (o chão da foto some). <strong>Área que não se pinta</strong>: fica igual à foto (couro, cordão).</li>
+        <li>Tudo fica como rascunho <strong>neste navegador</strong>; a página “Monte seu boné” aberta aqui já mostra. Para valer para todos, toque em <strong>Copiar os ajustes</strong> e cole na conversa com o Claude, ou baixe o arquivo e mande.</li>
+      </ol>
+    </details>
+  </section>
+</main>
+
+<main class="aj" id="aba-3d" role="tabpanel" aria-labelledby="aba-botao-3d" hidden>
+  <section class="aj-palco" aria-label="Prévia em 3D">
+    <canvas id="tela-3d" class="aj-palco__tela" aria-label="Boné em 3D. Arraste para girar."></canvas>
+    <div class="aj-palco__vistas" role="group" aria-label="Ver de">
+      <button type="button" data-vista="0,6">Frente</button>
+      <button type="button" data-vista="35,14">Três quartos</button>
+      <button type="button" data-vista="90,4">Lado</button>
+      <button type="button" data-vista="180,10">Trás</button>
+      <button type="button" data-vista="0,88">Cima</button>
+    </div>
+    <figure class="aj-foto">
+      <img id="foto-do-modelo" alt="Foto do boné de verdade, para comparar">
+      <figcaption>Foto de verdade, para comparar</figcaption>
+    </figure>
+  </section>
+
+  <section class="aj-painel" aria-label="Ajustes">
+    <div class="aj-linha">
+      <label for="modelo">Modelo</label>
+      <select id="modelo"></select>
+    </div>
+    <div class="aj-linha aj-linha--dupla">
+      <div>
+        <label for="cor">Cor do boné</label>
+        <input type="color" id="cor" value="#2f5fd0">
+      </div>
+      <div>
+        <label for="logo">Logo de teste</label>
+        <input type="file" id="logo" accept="image/*">
+      </div>
+    </div>
+
+    <div id="reguas"></div>
+
+    <p class="aj-situacao" id="situacao" role="status"></p>
+
+    <div class="aj-botoes">
+      <button type="button" class="botao botao--vazado" id="padrao">Voltar este modelo ao padrão</button>
+      <button type="button" class="botao botao--vazado" id="descartar">Descartar o rascunho</button>
+      <button type="button" class="botao" id="copiar">Copiar os ajustes</button>
+      <button type="button" class="botao" id="baixar">Baixar ajustes-3d.json</button>
+    </div>
+
+    <details class="aj-ajuda">
+      <summary>Como publicar o ajuste para todo mundo</summary>
+      <ol>
+        <li>Tudo o que você mexe fica salvo <strong>neste navegador</strong>, como rascunho. A página “Monte seu boné” aberta aqui mesmo já mostra o rascunho.</li>
+        <li>Quando estiver bom, toque em <strong>Copiar os ajustes</strong> e cole na conversa com o Claude, ou toque em <strong>Baixar</strong> e mande o arquivo.</li>
+        <li>O ajuste entra no arquivo <code>dados/ajustes-3d.json</code> do site e vale para todos os clientes.</li>
+      </ol>
+    </details>
+  </section>
+</main>
+
+<script type="module" src="assets/js/ajustes-foto.js"></script>
+</body>
+</html>
