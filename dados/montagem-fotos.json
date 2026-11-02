@@ -158,220 +158,131 @@
       "mockup": "chatgpt"
     },
     "japones": {
-      "partes": {
-        "aba": [
-          [150, 380],
-          [250, 352],
-          [350, 342],
-          [450, 334],
-          [520, 370],
-          [600, 430],
-          [560, 460],
-          [420, 500],
-          [300, 500],
-          [200, 470],
-          [150, 420]
-        ],
-        "aba-baixo": [
-          [520, 424],
-          [575, 418],
-          [575, 445],
-          [530, 442]
-        ],
-        "laterais": [
-          [0, 100],
-          [245, 120],
-          [290, 160],
-          [205, 245],
-          [180, 345],
-          [0, 380]
-        ],
-        "botao": [
-          [256, 128],
-          [255, 134],
-          [250, 138],
-          [245, 139],
-          [240, 138],
-          [235, 134],
-          [234, 128],
-          [235, 122],
-          [240, 118],
-          [245, 117],
-          [250, 118],
-          [255, 122]
-        ]
+      "original": "assets/produtos/montagem/japones-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/japones-mapa.png",
+        "cores": {
+          "ff0000": "aba-baixo",
+          "00ff00": "aba",
+          "0000ff": "botao",
+          "ffff00": "frente",
+          "ff00ff": "laterais"
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 382,
-        "y": 278,
-        "largura": 105,
-        "altura": 130,
+        "x": 308,
+        "y": 240,
+        "largura": 115,
+        "altura": 108,
         "giro": 0,
-        "inclina": 5,
+        "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
-      "contraste": 1
+      "contraste": 1,
+      "mockup": "chatgpt"
     },
     "gomos-5-6": {
-      "partes": {
-        "aba": [
-          [90, 400],
-          [200, 408],
-          [300, 402],
-          [400, 386],
-          [450, 372],
-          [520, 420],
-          [600, 460],
-          [560, 480],
-          [420, 520],
-          [300, 530],
-          [200, 520],
-          [120, 470]
-        ],
-        "aba-baixo": [
-          [515, 450],
-          [575, 442],
-          [575, 472],
-          [530, 468]
-        ],
-        "laterais": [
-          [0, 100],
-          [255, 150],
-          [200, 230],
-          [170, 320],
-          [160, 400],
-          [0, 420]
-        ],
-        "botao": [
-          [272, 158],
-          [271, 163],
-          [267, 167],
-          [262, 168],
-          [257, 167],
-          [253, 163],
-          [252, 158],
-          [253, 153],
-          [257, 149],
-          [262, 148],
-          [267, 149],
-          [271, 153]
-        ]
+      "original": "assets/produtos/montagem/gomos-5-6-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/gomos-5-6-mapa.png",
+        "cores": {
+          "ff0000": "aba-baixo",
+          "00ff00": "aba",
+          "0000ff": "botao",
+          "ffff00": "frente",
+          "ff00ff": "laterais"
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 343,
-        "y": 328,
-        "largura": 118,
-        "altura": 128,
-        "giro": -8,
+        "x": 329,
+        "y": 274,
+        "largura": 98,
+        "altura": 111,
+        "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
-      "contraste": 1
+      "contraste": 1,
+      "mockup": "chatgpt"
     },
     "viseira": {
-      "partes": {
-        "aba": [
-          [150, 380],
-          [250, 350],
-          [350, 335],
-          [445, 325],
-          [500, 350],
-          [600, 390],
-          [560, 410],
-          [420, 470],
-          [340, 480],
-          [260, 450],
-          [200, 400]
-        ],
-        "aba-baixo": [
-          [520, 380],
-          [575, 380],
-          [575, 400],
-          [530, 398]
-        ]
+      "original": "assets/produtos/montagem/viseira-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/viseira-mapa.png",
+        "cores": {
+          "ff0000": "aba",
+          "00ff00": null,
+          "0000ff": "frente",
+          "ffff00": null
+        }
       },
-      "arte": {
-        "x": 370,
-        "y": 257,
-        "largura": 100,
-        "altura": 105,
-        "giro": 0,
-        "inclina": 0,
-        "fuga": 0,
-        "curva": 0
-      },
-      "contraste": 1
-    },
-    "viseira-sport": {
-      "partes": {
-        "aba": [
-          [0, 430],
-          [60, 410],
-          [140, 340],
-          [250, 330],
-          [350, 345],
-          [420, 365],
-          [470, 385],
-          [480, 420],
-          [400, 470],
-          [300, 520],
-          [150, 470],
-          [0, 470]
-        ],
-        "aba-baixo": [
-          [40, 408],
-          [90, 405],
-          [90, 430],
-          [40, 432]
-        ]
-      },
+      "partes": {},
       "arte": {
         "x": 260,
-        "y": 262,
-        "largura": 100,
-        "altura": 115,
+        "y": 295,
+        "largura": 162,
+        "altura": 87,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
-      "contraste": 1
+      "contraste": 1,
+      "mockup": "chatgpt"
+    },
+    "viseira-sport": {
+      "original": "assets/produtos/montagem/viseira-sport-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/viseira-sport-mapa.png",
+        "cores": {
+          "ff0000": "aba",
+          "00ff00": null,
+          "0000ff": "frente",
+          "ffff00": null
+        }
+      },
+      "partes": {},
+      "arte": {
+        "x": 350,
+        "y": 283,
+        "largura": 186,
+        "altura": 94,
+        "giro": 0,
+        "inclina": 0,
+        "fuga": 0,
+        "curva": 0
+      },
+      "contraste": 1,
+      "mockup": "chatgpt"
     },
     "viseira-malha": {
-      "partes": {
-        "aba": [
-          [60, 420],
-          [100, 370],
-          [170, 320],
-          [260, 345],
-          [360, 360],
-          [470, 370],
-          [480, 400],
-          [400, 460],
-          [330, 500],
-          [150, 460],
-          [60, 440]
-        ],
-        "aba-baixo": [
-          [80, 402],
-          [118, 400],
-          [118, 420],
-          [80, 422]
-        ]
+      "original": "assets/produtos/montagem/viseira-malha-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/viseira-malha-mapa.png",
+        "cores": {
+          "ff0000": "aba",
+          "00ff00": null,
+          "0000ff": "frente",
+          "ffff00": null
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 262,
-        "y": 275,
-        "largura": 95,
-        "altura": 110,
+        "x": 356,
+        "y": 271,
+        "largura": 165,
+        "altura": 92,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
-      "contraste": 1
+      "contraste": 1,
+      "mockup": "chatgpt"
     },
     "bucket": {
       "original": "assets/produtos/montagem/bucket-original.webp",
@@ -397,33 +308,27 @@
       "mockup": "chatgpt"
     },
     "cumbuca": {
-      "partes": {
-        "aba": [
-          [60, 400],
-          [120, 345],
-          [170, 330],
-          [220, 388],
-          [320, 412],
-          [420, 408],
-          [500, 385],
-          [515, 335],
-          [600, 420],
-          [560, 490],
-          [330, 530],
-          [100, 470]
-        ]
+      "original": "assets/produtos/montagem/cumbuca-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/cumbuca-mapa.png",
+        "cores": {
+          "ff0000": "aba",
+          "00ff00": "copa"
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 255,
-        "y": 320,
-        "largura": 120,
-        "altura": 120,
+        "x": 328,
+        "y": 266,
+        "largura": 153,
+        "altura": 119,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
-      "contraste": 1
+      "contraste": 1,
+      "mockup": "chatgpt"
     },
     "chapeu-australiano": {
       "original": "assets/produtos/montagem/chapeu-australiano-original.webp",
