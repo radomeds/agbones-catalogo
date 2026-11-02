@@ -26,6 +26,7 @@ import {
 
 import { montarMensagemWhatsapp, abrirWhatsapp } from "./whatsapp.js";
 import { conferirArte, enderecoParaMostrar, podeMostrarNaTela } from "./arte.js";
+import { enderecoDoVetor, vetorizadorDisponivel, vetorizarArquivo } from "./vetor.js";
 import { prepararMedicao, registrar, registrarPedidoEnviado } from "./medicao.js";
 
 const CHAVE_ARMAZENAMENTO = "agbones.pedido";
@@ -126,7 +127,7 @@ function criarMontagemVazia() {
     variacoes: {},       // { fecho: "Fecho plástico" }
     quantidade: null,
     observacoes: "",
-    arte: { origem: "", redesenho: false, arquivo: "", nivel: "" },
+    arte: { origem: "", redesenho: false, arquivo: "", nivel: "", vetor: "" },
   };
 }
 
@@ -135,9 +136,22 @@ function criarMontagemVazia() {
 let logoNaTela = null;
 
 function trocarLogoNaTela(arquivo) {
-  if (logoNaTela) URL.revokeObjectURL(logoNaTela.endereco);
+  esquecerLogoNaTela();
   const endereco = enderecoParaMostrar(arquivo);
-  logoNaTela = endereco ? { endereco, nome: arquivo.name } : null;
+  logoNaTela = endereco ? { endereco, nome: arquivo.name, arquivo, vetor: null, usarVetor: false } : null;
+}
+
+function esquecerLogoNaTela() {
+  if (logoNaTela) {
+    URL.revokeObjectURL(logoNaTela.endereco);
+    if (logoNaTela.vetor) URL.revokeObjectURL(logoNaTela.vetor.endereco);
+  }
+  logoNaTela = null;
+}
+
+/** A imagem que vai no boné: a versão em vetor, se o cliente escolheu ver assim. */
+function enderecoDaLogo() {
+  return logoNaTela.usarVetor && logoNaTela.vetor ? logoNaTela.vetor.endereco : logoNaTela.endereco;
 }
 
 const elementos = {
@@ -411,7 +425,7 @@ function desenharAplicacoes() {
     const lugar = APLICACAO[posicao];
     const imagem = document.createElement("img");
     imagem.className = "aplicacao";
-    imagem.src = logoNaTela.endereco;
+    imagem.src = enderecoDaLogo();
     imagem.alt = "";
     imagem.style.left = `${ladoDireito ? 100 - lugar.x : lugar.x}%`;
     imagem.style.top = `${lugar.y}%`;
@@ -1083,12 +1097,18 @@ function abrirPainelDaLogo() {
           "mas serve para produzir. O layout com sua logo vem no atendimento.";
         veredito.append(nota);
       }
+      prepararVetor(blocoVetor);
     });
 
-    blocoArquivo.append(titulo, nota, area, veredito);
+    // a logo em vetor (motor ArtCraft): nasce escondida, aparece com a imagem
+    const blocoVetor = document.createElement("div");
+    blocoVetor.className = "bloco-vetor oculto";
+
+    blocoArquivo.append(titulo, nota, area, veredito, blocoVetor);
     corpo.append(blocoArquivo);
 
     if (arteConferida) mostrarVeredito(veredito, arteConferida);
+    prepararVetor(blocoVetor);
   }, [{
     texto: "Pronto",
     classe: "botao--grande",
@@ -1098,11 +1118,169 @@ function abrirPainelDaLogo() {
         montagem.arte.arquivo = arteConferida.resumo;
         montagem.arte.nivel = arteConferida.nivel;
       }
+      montagem.arte.vetor = resumoDoVetor();
       fecharPainel();
       marcarFerramentas();
       atualizarBarra();
     },
   }]);
+}
+
+/* ---------- A logo em vetor ---------- */
+
+/** 0 = automático: as cores chapadas que a logo já tem. */
+const QUANTAS_CORES = [0, 1, 2, 3, 4, 6];
+
+/** Começa no automático: o motor acha as cores da logo; o cliente pode forçar menos. */
+let coresDoVetor = 0;
+
+function resumoDoVetor() {
+  const vetor = logoNaTela && logoNaTela.vetor;
+  if (!vetor) return "";
+  const n = vetor.cores.length;
+  return `${n} ${n === 1 ? "cor" : "cores"} (${vetor.cores.join(", ")})` +
+    (logoNaTela.usarVetor ? ", vista assim no boné" : "");
+}
+
+/** Monta o bloco "Sua logo em vetor" e vetoriza, se a imagem permite. */
+function prepararVetor(bloco) {
+  const arquivo = logoNaTela && logoNaTela.arquivo;
+  const ehImagem = arquivo && podeMostrarNaTela(arquivo) && !/\.svg$/i.test(arquivo.name);
+  bloco.classList.toggle("oculto", !ehImagem || !vetorizadorDisponivel());
+  if (bloco.classList.contains("oculto")) return;
+  bloco.textContent = "";
+
+  const titulo = document.createElement("h3");
+  titulo.className = "painel__subtitulo";
+  titulo.textContent = "Sua logo em vetor";
+  const apoio = document.createElement("p");
+  apoio.className = "painel__apoio";
+  apoio.textContent = "É como ela sai na serigrafia, no transfer e no bordado: poucas cores chapadas. " +
+    "Cada cor a mais é uma tela a mais na serigrafia.";
+
+  const grupo = document.createElement("div");
+  grupo.className = "vetor-cores";
+  grupo.setAttribute("role", "radiogroup");
+  grupo.setAttribute("aria-label", "Quantas cores");
+  QUANTAS_CORES.forEach((n) => {
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.className = "vetor-cores__opcao";
+    botao.setAttribute("role", "radio");
+    botao.setAttribute("aria-checked", String(n === coresDoVetor));
+    botao.textContent = n === 0 ? "Auto" : String(n);
+    botao.setAttribute("aria-label", n === 0 ? "Cores automáticas" : (n === 1 ? "1 cor" : `${n} cores`));
+    botao.addEventListener("click", () => {
+      coresDoVetor = n;
+      grupo.querySelectorAll(".vetor-cores__opcao").forEach((outro) =>
+        outro.setAttribute("aria-checked", String(outro === botao)));
+      vetorizar();
+    });
+    grupo.append(botao);
+  });
+
+  const comparacao = document.createElement("div");
+  comparacao.className = "vetor-comparacao";
+  const original = document.createElement("figure");
+  original.className = "vetor-quadro";
+  const imgOriginal = document.createElement("img");
+  imgOriginal.src = logoNaTela.endereco;
+  imgOriginal.alt = "Sua imagem";
+  const legOriginal = document.createElement("figcaption");
+  legOriginal.textContent = "Sua imagem";
+  original.append(imgOriginal, legOriginal);
+  const vetorizada = document.createElement("figure");
+  vetorizada.className = "vetor-quadro";
+  const imgVetor = document.createElement("img");
+  imgVetor.alt = "Sua logo em vetor";
+  const legVetor = document.createElement("figcaption");
+  legVetor.textContent = "Em vetor";
+  vetorizada.append(imgVetor, legVetor);
+  comparacao.append(original, vetorizada);
+
+  const situacao = document.createElement("p");
+  situacao.className = "vetor-situacao";
+  situacao.setAttribute("aria-live", "polite");
+  const paleta = document.createElement("div");
+  paleta.className = "vetor-paleta";
+
+  const usar = document.createElement("label");
+  usar.className = "vetor-usar";
+  const caixa = document.createElement("input");
+  caixa.type = "checkbox";
+  caixa.checked = logoNaTela.usarVetor;
+  caixa.addEventListener("change", () => {
+    logoNaTela.usarVetor = caixa.checked;
+    desenharAplicacoes();
+  });
+  usar.append(caixa, document.createTextNode(" Ver no boné a versão em vetor"));
+
+  const credito = document.createElement("p");
+  credito.className = "vetor-credito";
+  credito.textContent = "Vetorizado no seu aparelho com o VectorCraft, do ArtCraft. " +
+    "É uma prévia: o layout final a gente acerta e manda para aprovar.";
+
+  const rotuloCores = document.createElement("p");
+  rotuloCores.className = "vetor-rotulo";
+  rotuloCores.textContent = "Quantas cores";
+  bloco.append(titulo, apoio, rotuloCores, grupo, comparacao, situacao, paleta, usar, credito);
+
+  async function vetorizar() {
+    const alvo = logoNaTela;
+    situacao.textContent = "Vetorizando no seu aparelho…";
+    comparacao.classList.add("vetor-comparacao--trabalhando");
+    usar.classList.add("oculto");
+    const inicio = performance.now();
+    let resultado;
+    try {
+      resultado = await vetorizarArquivo(alvo.arquivo, coresDoVetor);
+    } catch (erro) {
+      resultado = { svg: "", erro: "não conseguimos ler essa imagem aqui" };
+    }
+    // o cliente trocou de arquivo (ou de quantidade de cores) no meio: vale o mais novo
+    if (logoNaTela !== alvo || !bloco.isConnected) return;
+    comparacao.classList.remove("vetor-comparacao--trabalhando");
+    if (!resultado.svg) {
+      situacao.textContent = "Essa imagem não deu para vetorizar aqui. Não tem problema: " +
+        "a gente redesenha do nosso lado.";
+      registrar("vetorizou_logo", { resultado: "falhou" });
+      return;
+    }
+    if (alvo.vetor) URL.revokeObjectURL(alvo.vetor.endereco);
+    alvo.vetor = { endereco: enderecoDoVetor(resultado.svg), cores: resultado.cores, modo: resultado.modo };
+    imgVetor.src = alvo.vetor.endereco;
+    const n = resultado.cores.length;
+    const segundos = ((performance.now() - inicio) / 1000).toFixed(1).replace(".", ",");
+    situacao.textContent = `${n} ${n === 1 ? "cor" : "cores"}, ${resultado.formas} formas — pronto em ${segundos} s.` +
+      (resultado.modo === "logo" ? "" : coresDoVetor > 0
+        ? " Juntamos as cores parecidas para caber no que você escolheu."
+        : " Sua imagem tem degradê ou sombra: no vetor ela fica chapada.");
+    paleta.textContent = "";
+    resultado.cores.forEach((cor) => {
+      const amostra = document.createElement("span");
+      amostra.className = "vetor-paleta__cor";
+      amostra.style.background = cor;
+      amostra.title = cor;
+      paleta.append(amostra);
+    });
+    usar.classList.remove("oculto");
+    if (alvo.usarVetor) desenharAplicacoes();
+    registrar("vetorizou_logo", { resultado: resultado.modo, cores: n });
+  }
+
+  if (logoNaTela.vetor && logoNaTela.vetor.cores.length) {
+    // o painel foi reaberto: mostra o que já foi feito, sem refazer
+    imgVetor.src = logoNaTela.vetor.endereco;
+    situacao.textContent = `${logoNaTela.vetor.cores.length} cores.`;
+    logoNaTela.vetor.cores.forEach((cor) => {
+      const amostra = document.createElement("span");
+      amostra.className = "vetor-paleta__cor";
+      amostra.style.background = cor;
+      paleta.append(amostra);
+    });
+  } else {
+    vetorizar();
+  }
 }
 
 function mostrarVeredito(alvo, resultado) {
@@ -1487,8 +1665,7 @@ function limparPedido() {
   montagem = criarMontagemVazia();
   produtoEscolhido = null;
   arteConferida = null;
-  if (logoNaTela) URL.revokeObjectURL(logoNaTela.endereco);
-  logoNaTela = null;
+  esquecerLogoNaTela();
   salvarPedido();
   desenharPedido();
   irParaPasso(1);

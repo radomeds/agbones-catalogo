@@ -972,6 +972,43 @@ p { margin: 0 0 var(--e4); }
 .veredito--redesenho .veredito__titulo { color: var(--destaque); }
 .veredito--conferindo { border-color: var(--texto-fraco); }
 
+/* ---------- A logo em vetor (motor ArtCraft) ---------- */
+
+.bloco-vetor { margin-top: var(--e5); }
+.vetor-rotulo {
+  margin: var(--e3) 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texto-fraco);
+}
+
+.vetor-cores { display: grid; grid-template-columns: 1.5fr repeat(5, 1fr); gap: var(--e2); margin: var(--e2) 0 var(--e3); }
+.vetor-cores__opcao {
+  min-width: 0; min-height: 44px; padding: 0 var(--e1, 4px);
+  border: 2px solid var(--borda); border-radius: var(--raio-p);
+  background: var(--cartao); color: var(--texto); font: inherit; font-weight: 600; cursor: pointer;
+}
+.vetor-cores__opcao[aria-checked="true"] { border-color: var(--destaque); background: var(--destaque); color: var(--destaque-texto); }
+.vetor-comparacao { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.vetor-quadro {
+  margin: 0; padding: var(--e3); border: 1px solid var(--borda); border-radius: var(--raio-p);
+  /* xadrez claro: mostra o que é transparente na logo */
+  background: repeating-conic-gradient(#eef1f6 0 25%, #fff 0 50%) 0 0 / 16px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: var(--e2);
+}
+.vetor-quadro img { width: 100%; aspect-ratio: 1; object-fit: contain; }
+.vetor-quadro figcaption { font-size: .8rem; color: #69738A; }
+.vetor-comparacao--trabalhando .vetor-quadro:last-child img { opacity: .25; }
+.vetor-comparacao--trabalhando .vetor-quadro:last-child { animation: vetor-pulso 1.2s ease-in-out infinite; }
+@keyframes vetor-pulso { 50% { border-color: var(--destaque); } }
+@media (prefers-reduced-motion: reduce) { .vetor-comparacao--trabalhando .vetor-quadro:last-child { animation: none; } }
+.vetor-situacao { margin: var(--e3) 0 var(--e2); font-size: .9rem; }
+.vetor-paleta { display: flex; flex-wrap: wrap; gap: var(--e2); margin-bottom: var(--e3); }
+.vetor-paleta__cor { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--borda); }
+.vetor-usar { display: flex; align-items: center; gap: var(--e2); min-height: 44px; font-weight: 600; cursor: pointer; }
+.vetor-usar input { width: 22px; height: 22px; accent-color: var(--destaque); }
+.vetor-credito { color: var(--texto-fraco); font-size: .8rem; line-height: 1.5; }
+
 /* ---------- Quantidade ---------- */
 
 .atalhos-quantidade { display: flex; flex-wrap: wrap; gap: var(--e2); margin-bottom: var(--e4); }

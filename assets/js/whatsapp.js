@@ -29,6 +29,7 @@ function descreverItem(catalogo, item, posicao) {
   if (arte && arte.origem) {
     partes.push(`   Arte: ${arte.origem}${arte.redesenho ? " (precisa de redesenho)" : ""}`);
     if (arte.arquivo) partes.push(`   Arquivo conferido no site: ${arte.arquivo}`);
+    if (arte.vetor) partes.push(`   Prévia em vetor no site: ${arte.vetor}`);
   }
   if (item.observacoes) partes.push(`   Obs.: ${item.observacoes}`);
   partes.push(

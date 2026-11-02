@@ -22,3 +22,8 @@
 # O catálogo muda quando a fábrica muda preço ou modelo: cache curto
 /dados/*
   Cache-Control: public, max-age=300
+
+# O motor de vetorização (ArtCraft em WebAssembly) só muda quando é recompilado
+/assets/wasm/*
+  Content-Type: application/wasm
+  Cache-Control: public, max-age=604800
