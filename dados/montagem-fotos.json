@@ -2,392 +2,160 @@
   "_leia": "Onde fica cada parte do boné na foto de cada modelo (pixels da foto de 640) e o lugar da logo. partes: polígonos pintados com a cor de cada parte (o resto do boné é a frente, ou a copa). escuros: a parte só pega o que for mais escuro que esse limite. fixo: fica como na foto. chao: o vão debaixo da aba (o claro vira sombra). arte: o lugar da logo. original e mapa: mockup do ChatGPT (ferramentas/integrar-mockup.py), com a foto própria e um PNG de cores chapadas, uma por parte (cores: hex -> parte; null fica como na foto). Gerado pela tela ajustes-3d.html, aba Foto; confira lá antes de editar à mão.",
   "modelos": {
     "trucker": {
-      "partes": {
-        "aba": [
-          [0, 470],
-          [40, 440],
-          [70, 420],
-          [120, 385],
-          [165, 340],
-          [240, 330],
-          [330, 345],
-          [420, 370],
-          [490, 392],
-          [540, 410],
-          [500, 470],
-          [350, 530],
-          [150, 520],
-          [0, 520]
-        ],
-        "aba-baixo": [
-          [0, 445],
-          [38, 440],
-          [55, 428],
-          [95, 415],
-          [110, 430],
-          [80, 450],
-          [0, 460]
-        ],
-        "laterais": [
-          [478, 100],
-          [640, 100],
-          [640, 420],
-          [540, 400],
-          [495, 390],
-          [478, 330],
-          [475, 200]
-        ],
-        "botao": [
-          [403, 110],
-          [402, 116],
-          [398, 120],
-          [392, 121],
-          [386, 120],
-          [382, 116],
-          [381, 110],
-          [382, 104],
-          [386, 100],
-          [392, 99],
-          [398, 100],
-          [402, 104]
-        ]
+      "original": "assets/produtos/montagem/trucker-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/trucker-mapa.png",
+        "cores": {
+          "ff0000": "aba-baixo",
+          "00ff00": "aba",
+          "0000ff": "botao",
+          "ffff00": "frente",
+          "ff00ff": "laterais"
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 265,
-        "y": 230,
-        "largura": 150,
-        "altura": 160,
+        "x": 334,
+        "y": 247,
+        "largura": 129,
+        "altura": 117,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
-      "contraste": 1
+      "contraste": 1,
+      "mockup": "chatgpt"
     },
     "dad-hat": {
-      "partes": {
-        "laterais": [
-          [405, 148],
-          [470, 165],
-          [530, 200],
-          [640, 250],
-          [640, 420],
-          [520, 415],
-          [475, 405],
-          [470, 330],
-          [450, 230]
-        ],
-        "aba": [
-          [0, 500],
-          [60, 470],
-          [90, 435],
-          [140, 405],
-          [190, 380],
-          [250, 368],
-          [330, 370],
-          [400, 385],
-          [460, 400],
-          [540, 410],
-          [520, 470],
-          [400, 520],
-          [200, 520],
-          [0, 520]
-        ],
-        "aba-baixo": [
-          [0, 470],
-          [66, 468],
-          [80, 440],
-          [120, 425],
-          [150, 440],
-          [120, 470],
-          [90, 480],
-          [0, 480]
-        ],
-        "botao": [
-          [413, 145],
-          [412, 150],
-          [408, 154],
-          [403, 155],
-          [398, 154],
-          [394, 150],
-          [393, 145],
-          [394, 140],
-          [398, 136],
-          [403, 135],
-          [408, 136],
-          [412, 140]
-        ]
+      "original": "assets/produtos/montagem/dad-hat-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/dad-hat-mapa.png",
+        "cores": {
+          "ff0000": "aba-baixo",
+          "00ff00": "aba",
+          "0000ff": "botao",
+          "ffff00": "frente",
+          "ff00ff": "laterais"
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 275,
+        "x": 335,
         "y": 255,
-        "largura": 170,
-        "altura": 170,
+        "largura": 127,
+        "altura": 120,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
       "contraste": 1,
-      "chao": [
-        [
-          [40, 484],
-          [90, 482],
-          [125, 452],
-          [150, 436],
-          [200, 440],
-          [250, 458],
-          [300, 485],
-          [350, 518],
-          [400, 521],
-          [432, 504],
-          [452, 474],
-          [466, 446],
-          [482, 421],
-          [640, 421],
-          [640, 640],
-          [40, 640]
-        ]
-      ]
+      "mockup": "chatgpt"
     },
     "flex": {
-      "partes": {
-        "aba": [
-          [40, 520],
-          [60, 470],
-          [100, 430],
-          [165, 382],
-          [200, 372],
-          [300, 366],
-          [400, 364],
-          [450, 370],
-          [540, 420],
-          [500, 480],
-          [400, 530],
-          [250, 550],
-          [40, 550]
-        ],
-        "aba-baixo": [
-          [40, 470],
-          [110, 462],
-          [140, 478],
-          [100, 495],
-          [40, 495]
-        ],
-        "laterais": [
-          [365, 125],
-          [640, 125],
-          [640, 420],
-          [470, 395],
-          [460, 300],
-          [430, 200]
-        ],
-        "botao": [
-          [376, 135],
-          [375, 140],
-          [370, 145],
-          [365, 146],
-          [360, 145],
-          [355, 140],
-          [354, 135],
-          [355, 130],
-          [360, 125],
-          [365, 124],
-          [370, 125],
-          [375, 130]
-        ]
+      "original": "assets/produtos/montagem/flex-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/flex-mapa.png",
+        "cores": {
+          "ff0000": "aba-baixo",
+          "00ff00": "aba",
+          "0000ff": "botao",
+          "ffff00": "frente",
+          "ff00ff": "laterais"
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 275,
-        "y": 255,
-        "largura": 140,
-        "altura": 150,
+        "x": 325,
+        "y": 249,
+        "largura": 123,
+        "altura": 125,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
       "contraste": 1,
-      "chao": [
-        [
-          [60, 430],
-          [300, 430],
-          [300, 540],
-          [60, 540]
-        ]
-      ]
+      "mockup": "chatgpt"
     },
     "aba-reta": {
-      "partes": {
-        "aba": [
-          [0, 560],
-          [0, 440],
-          [100, 402],
-          [200, 397],
-          [330, 405],
-          [450, 410],
-          [530, 395],
-          [600, 420],
-          [600, 560]
-        ],
-        "laterais": [
-          [455, 100],
-          [640, 100],
-          [640, 420],
-          [470, 410]
-        ],
-        "botao": [
-          [376, 108],
-          [375, 114],
-          [370, 118],
-          [365, 119],
-          [360, 118],
-          [355, 114],
-          [354, 108],
-          [355, 102],
-          [360, 98],
-          [365, 97],
-          [370, 98],
-          [375, 102]
-        ]
+      "original": "assets/produtos/montagem/aba-reta-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/aba-reta-mapa.png",
+        "cores": {
+          "ff0000": "aba-baixo",
+          "00ff00": "aba",
+          "0000ff": "botao",
+          "ffff00": "frente",
+          "ff00ff": "laterais"
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 380,
-        "y": 322,
-        "largura": 140,
-        "altura": 145,
-        "giro": 0,
-        "inclina": 0,
-        "fuga": 0,
-        "curva": 0
-      },
-      "contraste": 1
-    },
-    "americano": {
-      "partes": {
-        "aba": [
-          [190, 400],
-          [200, 345],
-          [300, 335],
-          [400, 325],
-          [470, 320],
-          [540, 380],
-          [620, 430],
-          [560, 470],
-          [420, 500],
-          [300, 500],
-          [220, 470]
-        ],
-        "aba-baixo": [
-          [540, 415],
-          [600, 412],
-          [600, 445],
-          [550, 445]
-        ],
-        "laterais": [
-          [0, 90],
-          [250, 100],
-          [270, 130],
-          [200, 220],
-          [170, 330],
-          [0, 360]
-        ],
-        "botao": [
-          [269, 108],
-          [268, 114],
-          [264, 118],
-          [258, 119],
-          [252, 118],
-          [248, 114],
-          [247, 108],
-          [248, 102],
-          [252, 98],
-          [258, 97],
-          [264, 98],
-          [268, 102]
-        ]
-      },
-      "arte": {
-        "x": 387,
-        "y": 245,
-        "largura": 105,
-        "altura": 130,
-        "giro": 0,
-        "inclina": 0,
-        "fuga": 0,
-        "curva": 0
-      },
-      "contraste": 1
-    },
-    "americano-tela": {
-      "partes": {
-        "laterais": [
-          [470, 80],
-          [640, 80],
-          [640, 420],
-          [500, 420],
-          [480, 300],
-          [470, 150]
-        ],
-        "aba": [
-          [0, 460],
-          [60, 420],
-          [150, 385],
-          [250, 370],
-          [350, 375],
-          [450, 390],
-          [520, 400],
-          [580, 440],
-          [500, 520],
-          [350, 540],
-          [150, 520],
-          [0, 500]
-        ],
-        "aba-baixo": [
-          [45, 424],
-          [80, 419],
-          [132, 424],
-          [136, 436],
-          [100, 430],
-          [60, 436],
-          [45, 436]
-        ]
-      },
-      "arte": {
-        "x": 278,
-        "y": 222,
-        "largura": 150,
-        "altura": 165,
+        "x": 331,
+        "y": 266,
+        "largura": 142,
+        "altura": 137,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
       "contraste": 1,
-      "chao": [
-        [
-          [20, 441],
-          [60, 441],
-          [100, 434],
-          [130, 442],
-          [155, 450],
-          [200, 463],
-          [200, 640],
-          [20, 640]
-        ],
-        [
-          [486, 397],
-          [640, 397],
-          [640, 640],
-          [380, 640],
-          [402, 493],
-          [422, 473],
-          [442, 455],
-          [452, 441],
-          [462, 426],
-          [478, 403]
-        ]
-      ]
+      "mockup": "chatgpt"
+    },
+    "americano": {
+      "original": "assets/produtos/montagem/americano-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/americano-mapa.png",
+        "cores": {
+          "ff0000": "aba-baixo",
+          "00ff00": "aba",
+          "0000ff": "botao",
+          "ffff00": "frente",
+          "ff00ff": "laterais"
+        }
+      },
+      "partes": {},
+      "arte": {
+        "x": 314,
+        "y": 249,
+        "largura": 131,
+        "altura": 134,
+        "giro": 0,
+        "inclina": 0,
+        "fuga": 0,
+        "curva": 0
+      },
+      "contraste": 1,
+      "mockup": "chatgpt"
+    },
+    "americano-tela": {
+      "original": "assets/produtos/montagem/americano-tela-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/americano-tela-mapa.png",
+        "cores": {
+          "ff0000": "aba-baixo",
+          "00ff00": "aba",
+          "0000ff": "botao",
+          "ffff00": "frente",
+          "ff00ff": "laterais"
+        }
+      },
+      "partes": {},
+      "arte": {
+        "x": 339,
+        "y": 248,
+        "largura": 132,
+        "altura": 133,
+        "giro": 0,
+        "inclina": 0,
+        "fuga": 0,
+        "curva": 0
+      },
+      "contraste": 1,
+      "mockup": "chatgpt"
     },
     "japones": {
       "partes": {
@@ -606,37 +374,27 @@
       "contraste": 1
     },
     "bucket": {
-      "partes": {
-        "aba": [
-          [60, 330],
-          [130, 300],
-          [165, 310],
-          [200, 370],
-          [260, 398],
-          [340, 408],
-          [420, 398],
-          [480, 370],
-          [495, 330],
-          [520, 290],
-          [600, 330],
-          [600, 450],
-          [500, 520],
-          [300, 530],
-          [100, 480],
-          [60, 420]
-        ]
+      "original": "assets/produtos/montagem/bucket-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/bucket-mapa.png",
+        "cores": {
+          "ff0000": "aba",
+          "00ff00": "copa"
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 255,
-        "y": 312,
-        "largura": 110,
-        "altura": 145,
+        "x": 330,
+        "y": 253,
+        "largura": 146,
+        "altura": 117,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
-      "contraste": 1
+      "contraste": 1,
+      "mockup": "chatgpt"
     },
     "cumbuca": {
       "partes": {
@@ -668,147 +426,82 @@
       "contraste": 1
     },
     "chapeu-australiano": {
-      "partes": {
-        "aba": [
-          [40, 300],
-          [100, 270],
-          [160, 280],
-          [200, 322],
-          [300, 348],
-          [400, 338],
-          [445, 310],
-          [450, 270],
-          [560, 310],
-          [560, 360],
-          [450, 410],
-          [300, 420],
-          [150, 400],
-          [40, 340]
-        ]
+      "original": "assets/produtos/montagem/chapeu-australiano-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/chapeu-australiano-mapa.png",
+        "cores": {
+          "ff0000": "aba",
+          "00ff00": null,
+          "0000ff": "copa",
+          "ffff00": null,
+          "ff00ff": null
+        }
       },
+      "partes": {},
       "arte": {
-        "x": 385,
-        "y": 270,
-        "largura": 90,
-        "altura": 120,
+        "x": 322,
+        "y": 217,
+        "largura": 131,
+        "altura": 101,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
       "contraste": 1,
-      "chao": [
-        [
-          [210, 412],
-          [260, 420],
-          [440, 420],
-          [500, 410],
-          [500, 640],
-          [210, 640]
-        ]
-      ]
+      "mockup": "chatgpt"
     },
     "chapeu-juta": {
-      "partes": {
-        "fita": [
-          [200, 228],
-          [195, 300],
-          [201, 347],
-          [220, 374],
-          [255, 394],
-          [300, 404],
-          [345, 406],
-          [385, 394],
-          [421, 365],
-          [441, 322],
-          [444, 260],
-          [441, 228],
-          [428, 228],
-          [424, 265],
-          [410, 292],
-          [380, 320],
-          [340, 336],
-          [300, 334],
-          [262, 318],
-          [232, 285],
-          [214, 240],
-          [212, 228]
-        ]
+      "original": "assets/produtos/montagem/chapeu-juta-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/chapeu-juta-mapa.png",
+        "cores": {
+          "ff0000": null,
+          "00ff00": null,
+          "0000ff": "fita",
+          "ffff00": null
+        }
       },
-      "escuros": {
-        "fita": 0.06
-      },
+      "partes": {},
       "arte": {
         "x": 325,
-        "y": 372,
-        "largura": 88,
-        "altura": 62,
-        "giro": 0,
-        "inclina": 0,
-        "fuga": 0,
-        "curva": 0
-      },
-      "contraste": 1
-    },
-    "chapeu-palha": {
-      "partes": {
-        "debrum": [
-          [0, 0],
-          [640, 0],
-          [640, 480],
-          [0, 480]
-        ]
-      },
-      "escuros": {
-        "debrum": 0.06
-      },
-      "fixo": [
-        [
-          [312, 249],
-          [310, 261],
-          [306, 272],
-          [299, 282],
-          [289, 289],
-          [278, 293],
-          [266, 295],
-          [254, 293],
-          [243, 289],
-          [233, 282],
-          [226, 272],
-          [222, 261],
-          [220, 249],
-          [222, 237],
-          [226, 226],
-          [233, 216],
-          [243, 209],
-          [254, 205],
-          [266, 203],
-          [278, 205],
-          [289, 209],
-          [299, 216],
-          [306, 226],
-          [310, 237]
-        ]
-      ],
-      "arte": {
-        "x": 266,
-        "y": 249,
-        "largura": 78,
-        "altura": 72,
+        "y": 242,
+        "largura": 110,
+        "altura": 83,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
         "curva": 0
       },
       "contraste": 1,
-      "chao": [
-        [
-          [220, 455],
-          [370, 455],
-          [370, 640],
-          [220, 640]
-        ]
-      ]
+      "mockup": "chatgpt"
+    },
+    "chapeu-palha": {
+      "original": "assets/produtos/montagem/chapeu-palha-original.webp",
+      "mapa": {
+        "imagem": "assets/produtos/montagem/chapeu-palha-mapa.png",
+        "cores": {
+          "ff0000": null,
+          "00ff00": null,
+          "0000ff": null,
+          "ffff00": null,
+          "ff00ff": null,
+          "00ffff": "debrum"
+        }
+      },
+      "partes": {},
+      "arte": {
+        "x": 315,
+        "y": 145,
+        "largura": 97,
+        "altura": 96,
+        "giro": 0,
+        "inclina": 0,
+        "fuga": 0,
+        "curva": 0
+      },
+      "contraste": 1,
+      "mockup": "chatgpt"
     }
   }
 }
