@@ -21,16 +21,23 @@
   --destaque: var(--azul);
   --destaque-texto: #FFFFFF;
   --sombra: 0 1px 2px rgba(18, 22, 29, .06), 0 8px 24px rgba(18, 22, 29, .06);
+  /* Duas sombras a mais, para o cartao ter repouso e resposta: a leve da
+     profundidade parado, a alta levanta no toque. O site em producao usa uma
+     so (0 0 10px rgba(0,0,0,.1)) e fica chapado no hover. */
+  --sombra-leve: 0 1px 2px rgba(18, 22, 29, .05), 0 2px 10px rgba(18, 22, 29, .05);
+  --sombra-alta: 0 2px 6px rgba(18, 22, 29, .08), 0 14px 34px rgba(18, 22, 29, .14);
 
   /* Semanticas */
   --sucesso: #1B7F4B;
   --alerta: #9A6200;
 
-  /* Tipografia — as mesmas duas famílias do site em producao: Montserrat nos
-     títulos, Poppins no texto. A pilha do sistema pesava zero, mas dava cara
-     de documento; estas duas dao cara de marca, e e o que a fabrica reconhece
-     como "o site dela". Se a fonte nao chegar, a pilha do sistema assume e
-     nada quebra. */
+  /* Tipografia — as mesmas duas familias do site em producao (agbones.com.br),
+     mas com os papeis trocados de proposito: la o titulo e Poppins 700 e o
+     texto e Montserrat 400; aqui o titulo e Montserrat 800, que pesa mais na
+     tela, e o texto e Poppins, que se le melhor corrido no celular. A pilha do
+     sistema pesava zero, mas dava cara de documento; estas duas dao cara de
+     marca, e e o que a fabrica reconhece como "o site dela". Se a fonte nao
+     chegar, a pilha do sistema assume e nada quebra. */
   --fonte: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --fonte-titulo: "Montserrat", var(--fonte);
 
@@ -60,6 +67,8 @@
     --destaque: var(--azul-logo);
     --destaque-texto: #0E1116;
     --sombra: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    --sombra-leve: 0 1px 2px rgba(0, 0, 0, .35), 0 2px 10px rgba(0, 0, 0, .3);
+    --sombra-alta: 0 2px 6px rgba(0, 0, 0, .45), 0 14px 34px rgba(0, 0, 0, .5);
     --sucesso: #4ED08A;
     --alerta: #E3B341;
   }
