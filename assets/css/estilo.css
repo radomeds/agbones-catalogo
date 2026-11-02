@@ -275,7 +275,7 @@ p { margin: 0 0 var(--e4); }
 }
 .ponto--agora { width: 18px; border-radius: 3px; background: var(--destaque); }
 
-@media (prefers-reduced-motion: reduce) { .ponto { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ponto { transition: none; } .faq summary::after { transition: none; } }
 
 /* ---------- Menu com o traco que desliza ---------- */
 
@@ -600,7 +600,23 @@ p { margin: 0 0 var(--e4); }
   background: var(--cartao); border: 1px solid var(--borda);
   border-radius: var(--raio-p); padding: var(--e4); margin-bottom: var(--e3);
 }
-.faq summary { cursor: pointer; font-weight: 600; }
+.faq details { transition: border-color .2s ease, box-shadow .2s ease; }
+.faq details:hover { border-color: var(--destaque); box-shadow: var(--sombra-leve); }
+.faq summary {
+  cursor: pointer; font-weight: 600;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e3);
+  list-style: none;
+}
+.faq summary::-webkit-details-marker { display: none; }
+/* Seta desenhada com duas bordas (sem imagem, sem fonte de icone): aponta para
+   baixo fechada e da meia volta ao abrir. Antes nada dizia que a duvida abria. */
+.faq summary::after {
+  content: ""; flex: none; width: 9px; height: 9px;
+  border-right: 2px solid var(--destaque); border-bottom: 2px solid var(--destaque);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform .25s ease;
+}
+.faq details[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
 .faq details[open] summary { margin-bottom: var(--e3); }
 .faq p { margin: 0; color: var(--texto-fraco); }
 
@@ -677,7 +693,7 @@ p { margin: 0 0 var(--e4); }
 }
 .filtros::-webkit-scrollbar { display: none; }
 .filtro { flex: none; }
-.faq summary { min-height: 48px; display: flex; align-items: center; gap: var(--e2); }
+.faq summary { min-height: 48px; }
 .rodape a { display: inline-flex; align-items: center; min-height: 44px; }
 @media (min-width: 760px) {
   .cabecalho__nav a:not(.botao) { min-height: 44px; display: inline-flex; align-items: center; }
@@ -1233,7 +1249,7 @@ p { margin: 0 0 var(--e4); }
 .cabecalho__logo { min-height: 48px; }
 .pular-para-conteudo { min-height: 48px; display: inline-flex; align-items: center; }
 .filtro { min-height: 48px; padding-inline: 1.1rem; }
-.faq summary { min-height: 48px; display: flex; align-items: center; gap: var(--e2); }
+.faq summary { min-height: 48px; }
 .rodape a { display: inline-flex; align-items: center; min-height: 44px; }
 @media (min-width: 760px) {
   .cabecalho__nav a:not(.botao) { min-height: 44px; display: inline-flex; align-items: center; }
