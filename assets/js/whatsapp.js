@@ -16,6 +16,7 @@ function descreverItem(catalogo, item, posicao) {
   (item.aplicacoes || []).forEach((aplicacao) => {
     partes.push(`   ${aplicacao.parte}: ${aplicacao.tecnica}` +
       (aplicacao.observacao ? ` — ${aplicacao.observacao}` : ""));
+    if (aplicacao.arteCriada) partes.push(`      Arte montada no site: ${aplicacao.arteCriada}`);
   });
   if (!item.aplicacoes || !item.aplicacoes.length) {
     partes.push("   Personalização: a definir");
@@ -71,11 +72,16 @@ export function montarMensagemWhatsapp(catalogo, pedido) {
       "Sei que imagem de referência não é arte de produção: vocês redesenham em vetor e me mandam o layout para eu aprovar antes de produzir.",
     );
   }
-  if (artes.some((arte) => arte.origem)) {
+  const comLogo = artes.some((arte) => arte.origem);
+  const baixouArte = pedido.itens.some((item) => (item.aplicacoes || []).some((a) => a.arteBaixada));
+  if (comLogo || baixouArte) {
     linhas.push("");
     linhas.push("*Vou anexar aqui nesta conversa:*");
-    linhas.push("- minha logo, no melhor arquivo que eu tiver (vetor, se houver)");
-    linhas.push("- a imagem de referência do boné, se eu tiver feito uma");
+    if (comLogo) {
+      linhas.push("- minha logo, no melhor arquivo que eu tiver (vetor, se houver)");
+      linhas.push("- a imagem de referência do boné, se eu tiver feito uma");
+    }
+    if (baixouArte) linhas.push("- a arte que montei no site (o arquivo SVG que baixei)");
   }
 
   if (pedido.cliente && pedido.cliente.trim()) {

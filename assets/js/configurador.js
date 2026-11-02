@@ -28,6 +28,8 @@ import { montarMensagemWhatsapp, abrirWhatsapp } from "./whatsapp.js";
 import { conferirArte, enderecoParaMostrar, podeMostrarNaTela } from "./arte.js";
 import { enderecoDoVetor, vetorizadorDisponivel, vetorizarArquivo } from "./vetor.js";
 import { prepararMedicao, registrar, registrarPedidoEnviado } from "./medicao.js";
+import { interpretarPedido, comporArte, descreverCamada, sugestoes } from "./montador.js";
+import { carregarLetras, contornar, contornoDisponivel } from "./letras.js";
 
 const CHAVE_ARMAZENAMENTO = "agbones.pedido";
 const ULTIMO_PASSO = 3;
@@ -100,6 +102,7 @@ const ICONES = {
   fecho: '<rect x="3" y="9" width="18" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 9v7" stroke="currentColor" stroke-width="2"/>',
   numero: '<path d="M5 8h4v11M13 8h6v5h-6v6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
   logo: '<path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  criar: '<path d="M10 3l1.8 4.7L16.5 9.5l-4.7 1.8L10 16l-1.8-4.7L3.5 9.5l4.7-1.8Z M18 14l.9 2.1L21 17l-2.1.9L18 20l-.9-2.1L15 17l2.1-.9Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
 };
 
 let catalogo = null;
@@ -128,6 +131,7 @@ function criarMontagemVazia() {
     quantidade: null,
     observacoes: "",
     arte: { origem: "", redesenho: false, arquivo: "", nivel: "", vetor: "" },
+    artes: {},           // arte montada no site: { frente: { camadas, selecionada, baixada } }
   };
 }
 
@@ -147,6 +151,19 @@ function esquecerLogoNaTela() {
     if (logoNaTela.vetor) URL.revokeObjectURL(logoNaTela.vetor.endereco);
   }
   logoNaTela = null;
+}
+
+/* A arte montada no site, já desenhada, por parte: { frente: { endereco } }.
+   O histórico (para "desfazer") e a conversa também vivem só nesta aba. */
+let artesNaTela = {};
+let historicoDaArte = {};
+let conversaDaArte = [];
+
+function esquecerArtesNaTela() {
+  Object.values(artesNaTela).forEach((arte) => URL.revokeObjectURL(arte.endereco));
+  artesNaTela = {};
+  historicoDaArte = {};
+  conversaDaArte = [];
 }
 
 /** A imagem que vai no boné: a versão em vetor, se o cliente escolheu ver assim. */
@@ -242,9 +259,14 @@ function painelEstaAberto() {
 }
 
 function abrirPainel(titulo, montarCorpo, acoes = []) {
-  quemAbriuOPainel = document.activeElement;
-  // o botão voltar do celular precisa fechar o painel, não sair do site
-  history.pushState({ painel: true, passo: passoAtual }, "");
+  // um painel pode abrir outro (da parte para "Criar arte"): aí o histórico
+  // e quem abriu continuam os do primeiro
+  if (!painelEstaAberto()) {
+    quemAbriuOPainel = document.activeElement;
+    // o botão voltar do celular precisa fechar o painel, não sair do site
+    history.pushState({ painel: true, passo: passoAtual }, "");
+  }
+  elementos.painel.classList.remove("painel--arte");
 
   elementos.painelTitulo.textContent = titulo;
   elementos.painelCorpo.textContent = "";
@@ -334,7 +356,7 @@ function montarGrade() {
 
 function escolherModelo(id, { seguir = false } = {}) {
   const trocou = !produtoEscolhido || produtoEscolhido.id !== id;
-  if (trocou && partesComArte().length) {
+  if (trocou && partesDoPedido().length) {
     // as técnicas de uma linha não valem na outra, então a montagem recomeça:
     // avisar antes, senão o cliente perde o que fez sem entender por quê
     const certeza = confirm(
@@ -347,6 +369,7 @@ function escolherModelo(id, { seguir = false } = {}) {
   produtoEscolhido = produtoPorId(catalogo, id);
   if (trocou) {
     montagem = criarMontagemVazia();
+    esquecerArtesNaTela();
     registrar("escolheu_modelo", { modelo: id, linha: produtoEscolhido.linha });
   }
 
@@ -414,18 +437,22 @@ function virarOBone() {
     É uma ideia de como fica, não o layout final — o texto diz isso. */
 function desenharAplicacoes() {
   elementos.aplicacoes.textContent = "";
-  if (!logoNaTela) return;
 
   Object.keys(APLICACAO).forEach((posicao) => {
     const parteId = parteDaPosicao(posicao);
     if (!areaPorId(parteId)) return;
-    const escolhida = montagem.partes[parteId];
-    if (!escolhida || !escolhida.tecnicas || !escolhida.tecnicas.length) return;
+    // a arte montada no site vale mais que a logo solta: foi o que o cliente fez ali
+    let endereco = artesNaTela[parteId] ? artesNaTela[parteId].endereco : "";
+    if (!endereco) {
+      const escolhida = montagem.partes[parteId];
+      if (!logoNaTela || !escolhida || !escolhida.tecnicas || !escolhida.tecnicas.length) return;
+      endereco = enderecoDaLogo();
+    }
 
     const lugar = APLICACAO[posicao];
     const imagem = document.createElement("img");
     imagem.className = "aplicacao";
-    imagem.src = enderecoDaLogo();
+    imagem.src = endereco;
     imagem.alt = "";
     imagem.style.left = `${ladoDireito ? 100 - lugar.x : lugar.x}%`;
     imagem.style.top = `${lugar.y}%`;
@@ -453,7 +480,8 @@ function desenharMarcadores() {
     const temArte = Boolean(escolhida && escolhida.tecnicas && escolhida.tecnicas.length);
     // com a logo desenhada, o marcador vira um anel vazado: senão ele
     // cobriria justamente a arte que o cliente quer ver
-    const mostrandoLogo = temArte && Boolean(logoNaTela) && Boolean(APLICACAO[posicao]);
+    const mostrandoLogo = Boolean(APLICACAO[posicao]) &&
+      (Boolean(artesNaTela[parte.id]) || (temArte && Boolean(logoNaTela)));
     marcador.classList.toggle("marcador--preenchido", temArte && !mostrandoLogo);
     marcador.classList.toggle("marcador--vazado", mostrandoLogo);
     marcador.textContent = mostrandoLogo ? "" : (temArte ? "✓" : "+");
@@ -506,7 +534,8 @@ function desenharPartes() {
 
 /** Expectativa alinhada: o desenho é uma ideia, não o layout de produção. */
 function atualizarNotaDoPalco() {
-  const mostrando = Boolean(logoNaTela) && partesComArte().length > 0;
+  const mostrando = Object.keys(artesNaTela).length > 0 ||
+    (Boolean(logoNaTela) && partesComArte().length > 0);
   elementos.palcoNota.classList.toggle("oculto", !mostrando);
   if (mostrando) {
     elementos.palcoNota.textContent =
@@ -650,11 +679,22 @@ function abrirPainelDaParte(parte) {
         atualizarBarra();
       },
     },
-    ...(atual.tecnicas.length ? [{
+    {
+      texto: temArteCriada(parte.id) ? "Mexer na arte desta parte" : "Montar a arte aqui (texto, letra, cor)",
+      classe: "botao--texto",
+      aoTocar: () => {
+        if (escolhidas.length) {
+          montagem.partes[parte.id] = { tecnicas: escolhidas, observacao: observacao.trim() };
+        }
+        abrirPainelDeCriarArte(parte.id);
+      },
+    },
+    ...(atual.tecnicas.length || temArteCriada(parte.id) ? [{
       texto: "Tirar a arte desta parte",
       classe: "botao--texto",
       aoTocar: () => {
         delete montagem.partes[parte.id];
+        apagarArteCriada(parte.id);
         fecharPainel();
         desenharMarcadores();
         desenharAplicacoes();
@@ -663,6 +703,416 @@ function abrirPainelDaParte(parte) {
       },
     }] : []),
   ]);
+}
+
+/* ---------- Criar arte: o designer de quem não é designer ----------
+   O cliente escreve como fala ("escreva Fazenda Boa Vista em arco, dourado com
+   contorno preto") e a arte aparece na hora, em camadas, na parte do boné que
+   ele escolheu. O entendimento do pedido é local (montador.js): não chama
+   nenhum serviço pago e funciona no 4G. O contorno é o motor do ArtCraft. */
+
+function camadasDaParte(parteId) {
+  return (montagem.artes[parteId] && montagem.artes[parteId].camadas) || [];
+}
+
+function temArteCriada(parteId) {
+  return camadasDaParte(parteId).some((camada) => camada.visivel);
+}
+
+/** Partes que vão no pedido: as com técnica e as com arte montada. */
+function partesDoPedido() {
+  const ids = partesComArte().map(([parteId]) => parteId);
+  Object.keys(montagem.artes).forEach((parteId) => {
+    if (temArteCriada(parteId) && !ids.includes(parteId) && areaPorId(parteId)) ids.push(parteId);
+  });
+  return ids;
+}
+
+function apagarArteCriada(parteId) {
+  delete montagem.artes[parteId];
+  delete historicoDaArte[parteId];
+  if (artesNaTela[parteId]) URL.revokeObjectURL(artesNaTela[parteId].endereco);
+  delete artesNaTela[parteId];
+}
+
+/** A logo vai dentro do SVG como data: — o navegador não deixa um SVG mostrado
+    como imagem buscar outro arquivo, nem um blob da mesma página. */
+async function logoParaArte() {
+  if (!logoNaTela) return null;
+  const endereco = enderecoDaLogo();
+  if (logoNaTela.paraArte && logoNaTela.paraArte.origem === endereco) return logoNaTela.paraArte;
+  const dados = await new Promise((resolver, recusar) => {
+    fetch(endereco).then((resposta) => resposta.blob()).then((blob) => {
+      const leitor = new FileReader();
+      leitor.onload = () => resolver(leitor.result);
+      leitor.onerror = recusar;
+      leitor.readAsDataURL(blob);
+    }, recusar);
+  });
+  const proporcao = await new Promise((resolver) => {
+    const imagem = new Image();
+    imagem.onload = () => resolver(imagem.naturalWidth && imagem.naturalHeight
+      ? imagem.naturalWidth / imagem.naturalHeight : 1);
+    imagem.onerror = () => resolver(1);
+    imagem.src = dados;
+  });
+  logoNaTela.paraArte = { origem: endereco, endereco: dados, proporcao };
+  return logoNaTela.paraArte;
+}
+
+/** Desenha a arte de uma parte e guarda a imagem para o palco. */
+async function comporArteDaParte(parteId) {
+  const camadas = camadasDaParte(parteId);
+  const precisaLogo = camadas.some((camada) => camada.tipo === "logo" && camada.visivel);
+  const logo = precisaLogo ? await logoParaArte().catch(() => null) : null;
+  return comporArte(camadas, {
+    letrasDe: carregarLetras,
+    contornar: contornoDisponivel() ? contornar : null,
+    logo,
+  });
+}
+
+/** Põe na parte a forma de aplicação recomendada, quando ainda não há nenhuma:
+    o cliente leigo não sabe escolher, e a fábrica confirma no atendimento. */
+function garantirTecnica(parteId) {
+  const escolhida = montagem.partes[parteId];
+  if (escolhida && escolhida.tecnicas && escolhida.tecnicas.length) return;
+  const area = areaPorId(parteId);
+  if (!area) return;
+  const { permitidas, recomendada } = tecnicasDaArea(catalogo, produtoEscolhido, construcaoAtual(), area);
+  const tecnica = recomendada || permitidas[0];
+  if (!tecnica) return;
+  // "automatica": se a arte some, a forma de aplicação que o site pôs sai junto
+  montagem.partes[parteId] = { tecnicas: [tecnica.id], observacao: (escolhida || {}).observacao || "", automatica: true };
+}
+
+let desenhoDaArte = 0;
+
+/** Redesenha a arte de uma parte no painel e no palco. */
+async function atualizarArteDaParte(parteId, previa) {
+  const vez = ++desenhoDaArte;
+  if (previa) previa.classList.add("arte-previa--desenhando");
+  let resultado = null;
+  try {
+    resultado = await comporArteDaParte(parteId);
+  } catch (erro) {
+    resultado = null;
+  }
+  if (vez !== desenhoDaArte) return null;
+
+  if (artesNaTela[parteId]) URL.revokeObjectURL(artesNaTela[parteId].endereco);
+  delete artesNaTela[parteId];
+  if (resultado) {
+    const endereco = URL.createObjectURL(new Blob([resultado.svg], { type: "image/svg+xml" }));
+    artesNaTela[parteId] = { endereco };
+    garantirTecnica(parteId);
+  } else if (montagem.partes[parteId] && montagem.partes[parteId].automatica) {
+    delete montagem.partes[parteId];
+  }
+
+  if (previa) {
+    previa.classList.remove("arte-previa--desenhando");
+    previa.textContent = "";
+    if (resultado) {
+      const imagem = document.createElement("img");
+      imagem.src = artesNaTela[parteId].endereco;
+      imagem.alt = `Prévia da arte: ${camadasDaParte(parteId).filter((c) => c.visivel).map(descreverCamada).join(", ")}`;
+      previa.append(imagem);
+    } else {
+      const vazio = document.createElement("p");
+      vazio.className = "arte-previa__vazio";
+      vazio.textContent = "A arte aparece aqui enquanto você pede.";
+      previa.append(vazio);
+    }
+  }
+  desenharAplicacoes();
+  desenharMarcadores();
+  desenharPartes();
+  marcarFerramentas();
+  atualizarBarra();
+  return resultado;
+}
+
+/** Parte pedida pelo cliente ("na aba", "na lateral") vira uma área do modelo. */
+function areaDaFala(parte) {
+  if (parte === "lateral") {
+    const preferida = ladoDireito ? "lateral-direita" : "lateral-esquerda";
+    if (areaPorId(preferida)) return preferida;
+    return ["lateral-esquerda", "lateral-direita", "lado-a", "lado-b"].find(areaPorId) || null;
+  }
+  return areaPorId(parte) ? parte : null;
+}
+
+function abrirPainelDeCriarArte(parteInicial) {
+  const areas = areasDoProduto();
+  if (!areas.length) return;
+  let parteAtual = parteInicial && areaPorId(parteInicial) ? parteInicial
+    : (areas.find((area) => temArteCriada(area.id)) || areas.find((area) => area.id === "frente") || areas[0]).id;
+
+  let abas;
+  let previa;
+  let conversa;
+  let chips;
+  let listaDeCamadas;
+  let entrada;
+
+  const estadoDaParte = (parteId) => ({
+    camadas: camadasDaParte(parteId),
+    selecionada: (montagem.artes[parteId] || {}).selecionada || null,
+    temLogo: Boolean(logoNaTela),
+  });
+
+  const guardar = (parteId, camadas, selecionada) => {
+    if (camadas.length) {
+      montagem.artes[parteId] = { ...(montagem.artes[parteId] || {}), camadas, selecionada, baixada: false };
+    } else {
+      delete montagem.artes[parteId];
+    }
+  };
+
+  const lembrar = (parteId) => {
+    const pilha = historicoDaArte[parteId] || (historicoDaArte[parteId] = []);
+    pilha.push(JSON.parse(JSON.stringify(estadoDaParte(parteId))));
+    if (pilha.length > 40) pilha.shift();
+  };
+
+  const falar = (quem, texto) => {
+    if (!texto) return;
+    conversaDaArte.push({ quem, texto });
+    if (conversaDaArte.length > 30) conversaDaArte.shift();
+    desenharConversa();
+  };
+
+  function desenharConversa() {
+    conversa.textContent = "";
+    conversaDaArte.forEach((fala) => {
+      const balao = document.createElement("p");
+      balao.className = `arte-fala arte-fala--${fala.quem}`;
+      balao.textContent = fala.texto;
+      conversa.append(balao);
+    });
+    conversa.scrollTop = conversa.scrollHeight;
+  }
+
+  function desenharAbas() {
+    abas.textContent = "";
+    areas.forEach((area) => {
+      const aba = document.createElement("button");
+      aba.type = "button";
+      aba.className = "arte-aba";
+      aba.textContent = area.nome;
+      aba.setAttribute("aria-pressed", String(area.id === parteAtual));
+      aba.classList.toggle("arte-aba--com-arte", temArteCriada(area.id));
+      aba.addEventListener("click", () => trocarParte(area.id));
+      abas.append(aba);
+    });
+  }
+
+  function desenharChips() {
+    chips.textContent = "";
+    sugestoes(estadoDaParte(parteAtual)).forEach((texto) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "arte-chip";
+      chip.textContent = texto;
+      chip.addEventListener("click", () => pedir(texto.replace(/[“”]/g, "\"")));
+      chips.append(chip);
+    });
+  }
+
+  function desenharCamadas() {
+    listaDeCamadas.textContent = "";
+    const { camadas, selecionada } = estadoDaParte(parteAtual);
+    listaDeCamadas.classList.toggle("oculto", !camadas.length);
+    camadas.forEach((camada, indice) => {
+      const item = document.createElement("li");
+      item.className = "arte-camada";
+      item.classList.toggle("arte-camada--selecionada", camada.id === selecionada);
+      item.classList.toggle("arte-camada--escondida", !camada.visivel);
+
+      const escolher = document.createElement("button");
+      escolher.type = "button";
+      escolher.className = "arte-camada__nome";
+      escolher.textContent = descreverCamada(camada);
+      escolher.setAttribute("aria-pressed", String(camada.id === selecionada));
+      escolher.addEventListener("click", () => {
+        guardar(parteAtual, camadas, camada.id);
+        falar("site", `Agora o que você pedir vale para ${camada.tipo === "logo" ? "a logo" : `“${camada.texto}”`}.`);
+        redesenharTudo(false);
+      });
+
+      const botao = (rotulo, texto, aoTocar, desligado = false) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "arte-camada__acao";
+        b.textContent = texto;
+        b.setAttribute("aria-label", rotulo);
+        b.title = rotulo;
+        b.disabled = desligado;
+        b.addEventListener("click", aoTocar);
+        return b;
+      };
+      const mexer = (mudar) => {
+        lembrar(parteAtual);
+        const copia = camadas.map((c) => ({ ...c }));
+        mudar(copia);
+        guardar(parteAtual, copia, selecionada && copia.some((c) => c.id === selecionada) ? selecionada : (copia[0] || {}).id || null);
+        redesenharTudo(true);
+      };
+
+      item.append(
+        escolher,
+        botao("Subir", "↑", () => mexer((copia) => copia.splice(indice - 1, 0, copia.splice(indice, 1)[0])), indice === 0),
+        botao("Descer", "↓", () => mexer((copia) => copia.splice(indice + 1, 0, copia.splice(indice, 1)[0])), indice === camadas.length - 1),
+        botao(camada.visivel ? "Esconder" : "Mostrar", camada.visivel ? "◉" : "○",
+          () => mexer((copia) => { copia[indice].visivel = !copia[indice].visivel; })),
+        botao("Apagar", "✕", () => mexer((copia) => { copia.splice(indice, 1); })),
+      );
+      listaDeCamadas.append(item);
+    });
+  }
+
+  function redesenharTudo(desenharArte) {
+    desenharAbas();
+    desenharCamadas();
+    desenharChips();
+    if (desenharArte) atualizarArteDaParte(parteAtual, previa);
+  }
+
+  function trocarParte(parteId) {
+    parteAtual = parteId;
+    const area = areaPorId(parteId);
+    elementos.painelTitulo.textContent = `Criar arte · ${area.nome}`;
+    redesenharTudo(true);
+  }
+
+  function pedir(texto) {
+    const limpo = String(texto || "").trim();
+    if (!limpo) return;
+    falar("cliente", limpo);
+
+    let resposta = interpretarPedido(limpo, estadoDaParte(parteAtual));
+    if (resposta.parte) {
+      const destino = areaDaFala(resposta.parte);
+      if (!destino) {
+        falar("site", "Este modelo não tem essa parte para arte. Escolha uma das partes aqui em cima.");
+        return;
+      }
+      if (destino !== parteAtual) {
+        trocarParte(destino);
+        resposta = interpretarPedido(limpo, estadoDaParte(destino));
+        if (!resposta.resposta) resposta.resposta = `Agora estamos na ${areaPorId(destino).nome.toLowerCase()}.`;
+      }
+    }
+
+    if (resposta.desfazer) {
+      const pilha = historicoDaArte[parteAtual] || [];
+      if (!pilha.length) {
+        falar("site", "Não tem mais nada para voltar.");
+        return;
+      }
+      const anterior = pilha.pop();
+      guardar(parteAtual, anterior.camadas, anterior.selecionada);
+      falar("site", resposta.resposta);
+      redesenharTudo(true);
+      return;
+    }
+
+    if (resposta.mudou) {
+      lembrar(parteAtual);
+      registrar("criou_arte", { parte: parteAtual });
+    }
+    guardar(parteAtual, resposta.camadas, resposta.selecionada);
+    falar("site", resposta.resposta || "Pronto.");
+    redesenharTudo(resposta.mudou);
+  }
+
+  async function baixar() {
+    const resultado = await comporArteDaParte(parteAtual);
+    if (!resultado) {
+      falar("site", "Ainda não tem arte nesta parte para baixar. Peça um texto primeiro.");
+      return;
+    }
+    const nome = `arte-${(produtoEscolhido.id || "bone")}-${parteAtual}.svg`;
+    const endereco = URL.createObjectURL(new Blob([resultado.svg], { type: "image/svg+xml" }));
+    const link = document.createElement("a");
+    link.href = endereco;
+    link.download = nome;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(endereco), 4000);
+    if (montagem.artes[parteAtual]) montagem.artes[parteAtual].baixada = true;
+    registrar("baixou_arte", { parte: parteAtual });
+    falar("site", `Baixei o arquivo ${nome}. Mande ele junto no WhatsApp: a fábrica abre direto no Corel.`);
+  }
+
+  abrirPainel(`Criar arte · ${areaPorId(parteAtual).nome}`, (corpo) => {
+    const apoio = document.createElement("p");
+    apoio.className = "painel__apoio";
+    apoio.textContent = "Escreva como se estivesse falando com a gente: o que vai escrito, a cor, a letra. " +
+      "A arte aparece aqui na hora. Para mudar, é só pedir.";
+    corpo.append(apoio);
+
+    abas = document.createElement("div");
+    abas.className = "arte-abas";
+    abas.setAttribute("aria-label", "Parte do boné");
+
+    previa = document.createElement("div");
+    previa.className = "arte-previa";
+
+    conversa = document.createElement("div");
+    conversa.className = "arte-conversa";
+    conversa.setAttribute("aria-live", "polite");
+
+    chips = document.createElement("div");
+    chips.className = "arte-chips";
+
+    const formulario = document.createElement("form");
+    formulario.className = "arte-pedido";
+    entrada = document.createElement("input");
+    entrada.type = "text";
+    entrada.enterKeyHint = "send";
+    entrada.autocomplete = "off";
+    entrada.placeholder = "Ex.: escreva Fazenda Boa Vista em arco, dourado";
+    entrada.setAttribute("aria-label", "O que você quer na arte");
+    const mandar = document.createElement("button");
+    mandar.type = "submit";
+    mandar.className = "botao arte-pedido__mandar";
+    mandar.textContent = "Pedir";
+    formulario.append(entrada, mandar);
+    formulario.addEventListener("submit", (evento) => {
+      evento.preventDefault();
+      const texto = entrada.value;
+      entrada.value = "";
+      pedir(texto);
+    });
+
+    listaDeCamadas = document.createElement("ul");
+    listaDeCamadas.className = "arte-camadas";
+    listaDeCamadas.setAttribute("aria-label", "Camadas da arte, de cima para baixo");
+
+    const nota = document.createElement("p");
+    nota.className = "painel__apoio arte-nota";
+    nota.textContent = "É a arte em curvas, do jeito que a fábrica usa. Antes de produzir, a gente manda o layout para você aprovar.";
+
+    corpo.append(abas, previa, conversa, chips, formulario, listaDeCamadas, nota);
+
+    if (!conversaDaArte.length) {
+      conversaDaArte.push({
+        quem: "site",
+        texto: logoNaTela
+          ? "Oi! O que vai no boné? Pode pedir um texto, ou \"coloca a minha logo\"."
+          : "Oi! O que vai escrito no boné? Pode pedir do seu jeito, que eu monto aqui.",
+      });
+    }
+    desenharConversa();
+    redesenharTudo(true);
+  }, [
+    { texto: "Pronto", classe: "botao--grande", aoTocar: fecharPainel },
+    { texto: "Baixar a arte (arquivo SVG)", classe: "botao--texto", aoTocar: baixar },
+  ]);
+  elementos.painel.classList.add("painel--arte");
 }
 
 /* ---------- Ferramentas ---------- */
@@ -696,6 +1146,7 @@ function montarFerramentas() {
   });
 
   lista.push({ id: "logo", nome: "Sua logo", icone: "logo", aoTocar: abrirPainelDaLogo });
+  lista.push({ id: "criar-arte", nome: "Criar arte", icone: "criar", aoTocar: () => abrirPainelDeCriarArte() });
   lista.push({ id: "quantidade", nome: "Quantidade", icone: "numero", aoTocar: abrirPainelDeQuantidade });
 
   elementos.ferramentas.textContent = "";
@@ -724,6 +1175,7 @@ function marcarFerramentas() {
     cores: montagem.cores.length > 0,
     fecho: Boolean(montagem.variacoes.fecho),
     logo: Boolean(montagem.arte.origem),
+    "criar-arte": Object.keys(montagem.artes || {}).some(temArteCriada),
     quantidade: Boolean(montagem.quantidade) && montagem.quantidade >= minimo,
   };
   elementos.ferramentas.querySelectorAll(".ferramenta").forEach((botao) => {
@@ -1427,14 +1879,18 @@ function montarItemAtual() {
     linha: produtoEscolhido.linha,
     imagem: produtoEscolhido.imagem,
     quantidade: montagem.quantidade,
-    aplicacoes: partesComArte().map(([parteId, escolha]) => {
+    aplicacoes: partesDoPedido().map((parteId) => {
       const parte = areaPorId(parteId);
+      const escolha = montagem.partes[parteId] || { tecnicas: [], observacao: "" };
+      const criada = montagem.artes[parteId];
       return {
         parte: parte ? parte.nome : parteId,
-        tecnica: escolha.tecnicas
-          .map((id) => (tecnicaPorId(catalogo, id) || {}).nome || id)
-          .join(" + "),
+        tecnica: escolha.tecnicas.length
+          ? escolha.tecnicas.map((id) => (tecnicaPorId(catalogo, id) || {}).nome || id).join(" + ")
+          : "forma de aplicação a definir",
         observacao: escolha.observacao || "",
+        arteCriada: criada ? criada.camadas.filter((c) => c.visivel).map(descreverCamada).join(" / ") : "",
+        arteBaixada: Boolean(criada && criada.baixada),
       };
     }),
     construcao: (construcaoAtual() || {}).nome || "",
@@ -1521,6 +1977,7 @@ function avancar() {
     });
     salvarPedido();
     montagem = criarMontagemVazia();
+    esquecerArtesNaTela();
     arteConferida = null;
     return irParaPasso(3);
   }
@@ -1531,7 +1988,7 @@ function atualizarBarra() {
     elementos.barraTitulo.textContent = produtoEscolhido ? produtoEscolhido.nome : "Escolha um modelo";
     elementos.barraDetalhe.textContent = produtoEscolhido ? "toque em continuar" : "toque na foto do boné";
   } else if (passoAtual === 2) {
-    const quantas = partesComArte().length;
+    const quantas = partesDoPedido().length;
     elementos.barraTitulo.textContent = produtoEscolhido ? produtoEscolhido.nome : "";
     const previa = previaDoItem();
     const partes = quantas ? `${quantas} ${quantas === 1 ? "arte" : "artes"}` : "sem arte";
@@ -1639,7 +2096,8 @@ function desenharPedido() {
   elementos.totalPecas.textContent = String(pecas);
   elementos.totalPrazo.textContent = formatarData(calcularPrazo(20));
   elementos.totalValor.textContent = algumSemPreco ? "sob consulta" : formatarMoeda(valor);
-  elementos.lembreteAnexos.classList.toggle("oculto", !itens.some((item) => item.arte && item.arte.origem));
+  elementos.lembreteAnexos.classList.toggle("oculto", !itens.some((item) =>
+    (item.arte && item.arte.origem) || (item.aplicacoes || []).some((a) => a.arteBaixada)));
   elementos.botaoWhatsapp.disabled = !temItens;
 }
 
@@ -1663,6 +2121,7 @@ function limparPedido() {
   if (itens.length && !confirm("Apagar tudo e começar de novo?")) return;
   itens = [];
   montagem = criarMontagemVazia();
+  esquecerArtesNaTela();
   produtoEscolhido = null;
   arteConferida = null;
   esquecerLogoNaTela();
