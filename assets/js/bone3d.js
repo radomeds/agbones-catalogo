@@ -4,12 +4,17 @@
    números (altura da copa, número de gomos, aba reta ou curva, tela atrás), e é
    por isso que o mesmo código desenha o trucker, o americano, o aba reta e o
    dad hat. Chapéu e viseira saem do mesmo jeito, com outro desenho.
+   O modelo que tem `glb` no desenho (o trucker) troca, assim que o arquivo
+   chega, pelo boné modelado no Blender (ferramentas/modelar-trucker.py), com
+   as mesmas peças e o mesmo jeito de pintar. Se o arquivo não vier, ou se o ADM
+   mexeu na forma e o arquivo não bate mais, fica o boné montado em código.
    Motor: three.js (MIT), em assets/js/terceiros/three/. */
 
 import * as THREE from "three";
 import { OrbitControls } from "./terceiros/three/OrbitControls.js";
 import { RoomEnvironment } from "./terceiros/three/RoomEnvironment.js";
 import { DecalGeometry } from "./terceiros/three/DecalGeometry.js";
+import { GLTFLoader } from "./terceiros/three/GLTFLoader.js";
 import {
   MEDIDAS_PADRAO, CAMPOS_DE_AJUSTE, DESENHOS, medidasDe, RASCUNHO_DE_AJUSTES, carregarAjustes, partesDoDesenho,
 } from "./desenhos.js";
@@ -333,10 +338,48 @@ function geometriaDeChapeu(perfil, passos = 96) {
    escolhe a parte). Ângulo em graus em volta do boné; 0 é de frente. */
 const VISTA_DA_PARTE = {
   frente: 28, laterais: 80, traseira: 180, aba: 25, "aba-baixo": 15, botao: 30,
-  copa: 25, fita: 20, debrum: 25,
+  copa: 25, fita: 20, debrum: 25, "aba-sanduiche": 20, suador: 180, costura: 28,
 };
 
+/* ---------- o boné modelado no Blender (glb) ---------- */
+
+const modelosBaixados = new Map();
+
+/** Baixa o arquivo uma vez só por endereço; se der erro, a próxima tenta de novo. */
+function baixarModelo(endereco) {
+  if (!modelosBaixados.has(endereco)) {
+    const promessa = new GLTFLoader().loadAsync(endereco).catch((erro) => {
+      modelosBaixados.delete(endereco);
+      throw erro;
+    });
+    modelosBaixados.set(endereco, promessa);
+  }
+  return modelosBaixados.get(endereco);
+}
+
+/** O arquivo foi feito com estas medidas? (o Blender grava as dele nos extras) */
+function medidasBatem(cena, medidas) {
+  let gravadas = null;
+  cena.traverse((o) => { if (!gravadas && o.userData && o.userData.medidas) gravadas = o.userData.medidas; });
+  if (!gravadas) return false;
+  return ["copa", "aba"].every((grupo) => {
+    const a = gravadas[grupo] || {};
+    const b = medidas[grupo] || {};
+    const chaves = new Set([...Object.keys(a), ...Object.keys(b)]);
+    return [...chaves].every((chave) => Math.abs((a[chave] ?? NaN) - (b[chave] ?? NaN)) < 1e-6);
+  });
+}
+
 /* ---------- o palco ---------- */
+
+/** Escurece a cor um tom como o olho vê (em sRGB). Escurecer na escala de luz
+    do motor derruba as cores escuras quase a preto. */
+function tomAbaixo(cor, css, quanto) {
+  const hsl = {};
+  cor.set(css).getHSL(hsl, THREE.SRGBColorSpace);
+  cor.setHSL(hsl.h, hsl.s, Math.max(0, hsl.l - quanto), THREE.SRGBColorSpace);
+  return cor;
+}
 
 export class PalcoDoBone {
   constructor(tela) {
@@ -397,6 +440,19 @@ export class PalcoDoBone {
 
     this.sarja = texturaSarja();
     this.furos = texturaFurosTela();
+    // no boné do Blender cada peça da copa vai de 0 a 1 (a frente é 0,3 da volta;
+    // laterais e traseira, 0,35 cada); no de código, a volta inteira vai de 0 a 9
+    // e a altura de 0 a 3. As mesmas imagens, repetidas para dar o mesmo tamanho.
+    const repetida = (textura, u, v) => {
+      const copia = textura.clone();
+      copia.repeat.set(u, v);
+      return copia;
+    };
+    this.texturasDaCopa = {
+      frente: { sarja: repetida(this.sarja, 2.7, 3), furos: repetida(this.furos, 13.5, 27) },
+      laterais: { sarja: repetida(this.sarja, 3.15, 3), furos: repetida(this.furos, 15.75, 27) },
+      traseira: { sarja: repetida(this.sarja, 3.15, 3), furos: repetida(this.furos, 15.75, 27) },
+    };
     this.cores = {};
     this.materiais = {};
     this.arte = null;
@@ -530,12 +586,8 @@ export class PalcoDoBone {
 
   /** Troca o modelo inteiro. `cores` é { parte: "#hex" }. */
   montar(id, cores = {}) {
-    if (this.grupo) {
-      this.cena.remove(this.grupo);
-      this.grupo.traverse((o) => {
-        if (o.geometry) o.geometry.dispose();
-      });
-    }
+    this.montagem = (this.montagem || 0) + 1;
+    this.tirarGrupo();
     this.id = id;
     this.desenho = DESENHOS[id];
     this.materiais = {};
@@ -557,6 +609,85 @@ export class PalcoDoBone {
     this.medirModelo();
     Object.entries(this.cores).forEach(([parte, cor]) => this.pintar(parte, cor));
     if (this.arte) this.colocarArte(this.arte);
+    if (this.desenho.glb) this.trocarPeloModelo(this.desenho.glb, this.montagem);
+  }
+
+  tirarGrupo() {
+    if (!this.grupo) return;
+    this.cena.remove(this.grupo);
+    this.grupo.traverse((o) => {
+      // a geometria do arquivo baixado fica guardada para a próxima vez
+      if (o.geometry && !o.userData.doArquivo) o.geometry.dispose();
+    });
+    if (this.decalque) {
+      this.decalque.material.dispose();
+      this.decalque = null;
+    }
+  }
+
+  /** Põe o boné do Blender no lugar do montado em código, quando ele chegar. */
+  async trocarPeloModelo(endereco, montagem) {
+    let gltf;
+    try {
+      gltf = await baixarModelo(endereco);
+    } catch (erro) {
+      console.warn("Boné 3D: fica o modelo montado em código.", erro);
+      return;
+    }
+    // o cliente já trocou de modelo, ou o ADM mexeu na forma: fica o de código
+    if (montagem !== this.montagem || !medidasBatem(gltf.scene, this.medidas)) return;
+    const alvo = this.alvoDaArte;
+    const posicao = this.grupo.position.clone();
+    this.tirarGrupo();
+    this.materiais = {};
+    this.grupo = new THREE.Group();
+    this.grupo.position.copy(posicao);
+    const modelo = gltf.scene.clone(true);
+    const malhas = [];
+    modelo.traverse((o) => { if (o.isMesh) malhas.push(o); });
+    malhas.forEach((malha) => {
+      const parte = malha.name.split("__")[0];
+      malha.userData.doArquivo = true;
+      // a linha fica rente ao pano: com sombra, ela pegava a do próprio tecido e ficava preta
+      const linha = parte.startsWith("costura");
+      malha.castShadow = !linha;
+      malha.receiveShadow = !linha;
+      if (parte.startsWith("fixo")) return; // o regulador e o forro têm a cor deles
+      malha.userData.parte = parte;
+      malha.material = this.material(parte, () => this.materialDoArquivo(parte, malha.material));
+    });
+    this.grupo.add(modelo);
+    this.cena.add(this.grupo);
+    if (alvo) alvo.malhas = malhas.filter((o) => o.userData.parte === "frente");
+    this.medirModelo();
+    Object.entries(this.cores).forEach(([parte, cor]) => this.pintar(parte, cor));
+    this.pintarLinhas();
+    if (this.arte) this.colocarArte(this.arte);
+  }
+
+  /** O material do site para uma peça do boné do Blender. */
+  materialDoArquivo(parte, original) {
+    const cor = new THREE.Color(this.cores[parte] || "#f2f2f2");
+    if (parte.startsWith("costura")) {
+      // sem mipmap: a imagem do ponto tem o vão transparente em preto, e de longe
+      // a média dos dois deixava a linha escura
+      if (original.map && original.map.generateMipmaps) {
+        original.map.generateMipmaps = false;
+        original.map.minFilter = THREE.NearestFilter;
+        original.map.needsUpdate = true;
+      }
+      return new THREE.MeshStandardMaterial({
+        color: cor, map: original.map, alphaTest: 0.5, roughness: 0.75, side: THREE.DoubleSide,
+      });
+    }
+    // do Blender ficam a forma e a sombra das dobras e das costuras; a trama e os
+    // furos vêm das imagens repetidas do site, que continuam nítidas de longe
+    // (a trama gravada numa imagem só por gomo sumia quando o celular a reduzia)
+    const daCopa = this.texturasDaCopa[parte];
+    if (original.alphaTest > 0) return materialTela(daCopa ? daCopa.furos : this.furos, cor);
+    const material = materialTecido(daCopa ? daCopa.sarja : this.sarja, cor);
+    if (original.map) material.map = original.map;
+    return material;
   }
 
   material(parte, criar) {
@@ -573,16 +704,34 @@ export class PalcoDoBone {
   /** Pinta uma parte. Aceita "todo" para o boné inteiro. */
   pintar(parte, cor) {
     if (parte === "todo") {
+      // a linha tem cor própria (ou segue o tecido sozinha); o fixo não pinta
       Object.keys(this.materiais).forEach((p) => {
-        if (p !== "costura-fixa") this.pintar(p, cor);
+        if (!p.startsWith("costura") && !p.startsWith("fixo")) this.pintar(p, cor);
       });
       return;
     }
-    this.cores[parte] = cor;
-    (this.materiais[parte] || []).forEach((material) => material.color.set(cor));
-    // a costura acompanha a parte, um tom acima, como linha da mesma cor
-    (this.materiais[`costura-${parte}`] || []).forEach((material) => {
-      material.color.set(cor).offsetHSL(0, 0, -0.06);
+    if (cor) this.cores[parte] = cor;
+    else delete this.cores[parte];
+    if (parte === "costura") {
+      this.pintarLinhas();
+      return;
+    }
+    if (cor) (this.materiais[parte] || []).forEach((material) => material.color.set(cor));
+    this.pintarLinhas(parte);
+  }
+
+  /** A linha de cada parte: a cor escolhida para a linha ou, sem ela, a do
+      tecido um tom abaixo, como linha da mesma cor. */
+  pintarLinhas(soDaParte) {
+    Object.keys(this.materiais).forEach((chave) => {
+      if (!chave.startsWith("costura-")) return;
+      const dona = chave.slice("costura-".length);
+      if (soDaParte && dona !== soDaParte) return;
+      const propria = this.cores.costura;
+      this.materiais[chave].forEach((material) => {
+        if (propria) material.color.set(propria);
+        else tomAbaixo(material.color, this.cores[dona] || "#f2f2f2", 0.06);
+      });
     });
   }
 
@@ -630,7 +779,7 @@ export class PalcoDoBone {
       malha.userData.parte = parte;
       this.grupo.add(malha);
       const costura = this.material(`costura-${parte}`, () => new THREE.MeshStandardMaterial({ roughness: 0.9 }));
-      costura.color.set(this.cores[parte] || "#f2f2f2").offsetHSL(0, 0, -0.06);
+      tomAbaixo(costura.color, this.cores[parte] || "#f2f2f2", 0.06);
       this.grupo.add(new THREE.Mesh(geometriaDaCostura(forma, a), costura));
 
       // o ilhós de cada gomo (o furinho de ventilação bordado), no alto do gomo
@@ -792,7 +941,7 @@ export class PalcoDoBone {
     // a costura em espiral da aba de bucket e australiano
     if (!d.palha) {
       const linha = this.material("costura-aba", () => new THREE.MeshStandardMaterial({ roughness: 0.9 }));
-      linha.color.set(this.cores.aba || "#f2f2f2").offsetHSL(0, 0, -0.08);
+      tomAbaixo(linha.color, this.cores.aba || "#f2f2f2", 0.08);
       abaPerfil.slice(1, -1).forEach(([r, y]) => {
         const anel = new THREE.Mesh(new THREE.TorusGeometry(r * escala, 0.006, 6, 96), linha);
         anel.rotation.x = Math.PI / 2;
