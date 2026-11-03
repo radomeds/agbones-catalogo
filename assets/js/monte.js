@@ -183,14 +183,7 @@ function irPara(aba, { empurrar = true } = {}) {
 
 /** Depois de trocar de aba, a escolha começa do topo, logo abaixo do boné. */
 function levarAoTopoDoPainel() {
-  if (window.matchMedia("(min-width: 900px)").matches) {
-    $("painel").scrollTop = 0;
-    return;
-  }
-  const abas = document.querySelector(".abas");
-  const fixo = parseFloat(getComputedStyle(abas).top) || 0;
-  const onde = $("painel").getBoundingClientRect().top + window.scrollY - fixo;
-  if (window.scrollY > onde) window.scrollTo({ top: onde });
+  $("painel").scrollTop = 0;
 }
 
 function atualizarMarcas() {
