@@ -389,7 +389,11 @@ export class PalcoDoBone {
     this.controles.addEventListener("start", () => {
       this.controles.autoRotate = false;
       this.alvoDeGiro = null;
+      clearTimeout(this.voltaDoGiro);
     });
+    // soltou o boné: depois de um tempo parado, ele volta a girar sozinho
+    this.controles.addEventListener("end", () => this.voltarAGirar());
+    this.giroLigado = true;
 
     this.sarja = texturaSarja();
     this.furos = texturaFurosTela();
@@ -471,10 +475,22 @@ export class PalcoDoBone {
     if (angulo === undefined) return;
     this.controles.autoRotate = false;
     this.alvoDeGiro = angulo * GRAU;
+    this.voltarAGirar(6000);
+  }
+
+  /** Religa o giro de apresentação depois de `espera` ms sem o cliente mexer. */
+  voltarAGirar(espera = 3500) {
+    clearTimeout(this.voltaDoGiro);
+    this.voltaDoGiro = setTimeout(() => {
+      if (this.giroLigado) this.controles.autoRotate = true;
+    }, espera);
   }
 
   /** Põe a câmera num ângulo exato (graus): 0 é de frente; 90, do lado; elevação 90 é de cima. */
   vista(azimute, elevacao = 8) {
+    // vista exata (o ajuste do ADM): o boné fica parado onde foi posto
+    this.giroLigado = false;
+    clearTimeout(this.voltaDoGiro);
     this.controles.autoRotate = false;
     this.alvoDeGiro = null;
     const alvo = this.controles.target;
@@ -923,6 +939,8 @@ export class PalcoDoBone {
   }
 
   girar(ligado) {
+    this.giroLigado = ligado;
+    clearTimeout(this.voltaDoGiro);
     this.controles.autoRotate = ligado;
   }
 

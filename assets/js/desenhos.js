@@ -71,7 +71,7 @@ export const DESENHOS = {
   "trucker": {
     // montado no Photoshop (TRUCKER.psd): tem suador e linha da costura à parte
     tipo: "bone", gomos: 5, tela: true, fecho: "snap", sanduiche: true, suador: true, costura: true,
-    medidas: { copa: { altura: 1.12, frente: 3.1, tras: 2.0 }, aba: { curva: 0.34 }, arte: { altura: 0.52, tamanho: 0.66 } },
+    medidas: { copa: { altura: 1.12, frente: 3.1, tras: 2.0 }, aba: { curva: 0.34 }, arte: { altura: 0.45, tamanho: 0.66 } },
   },
   "americano-tela": {
     tipo: "bone", gomos: 6, tela: true, fecho: "snap", sanduiche: true,
