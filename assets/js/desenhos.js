@@ -76,30 +76,37 @@ export const DESENHOS = {
     medidas: { copa: { altura: 1.12, frente: 3.1, tras: 2.0 }, aba: { curva: 0.34 }, arte: { altura: 0.45, tamanho: 0.66 } },
   },
   "americano-tela": {
+    glb: "assets/3d/americano-tela.glb", // modelado no Blender (ferramentas/blender)
     tipo: "bone", gomos: 6, tela: true, fecho: "snap", sanduiche: true,
     medidas: { copa: { altura: 1.04, frente: 2.7 } },
   },
   "americano": {
+    glb: "assets/3d/americano.glb", // modelado no Blender (ferramentas/blender)
     tipo: "bone", gomos: 6, tela: false, fecho: "snap",
     medidas: { copa: { altura: 1.04, frente: 2.7 } },
   },
   "dad-hat": {
+    glb: "assets/3d/dad-hat.glb", // modelado no Blender (ferramentas/blender)
     tipo: "bone", gomos: 6, tela: false, fecho: "fivela", mole: true,
     medidas: { copa: { altura: 0.9, frente: 2.0, tras: 1.8, topo: -0.06 }, aba: { curva: 0.38, inclinacao: 0.3, comprimento: 0.7 }, arte: { altura: 0.46, tamanho: 0.5 } },
   },
   "flex": {
+    glb: "assets/3d/flex.glb", // modelado no Blender (ferramentas/blender)
     tipo: "bone", gomos: 6, tela: false, fecho: "fechado",
     medidas: { copa: { altura: 1.02, frente: 2.6 } },
   },
   "aba-reta": {
+    glb: "assets/3d/aba-reta.glb", // modelado no Blender (ferramentas/blender)
     tipo: "bone", gomos: 6, tela: false, fecho: "snap",
     medidas: { copa: { altura: 1.18, frente: 3.4, tras: 2.4, topo: -0.08 }, aba: { comprimento: 0.76, largura: 1.1, curva: 0, inclinacao: 0.05, ponta: 2.8 }, arte: { altura: 0.5, tamanho: 0.62 } },
   },
   "japones": {
+    glb: "assets/3d/japones.glb", // modelado no Blender (ferramentas/blender)
     tipo: "bone", gomos: 6, tela: false, fecho: "snap",
     medidas: { copa: { altura: 0.96, frente: 2.4, tras: 1.9 }, aba: { curva: 0.34 } },
   },
   "gomos-5-6": {
+    glb: "assets/3d/gomos-5-6.glb", // modelado no Blender (ferramentas/blender)
     tipo: "bone", gomos: 5, tela: false, fecho: "snap",
     medidas: { copa: { altura: 1.0, frente: 2.6 } },
   },
