@@ -69,7 +69,7 @@ export const CAMPOS_DE_AJUSTE = {
    o que foge do padrão do tipo (medido nas fotos dos bonés da fábrica). */
 export const DESENHOS = {
   "trucker": {
-    // o boné modelado no Blender (ferramentas/modelar-trucker.py); sem ele, o montado em código
+    // o boné modelado no Blender (ferramentas/blender/gerar-bone.py); sem ele, o montado em código
     glb: "assets/3d/trucker.glb",
     // montado no Photoshop (TRUCKER.psd): tem suador e linha da costura à parte
     tipo: "bone", gomos: 5, tela: true, fecho: "snap", sanduiche: true, suador: true, costura: true,

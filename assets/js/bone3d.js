@@ -5,7 +5,7 @@
    por isso que o mesmo código desenha o trucker, o americano, o aba reta e o
    dad hat. Chapéu e viseira saem do mesmo jeito, com outro desenho.
    O modelo que tem `glb` no desenho (o trucker) troca, assim que o arquivo
-   chega, pelo boné modelado no Blender (ferramentas/modelar-trucker.py), com
+   chega, pelo boné modelado no Blender (ferramentas/blender/gerar-bone.py), com
    as mesmas peças e o mesmo jeito de pintar. Se o arquivo não vier, ou se o ADM
    mexeu na forma e o arquivo não bate mais, fica o boné montado em código.
    Motor: three.js (MIT), em assets/js/terceiros/three/. */
@@ -357,17 +357,37 @@ function baixarModelo(endereco) {
   return modelosBaixados.get(endereco);
 }
 
-/** O arquivo foi feito com estas medidas? (o Blender grava as dele nos extras) */
+/** O arquivo foi feito com estas medidas? O gerador (ferramentas/blender/gerar-bone.py)
+    grava as dele nos extras; o boné que o Rafael exporta à mão vem sem elas, e aí
+    vale o arquivo do jeito que ele modelou. */
 function medidasBatem(cena, medidas) {
   let gravadas = null;
   cena.traverse((o) => { if (!gravadas && o.userData && o.userData.medidas) gravadas = o.userData.medidas; });
-  if (!gravadas) return false;
+  if (!gravadas) return true;
   return ["copa", "aba"].every((grupo) => {
     const a = gravadas[grupo] || {};
     const b = medidas[grupo] || {};
     const chaves = new Set([...Object.keys(a), ...Object.keys(b)]);
     return [...chaves].every((chave) => Math.abs((a[chave] ?? NaN) - (b[chave] ?? NaN)) < 1e-6);
   });
+}
+
+/* As partes que o cliente pinta, como vêm no nome das peças do Blender. */
+const PARTES_DO_ARQUIVO = new Set([
+  "frente", "laterais", "traseira", "aba", "aba-baixo", "aba-sanduiche", "botao", "suador",
+  "copa", "fita", "debrum",
+]);
+
+/** A parte de uma peça do arquivo, pelo nome dela ou do objeto em volta: "frente",
+    "frente__detalhe", "frente.001" (o Blender põe o número na cópia, e o three.js
+    tira o ponto: "frente001") e "costura-frente" valem; o resto fica com a cor que
+    veio do Blender. */
+function parteDaPeca(peca) {
+  for (let o = peca; o; o = o.parent) {
+    const nome = (o.name || "").split("__")[0].replace(/([a-z])\d{3}$/, "$1");
+    if (PARTES_DO_ARQUIVO.has(nome) || /^costura-/.test(nome) || nome.startsWith("fixo")) return nome;
+  }
+  return "fixo";
 }
 
 /* ---------- o palco ---------- */
@@ -646,7 +666,7 @@ export class PalcoDoBone {
     const malhas = [];
     modelo.traverse((o) => { if (o.isMesh) malhas.push(o); });
     malhas.forEach((malha) => {
-      const parte = malha.name.split("__")[0];
+      const parte = parteDaPeca(malha);
       malha.userData.doArquivo = true;
       // a linha fica rente ao pano: com sombra, ela pegava a do próprio tecido e ficava preta
       const linha = parte.startsWith("costura");
