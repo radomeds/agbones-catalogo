@@ -19,6 +19,11 @@ import { FotoDoBone, carregarFotos } from "./foto-bone.js";
 import { ligarZoom } from "./zoom-palco.js";
 import { coresDaLogo, combinacoesDaLogo } from "./cores-da-logo.js";
 
+/* O rascunho do ADM (guardado no navegador) só entra quando ele pede para
+   conferir, com monte.html?rascunho. Sem isso, um rascunho esquecido no celular
+   passava por cima do ajuste publicado e a logo saía diferente do computador. */
+const VER_RASCUNHO = new URLSearchParams(location.search).has("rascunho");
+
 const ABAS = ["cores", "logo", "pedido"];
 const ROTULO_DO_BOTAO = { cores: "Próximo: sua logo", logo: "Próximo: pedido" };
 const GUARDA = "agbones-monte-v2";
@@ -378,8 +383,8 @@ async function alternar3d() {
     try {
       const modulo = await import("./bone3d.js");
       palco3d = new modulo.PalcoDoBone($("tela-3d"));
-      // o ajuste fino do ADM (dados/ajustes-3d.json, e o rascunho dele neste navegador)
-      const { juntos } = await modulo.carregarAjustes();
+      // o ajuste fino do ADM (dados/ajustes-3d.json; o rascunho só com ?rascunho)
+      const { juntos } = await modulo.carregarAjustes({ comRascunho: VER_RASCUNHO });
       palco3d.ajustes = juntos;
       palco3d.montar(estado.modelo, estado.cores);
       if (ultimaArte) palco3d.colocarArte(ultimaArte);
@@ -1105,8 +1110,8 @@ async function iniciar() {
   }
   try {
     foto = new FotoDoBone($("tela-foto"));
-    // onde fica cada parte e a logo em cada foto (dados/montagem-fotos.json, e o rascunho do ADM)
-    const { juntos } = await carregarFotos();
+    // onde fica cada parte e a logo em cada foto (dados/montagem-fotos.json; o rascunho só com ?rascunho)
+    const { juntos } = await carregarFotos({ comRascunho: VER_RASCUNHO });
     foto.definirAjustes(juntos);
   } catch (erro) {
     // navegador sem canvas: fica a foto do catálogo, e o resto funciona
