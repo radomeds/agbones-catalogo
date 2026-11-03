@@ -1025,6 +1025,7 @@
     {
       "id": "bordado",
       "nome": "Bordado",
+      "acabamento": "bordado",
       "icone": "agulha",
       "explicacao": "Logo costurada com linha, sem enchimento por baixo.",
       "materiais": [
@@ -1037,6 +1038,7 @@
     {
       "id": "bordado-emborrachado",
       "nome": "Bordado emborrachado premium",
+      "acabamento": "relevo",
       "icone": "agulha",
       "explicacao": "Bordado sobre borracha: fica alto e bem cheio. Acabamento premium.",
       "materiais": [
@@ -1048,6 +1050,7 @@
     {
       "id": "silk-direto",
       "nome": "Silk direto",
+      "acabamento": "plano",
       "icone": "tinta",
       "explicacao": "Tinta aplicada no tecido, com acabamento liso.",
       "materiais": [
@@ -1059,6 +1062,7 @@
     {
       "id": "silk-alto",
       "nome": "Silk em alto-relevo",
+      "acabamento": "relevo",
       "icone": "relevo",
       "explicacao": "Tinta em alto-relevo: a arte fica levantada, com toque. Acabamento premium.",
       "materiais": [
@@ -1070,6 +1074,7 @@
     {
       "id": "dtf-direto",
       "nome": "DTF direto",
+      "acabamento": "plano",
       "icone": "tinta",
       "explicacao": "Impressão colorida aplicada com prensa direto na peça. Aceita qualquer desenho, foto e degradê.",
       "materiais": [
@@ -1081,6 +1086,7 @@
     {
       "id": "pintura",
       "nome": "Pintura direta",
+      "acabamento": "plano",
       "icone": "tinta",
       "explicacao": "Pintura aplicada direto no tecido.",
       "materiais": [
@@ -1092,6 +1098,7 @@
     {
       "id": "aplique",
       "nome": "Aplique",
+      "acabamento": "relevo",
       "icone": "aplique",
       "explicacao": "Recorte de tecido costurado na peça.",
       "materiais": [
@@ -1104,6 +1111,7 @@
     {
       "id": "aplique-dtf",
       "nome": "Aplique com DTF",
+      "acabamento": "relevo",
       "icone": "aplique",
       "explicacao": "Recorte de tecido costurado, com a arte impressa em DTF.",
       "materiais": [
@@ -1116,6 +1124,7 @@
     {
       "id": "aplique-silk",
       "nome": "Aplique com silk em relevo",
+      "acabamento": "relevo",
       "icone": "aplique",
       "explicacao": "Recorte de tecido costurado, com a arte em silk levantado.",
       "materiais": [
@@ -1127,6 +1136,7 @@
     {
       "id": "aplique-relevo",
       "nome": "Aplique com relevo",
+      "acabamento": "relevo",
       "icone": "aplique",
       "explicacao": "Aplique com enchimento, que deixa a peça em alto-relevo.",
       "materiais": [
@@ -1138,6 +1148,7 @@
     {
       "id": "fita-couro",
       "nome": "Arte na fita de couro",
+      "acabamento": "plano",
       "icone": "relevo",
       "explicacao": "A arte é aplicada sobre a fita de couro do chapéu.",
       "materiais": [

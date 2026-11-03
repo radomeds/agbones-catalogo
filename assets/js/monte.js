@@ -848,8 +848,10 @@ async function atualizarArte() {
     emTodos((palco) => palco.colocarArte(null));
     return;
   }
-  const relevo = ["bordado", "bordado-emborrachado", "silk-alto", "aplique-relevo", "aplique-silk"].includes(estado.tecnica);
-  ultimaArte = { imagem: final, proporcao: final.width / final.height, escala: estado.tamanho, relevo };
+  // plano, relevo, bordado ou tecido: como a técnica fica de verdade (dados/produtos.json)
+  const tecnica = catalogo.tecnicas.find((t) => t.id === estado.tecnica);
+  const acabamento = (tecnica && tecnica.acabamento) || "plano";
+  ultimaArte = { imagem: final, proporcao: final.width / final.height, escala: estado.tamanho, acabamento };
   emTodos((palco) => palco.colocarArte(ultimaArte));
 }
 

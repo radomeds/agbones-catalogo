@@ -356,7 +356,7 @@ async function trocarModelo() {
   pintarCores();
   foto.desenharBone();
   const imagem = logo || logoDeTeste();
-  foto.colocarArte({ imagem, proporcao: imagem.width / imagem.height, escala: 1, relevo: false });
+  foto.colocarArte({ imagem, proporcao: imagem.width / imagem.height, escala: 1, acabamento: "plano" });
   desenharAlvos();
   desenharMarcas();
 }
@@ -716,7 +716,7 @@ function ligar() {
     tela.height = Math.round(bitmap.height * reduz);
     tela.getContext("2d").drawImage(bitmap, 0, 0, tela.width, tela.height);
     logo = tela;
-    foto.colocarArte({ imagem: logo, proporcao: logo.width / logo.height, escala: 1, relevo: false });
+    foto.colocarArte({ imagem: logo, proporcao: logo.width / logo.height, escala: 1, acabamento: "plano" });
   });
 
   const tela = marcas();

@@ -77,7 +77,7 @@ function logoDeTeste() {
 
 function colocarLogo() {
   const imagem = logo || logoDeTeste();
-  palco.colocarArte({ imagem, proporcao: imagem.width / imagem.height, escala: 1, relevo: false });
+  palco.colocarArte({ imagem, proporcao: imagem.width / imagem.height, escala: 1, acabamento: "plano" });
 }
 
 function montar() {

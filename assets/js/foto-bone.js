@@ -710,7 +710,7 @@ export class FotoDoBone {
     this.camadaBone.getContext("2d").putImageData(saida, 0, 0);
   }
 
-  /** Coloca a arte do cliente na frente. `arte` = { imagem (canvas), proporcao, escala, relevo }. */
+  /** Coloca a arte do cliente na frente. `arte` = { imagem (canvas), proporcao, escala, acabamento }. */
   colocarArte(arte) {
     this.arte = arte;
     if (!this.pronto) return;
@@ -789,10 +789,32 @@ export class FotoDoBone {
     const referencia = mediana(amostra, quantos);
     // a espuma do trucker é lisa e clara: a luz pesa um pouco menos
     const curva = curvaDaLuz(referencia) * (this.camadas ? 0.7 : 0.8);
-    // a tinta e a linha cobrem o grão do tecido: passa só um pouco dele
-    const grao = pesoDoGrao(referencia) * (arte.relevo ? 0.3 : 0.5);
-    // quanto a logo anda nas dobras: no máximo 1 pixel, para não entortar o desenho
-    const deslocar = 1;
+    /* O acabamento vem da técnica (dados/produtos.json):
+       plano   — DTF, silk, pintura: tinta lisa por cima, sem o grão do tecido;
+       relevo  — silk alto, emborrachado, aplique: um degrau, com borda de luz e sombra;
+       bordado — a linha costurada, com o brilho dos pontos;
+       tecido  — sublimação: a tinta entra no fio, então a trama aparece. */
+    const acabamento = arte.acabamento || "plano";
+    const noTecido = acabamento === "tecido";
+    const grao = noTecido ? pesoDoGrao(referencia) * 0.5 : 0;
+    // só a sublimação anda com o fio; nas outras, a logo segue a dobra pela malha
+    const deslocar = noTecido ? 1 : 0;
+    // a luz das dobras sem o grão do tecido, para tinta, linha e borracha
+    if (!noTecido && this.luzLisaDe !== this.luzLarga) {
+      this.luzLisa = borrar(this.luzLarga, new Float32Array(PIXELS).fill(1), 4);
+      this.luzLisaDe = this.luzLarga;
+    }
+    const luzDaArte = noTecido ? this.luzLarga : this.luzLisa;
+    // a altura da logo (o degrau): a borda da arte, amaciada
+    let altura = null;
+    if (acabamento === "relevo" || acabamento === "bordado") {
+      const alfa = new Float32Array(PIXELS);
+      for (let i = 0; i < PIXELS; i++) alfa[i] = fonte[i * 4 + 3] / 255;
+      const um = new Float32Array(PIXELS).fill(1);
+      const raio = acabamento === "relevo" ? 2 : 1;
+      altura = borrar(borrar(alfa, um, raio), um, raio);
+    }
+    const forcaDaBorda = acabamento === "relevo" ? 1.6 : 1.1;
 
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
@@ -831,15 +853,23 @@ export class FotoDoBone {
         g /= a;
         b /= a;
         // a luz e a sombra da foto: multiplicar na sombra, clarear no brilho
-        const larga = Math.max(1e-4, this.luzLarga[i]);
-        const fino = Math.max(0.5, Math.min(1.8, this.luz[i] / larga)) ** grao;
+        const larga = Math.max(1e-4, luzDaArte[i]);
+        const fino = grao ? Math.max(0.5, Math.min(1.8, this.luz[i] / Math.max(1e-4, this.luzLarga[i]))) ** grao : 1;
         let s = Math.max(0.4, Math.min(1.35, (larga / referencia) ** curva * fino));
-        if (arte.relevo && x > 1 && y > 1 && x < LADO - 2 && y < LADO - 2) {
-          // bordado e aplique: a borda de cima pega luz e a de baixo faz sombra
-          const subida = (fonte[q - LADO * 4 - 4 + 3] - fonte[q + LADO * 4 + 4 + 3]) / 255;
-          s *= 1 - subida * 0.35;
+        let lustro = 0;
+        if (altura && x > 1 && y > 1 && x < LADO - 2 && y < LADO - 2) {
+          // a luz vem de cima e um pouco da esquerda: a borda de cima acende e a de baixo escurece
+          const gy = altura[i + LADO] - altura[i - LADO];
+          const gx = altura[i + 1] - altura[i - 1];
+          s *= Math.max(0.55, Math.min(1.45, 1 + (gy + gx * 0.4) * forcaDaBorda));
+          if (acabamento === "bordado") {
+            // os pontos de cetim: fios em diagonal, cada um com o seu brilho
+            const fio = 0.5 + 0.5 * Math.sin((x + y) * 2.2 + Math.sin(x * 0.13 - y * 0.07) * 1.5);
+            s *= 0.86 + 0.24 * fio;
+            lustro = fio * fio * 0.06;
+          }
         }
-        const brilho = s > 1 ? (s - 1) * 0.08 : 0;
+        const brilho = (s > 1 ? (s - 1) * 0.08 : 0) + lustro;
         p[q] = voltar(r * s + brilho * (1 - r));
         p[q + 1] = voltar(g * s + brilho * (1 - g));
         p[q + 2] = voltar(b * s + brilho * (1 - b));
@@ -854,7 +884,8 @@ export class FotoDoBone {
     c.clearRect(0, 0, x0, LADO);
     c.clearRect(x1 + 1, 0, LADO, LADO);
     this.camadaArte = tela;
-    if (this.camadas) this.acabarArteDasCamadas(p);
+    // a trama do PSD por cima da logo só na sublimação, onde a tinta é o próprio tecido
+    if (this.camadas && noTecido) this.acabarArteDasCamadas(p);
   }
 
   /** Como no PSD do trucker: a trama do tecido escurece a logo (a camada de
@@ -877,10 +908,13 @@ export class FotoDoBone {
     alvo.drawImage(this.camadaBone, 0, 0);
     if (this.camadaArte) {
       alvo.save();
-      if (this.arte && this.arte.relevo) {
-        alvo.shadowColor = "rgba(0,0,0,.35)";
-        alvo.shadowOffsetY = 1.5;
-        alvo.shadowBlur = 2.5;
+      // o degrau projeta sombra no tecido; tinta lisa não
+      const acabamento = this.arte && this.arte.acabamento;
+      if (acabamento === "relevo" || acabamento === "bordado") {
+        alvo.shadowColor = acabamento === "relevo" ? "rgba(0,0,0,.42)" : "rgba(0,0,0,.32)";
+        alvo.shadowOffsetX = acabamento === "relevo" ? 0.8 : 0.4;
+        alvo.shadowOffsetY = acabamento === "relevo" ? 2.4 : 1.4;
+        alvo.shadowBlur = acabamento === "relevo" ? 3 : 2;
       }
       alvo.drawImage(this.camadaArte, 0, 0);
       alvo.restore();

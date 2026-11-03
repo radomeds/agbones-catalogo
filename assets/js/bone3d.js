@@ -877,7 +877,7 @@ export class PalcoDoBone {
     this.grupo.position.y = 0.05;
   }
 
-  /** Coloca a arte do cliente na frente. `arte` = { imagem (canvas), proporcao, escala, relevo }. */
+  /** Coloca a arte do cliente na frente. `arte` = { imagem (canvas), proporcao, escala, acabamento }. */
   colocarArte(arte) {
     this.arte = arte;
     if (this.decalque) {
@@ -890,6 +890,10 @@ export class PalcoDoBone {
     const textura = new THREE.CanvasTexture(arte.imagem);
     textura.colorSpace = THREE.SRGBColorSpace;
     textura.anisotropy = 8;
+    // a altura vem da forma da logo, não das cores: o degrau do relevo, o fio do bordado
+    const acabamento = arte.acabamento || "plano";
+    const alturaDesenhada = mapaDeAltura(arte.imagem, acabamento);
+    const altura = alturaDesenhada ? new THREE.CanvasTexture(alturaDesenhada) : null;
     const material = new THREE.MeshStandardMaterial({
       map: textura,
       transparent: true,
@@ -898,9 +902,9 @@ export class PalcoDoBone {
       depthWrite: false,
       polygonOffset: true,
       polygonOffsetFactor: -4,
-      roughness: arte.relevo ? 0.55 : 0.8,
-      bumpMap: arte.relevo ? textura : null,
-      bumpScale: arte.relevo ? 3 : 0,
+      roughness: acabamento === "bordado" ? 0.5 : acabamento === "relevo" ? 0.45 : 0.75,
+      bumpMap: altura,
+      bumpScale: altura ? (acabamento === "relevo" ? 9 : 5) : 0,
     });
     const largura = this.alvoDaArte.tamanho * (arte.escala || 1);
     const proporcao = arte.proporcao || 1;
@@ -948,6 +952,50 @@ export class PalcoDoBone {
   pausar(pausado) {
     this.renderizador.setAnimationLoop(pausado ? null : () => this.quadro());
   }
+}
+
+/** O mapa de altura da logo: preto é o tecido, branco o topo da arte.
+    plano e tecido não têm altura; relevo é um degrau de borda macia;
+    bordado é o degrau mais baixo, riscado pelos fios em diagonal. */
+function mapaDeAltura(imagem, acabamento) {
+  if (acabamento !== "relevo" && acabamento !== "bordado") return null;
+  const lado = Math.max(imagem.width, imagem.height);
+  const escala = Math.min(1, 1024 / lado);
+  const largura = Math.max(1, Math.round(imagem.width * escala));
+  const alto = Math.max(1, Math.round(imagem.height * escala));
+  const tela = document.createElement("canvas");
+  tela.width = largura;
+  tela.height = alto;
+  const c = tela.getContext("2d");
+  c.fillStyle = "#000";
+  c.fillRect(0, 0, largura, alto);
+  // a silhueta da logo em branco, amaciada na borda
+  const silhueta = document.createElement("canvas");
+  silhueta.width = largura;
+  silhueta.height = alto;
+  const s = silhueta.getContext("2d");
+  s.drawImage(imagem, 0, 0, largura, alto);
+  s.globalCompositeOperation = "source-in";
+  s.fillStyle = "#fff";
+  s.fillRect(0, 0, largura, alto);
+  c.filter = `blur(${Math.max(1, Math.round(largura / (acabamento === "relevo" ? 160 : 260)))}px)`;
+  c.drawImage(silhueta, 0, 0);
+  c.filter = "none";
+  if (acabamento === "bordado") {
+    // os fios: listras finas em diagonal, só onde há logo
+    c.globalCompositeOperation = "multiply";
+    const passo = Math.max(3, Math.round(largura / 110));
+    c.strokeStyle = "rgb(150,150,150)";
+    c.lineWidth = passo * 0.45;
+    c.beginPath();
+    for (let k = -alto; k < largura + alto; k += passo) {
+      c.moveTo(k, 0);
+      c.lineTo(k + alto, alto);
+    }
+    c.stroke();
+    c.globalCompositeOperation = "source-over";
+  }
+  return tela;
 }
 
 function juntarGeometrias(geometrias) {
