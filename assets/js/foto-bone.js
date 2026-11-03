@@ -239,6 +239,93 @@ function triangulo(c, imagem, origem, destino) {
   c.restore();
 }
 
+/** A malha da logo do mockup do Photoshop: a logo do cliente cabe no objeto
+    inteligente (largura x altura) com a mesma folga do Mockup Fácil, passa pela
+    deformação (envelope de Bézier, cúbico na largura e reto na altura) e pelo
+    transformar (quadrilátero), que prende a caixa dos pontos da deformação. */
+export function malhaDoPsd(malha, proporcao = 1, escala = 1, passos = 10) {
+  const W = malha.largura;
+  const H = malha.altura;
+  const folga = malha.folga || 0.94;
+  const lado = Math.min((W * folga) / proporcao, H * folga) * escala;
+  const aw = lado * proporcao;
+  const ah = lado;
+  const grade = Array.isArray(malha.grade) && malha.grade.length >= 2
+    ? malha.grade
+    : [[[0, 0], [W / 3, 0], [(2 * W) / 3, 0], [W, 0]], [[0, H], [W / 3, H], [(2 * W) / 3, H], [W, H]]];
+  const todos = grade.flat();
+  const x0 = Math.min(...todos.map((v) => v[0]));
+  const x1 = Math.max(...todos.map((v) => v[0]));
+  const y0 = Math.min(...todos.map((v) => v[1]));
+  const y1 = Math.max(...todos.map((v) => v[1]));
+  const h = homografia([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], [0, 1, 2, 3].map((k) => [malha.quad[2 * k], malha.quad[2 * k + 1]]));
+  const bez = (linha, s) => {
+    const n = linha.length - 1;
+    let x = 0;
+    let y = 0;
+    linha.forEach(([px, py], k) => {
+      const b = binomial(n, k) * s ** k * (1 - s) ** (n - k);
+      x += b * px;
+      y += b * py;
+    });
+    return [x, y];
+  };
+  const pontos = [];
+  for (let j = 0; j <= passos; j++) {
+    const linha = [];
+    const t = (H / 2 + (j / passos - 0.5) * ah) / H;
+    for (let i = 0; i <= passos; i++) {
+      const s = (W / 2 + (i / passos - 0.5) * aw) / W;
+      // entre as linhas da grade, reto (a grade do PSD tem duas linhas)
+      const faixa = Math.min(grade.length - 2, Math.max(0, Math.floor(t * (grade.length - 1))));
+      const tt = t * (grade.length - 1) - faixa;
+      const [ax, ay] = bez(grade[faixa], s);
+      const [bx, by] = bez(grade[faixa + 1], s);
+      linha.push(aplicarHomografia(h, ax + (bx - ax) * tt, ay + (by - ay) * tt));
+    }
+    pontos.push(linha);
+  }
+  return pontos;
+}
+
+function binomial(n, k) {
+  let r = 1;
+  for (let i = 1; i <= k; i++) r = (r * (n - k + i)) / i;
+  return r;
+}
+
+/** A homografia que leva os quatro pontos de origem nos quatro de destino. */
+function homografia(de, para) {
+  const a = [];
+  const b = [];
+  de.forEach(([x, y], k) => {
+    const [u, v] = para[k];
+    a.push([x, y, 1, 0, 0, 0, -u * x, -u * y]);
+    b.push(u);
+    a.push([0, 0, 0, x, y, 1, -v * x, -v * y]);
+    b.push(v);
+  });
+  // eliminação de Gauss com pivô
+  for (let c = 0; c < 8; c++) {
+    let piv = c;
+    for (let r = c + 1; r < 8; r++) if (Math.abs(a[r][c]) > Math.abs(a[piv][c])) piv = r;
+    [a[c], a[piv]] = [a[piv], a[c]];
+    [b[c], b[piv]] = [b[piv], b[c]];
+    for (let r = 0; r < 8; r++) {
+      if (r === c) continue;
+      const f = a[r][c] / a[c][c];
+      for (let k = c; k < 8; k++) a[r][k] -= f * a[c][k];
+      b[r] -= f * b[c];
+    }
+  }
+  return b.map((v, k) => v / a[k][k]);
+}
+
+function aplicarHomografia(h, x, y) {
+  const w = h[6] * x + h[7] * y + 1;
+  return [(h[0] * x + h[1] * y + h[2]) / w, (h[3] * x + h[4] * y + h[5]) / w];
+}
+
 /* ---------- o palco da foto ---------- */
 
 export class FotoDoBone {
@@ -268,7 +355,14 @@ export class FotoDoBone {
       // com uma cor chapada por parte; os outros usam a foto do catálogo
       const conf = this.ajustes[id] || {};
       const mapa = conf.mapa && conf.mapa.imagem;
-      const promessa = Promise.all([
+      const camadas = conf.camadas && Array.isArray(conf.camadas.mascaras) ? conf.camadas : null;
+      const promessa = camadas ? Promise.all([
+        carregarImagem(`assets/produtos/montagem/${id}.webp`),
+        ...camadas.mascaras.map((m) => carregarImagem(m.imagem)),
+      ]).then(([foto, ...mascaras]) => ({
+        limpa: pixelsDe(foto),
+        mascaras: mascaras.map((m, k) => ({ canais: camadas.mascaras[k].canais, dados: pixelsDe(m, { chapado: true }) })),
+      })) : Promise.all([
         carregarImagem(conf.original || `assets/produtos/${id}.webp`),
         carregarImagem(`assets/produtos/montagem/${id}.webp`),
         mapa ? carregarImagem(mapa) : null,
@@ -312,6 +406,11 @@ export class FotoDoBone {
   preparar(id, imagens) {
     this.atuais = imagens;
     const conf = this.ajustes[id] || {};
+    this.camadas = null;
+    if (imagens.mascaras) {
+      this.prepararCamadas(conf, imagens);
+      return;
+    }
     const limpa = imagens.limpa.data;
     const original = imagens.original.data;
 
@@ -444,11 +543,67 @@ export class FotoDoBone {
     this.camadaBone = this.camadaBone || quadro();
   }
 
+  /** O mockup feito no Photoshop (ferramentas/integrar-psd.py): uma máscara
+      suave por parte, como as camadas de cor do PSD, e a trama que vai por cima
+      da logo. Pinta igual ao Photoshop: foto x (1 - m + m x cor). */
+  prepararCamadas(conf, imagens) {
+    const mascaras = {};
+    let trama = null;
+    imagens.mascaras.forEach(({ canais, dados }) => {
+      canais.forEach((nome, k) => {
+        const m = new Float32Array(PIXELS);
+        for (let i = 0; i < PIXELS; i++) m[i] = dados.data[i * 4 + k] / 255;
+        if (nome === "textura") trama = m;
+        else mascaras[nome] = m;
+      });
+    });
+    const nomes = Object.keys(mascaras);
+    // a parte de cada pixel, para acender e para saber o que a foto mostra:
+    // a costura passa por cima do pano
+    const rotulo = new Uint8Array(PIXELS);
+    for (let i = 0; i < PIXELS; i++) {
+      let melhor = 0;
+      let maior = 0.5;
+      nomes.forEach((nome, k) => {
+        const v = mascaras[nome][i] + (nome === "costura" ? 0.5 : 0);
+        if (v > maior) { maior = v; melhor = k + 1; }
+      });
+      rotulo[i] = melhor;
+    }
+    this.camadas = { mascaras, trama, forca: Number(conf.camadas.textura) || 0 };
+    this.nomes = nomes;
+    this.rotulo = rotulo;
+    this.chao = new Uint8Array(PIXELS);
+    this.camadaSombra = null;
+    this.camadaBone = this.camadaBone || quadro();
+  }
+
+  desenharCamadas() {
+    const foto = this.atuais.limpa.data;
+    const saida = new ImageData(new Uint8ClampedArray(foto), LADO, LADO);
+    const p = saida.data;
+    Object.entries(this.camadas.mascaras).forEach(([nome, m]) => {
+      const limpo = String(this.cores[nome] || "").replace("#", "");
+      // parte sem cor escolhida (a costura, de saída) fica como na foto
+      if (!/^[0-9a-f]{6}$/i.test(limpo)) return;
+      const cor = [0, 2, 4].map((k) => parseInt(limpo.slice(k, k + 2), 16) / 255);
+      for (let i = 0, q = 0; i < PIXELS; i++, q += 4) {
+        const v = m[i];
+        if (!v) continue;
+        p[q] *= 1 - v + v * cor[0];
+        p[q + 1] *= 1 - v + v * cor[1];
+        p[q + 2] *= 1 - v + v * cor[2];
+      }
+    });
+    this.camadaBone.getContext("2d").putImageData(saida, 0, 0);
+  }
+
   /** Pinta uma parte. Aceita "todo" para o boné inteiro. */
   pintar(parte, cor) {
     if (parte === "todo") {
-      (this.nomes || []).forEach((nome) => { this.cores[nome] = cor; });
-      Object.keys(this.cores).forEach((nome) => { this.cores[nome] = cor; });
+      // a linha da costura tem cor própria: o boné todo não muda a linha
+      (this.nomes || []).forEach((nome) => { if (nome !== "costura") this.cores[nome] = cor; });
+      Object.keys(this.cores).forEach((nome) => { if (nome !== "costura") this.cores[nome] = cor; });
     } else {
       this.cores[parte] = cor;
     }
@@ -458,6 +613,10 @@ export class FotoDoBone {
   }
 
   desenharBone() {
+    if (this.camadas) {
+      this.desenharCamadas();
+      return;
+    }
     const limpa = this.atuais.limpa.data;
     const saida = new ImageData(new Uint8ClampedArray(limpa), LADO, LADO);
     const p = saida.data;
@@ -492,6 +651,7 @@ export class FotoDoBone {
   /** Os quatro cantos e a malha da logo no lugar: para desenhar e para a tela do ADM. */
   malhaDaArte(proporcao = 1, escala = 1, passos = 10) {
     const lugar = (this.ajustes[this.id] || {}).arte;
+    if (lugar && lugar.malha && Array.isArray(lugar.malha.quad)) return malhaDoPsd(lugar.malha, proporcao, escala, passos);
     if (!lugar || !lugar.largura || !lugar.altura) return null;
     let fu = 1;
     let fv = 1;
@@ -510,10 +670,11 @@ export class FotoDoBone {
 
   desenharArte() {
     this.camadaArte = null;
+    this.camadaTrama = null;
     const arte = this.arte;
     if (!arte || !arte.imagem || !this.pronto) return;
     const imagem = arte.imagem;
-    const passos = 10;
+    const passos = this.camadas ? 24 : 10;
     const malha = this.malhaDaArte(arte.proporcao || imagem.width / imagem.height, arte.escala || 1, passos);
     if (!malha) return;
     const tela = quadro();
@@ -526,6 +687,10 @@ export class FotoDoBone {
       }
     }
 
+    if (this.camadas) {
+      this.acabarArteDasCamadas(c, tela);
+      return;
+    }
     // a luz do tecido debaixo da logo, medida contra o meio da própria logo
     const dados = c.getImageData(0, 0, LADO, LADO);
     const p = dados.data;
@@ -563,10 +728,32 @@ export class FotoDoBone {
     this.camadaArte = tela;
   }
 
+  /** Como no PSD: a logo vai por cima, sem sair do boné, e a trama do tecido
+      escurece a logo (a camada de textura em multiplicar, só onde há logo). */
+  acabarArteDasCamadas(c, tela) {
+    const dados = c.getImageData(0, 0, LADO, LADO);
+    const p = dados.data;
+    const foto = this.atuais.limpa.data;
+    const { trama, forca } = this.camadas;
+    const sombra = new ImageData(LADO, LADO);
+    for (let i = 0, q = 0; i < PIXELS; i++, q += 4) {
+      if (!p[q + 3]) continue;
+      p[q + 3] = Math.round((p[q + 3] * foto[q + 3]) / 255);
+      if (trama) sombra.data[q + 3] = Math.round(p[q + 3] * forca * trama[i]);
+    }
+    c.putImageData(dados, 0, 0);
+    this.camadaArte = tela;
+    this.camadaTrama = null;
+    if (trama && forca) {
+      this.camadaTrama = quadro();
+      this.camadaTrama.getContext("2d").putImageData(sombra, 0, 0);
+    }
+  }
+
   compor(alvo = this.c, comDestaque = true) {
     alvo.clearRect(0, 0, LADO, LADO);
     if (!this.pronto) return;
-    alvo.drawImage(this.camadaSombra, 0, 0);
+    if (this.camadaSombra) alvo.drawImage(this.camadaSombra, 0, 0);
     alvo.drawImage(this.camadaBone, 0, 0);
     if (this.camadaArte) {
       alvo.save();
@@ -577,6 +764,7 @@ export class FotoDoBone {
       }
       alvo.drawImage(this.camadaArte, 0, 0);
       alvo.restore();
+      if (this.camadas && this.camadaTrama) alvo.drawImage(this.camadaTrama, 0, 0);
     }
     if (comDestaque && this.destaque) {
       alvo.save();
@@ -594,8 +782,9 @@ export class FotoDoBone {
     if (!indice) return false;
     const marca = new ImageData(LADO, LADO);
     let tem = false;
+    const mascara = this.camadas && this.camadas.mascaras[parte];
     for (let i = 0, q = 0; i < PIXELS; i++, q += 4) {
-      if (this.rotulo[i] !== indice) continue;
+      if (mascara ? mascara[i] < 0.35 : this.rotulo[i] !== indice) continue;
       marca.data[q] = 102;
       marca.data[q + 1] = 153;
       marca.data[q + 2] = 255;

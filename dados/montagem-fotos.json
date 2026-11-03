@@ -2,17 +2,6 @@
   "_leia": "Onde fica cada parte do boné na foto de cada modelo (pixels da foto de 640) e o lugar da logo. partes: polígonos pintados com a cor de cada parte (o resto do boné é a frente, ou a copa). escuros: a parte só pega o que for mais escuro que esse limite. fixo: fica como na foto. chao: o vão debaixo da aba (o claro vira sombra). arte: o lugar da logo. original e mapa: mockup do ChatGPT (ferramentas/integrar-mockup.py), com a foto própria e um PNG de cores chapadas, uma por parte (cores: hex -> parte; null fica como na foto). Gerado pela tela ajustes-3d.html, aba Foto; confira lá antes de editar à mão.",
   "modelos": {
     "trucker": {
-      "original": "assets/produtos/montagem/trucker-original.webp",
-      "mapa": {
-        "imagem": "assets/produtos/montagem/trucker-mapa.png",
-        "cores": {
-          "ff0000": "aba-baixo",
-          "00ff00": "aba",
-          "0000ff": "botao",
-          "ffff00": "frente",
-          "ff00ff": "laterais"
-        }
-      },
       "partes": {},
       "arte": {
         "x": 335,
@@ -22,10 +11,103 @@
         "giro": 0,
         "inclina": 0,
         "fuga": 0,
-        "curva": 0
+        "curva": 0,
+        "malha": {
+          "quad": [
+            224.956,
+            181.777,
+            436.73,
+            190.187,
+            426.703,
+            293.469,
+            224.951,
+            285.548
+          ],
+          "largura": 1200.0,
+          "altura": 700.0,
+          "folga": 0.94,
+          "grade": [
+            [
+              [
+                -131.167,
+                12.399
+              ],
+              [
+                351.922,
+                -79.755
+              ],
+              [
+                848.078,
+                -79.755
+              ],
+              [
+                1331.167,
+                12.399
+              ]
+            ],
+            [
+              [
+                0.0,
+                700.0
+              ],
+              [
+                396.426,
+                624.378
+              ],
+              [
+                803.574,
+                624.378
+              ],
+              [
+                1200.0,
+                700.0
+              ]
+            ]
+          ]
+        }
       },
       "contraste": 1,
-      "mockup": "chatgpt"
+      "mockup": "chatgpt",
+      "camadas": {
+        "mascaras": [
+          {
+            "imagem": "assets/produtos/montagem/trucker-mascaras-1.png",
+            "canais": [
+              "frente",
+              "laterais",
+              "botao"
+            ]
+          },
+          {
+            "imagem": "assets/produtos/montagem/trucker-mascaras-2.png",
+            "canais": [
+              "aba",
+              "aba-baixo",
+              "aba-sanduiche"
+            ]
+          },
+          {
+            "imagem": "assets/produtos/montagem/trucker-mascaras-3.png",
+            "canais": [
+              "suador",
+              "costura",
+              "textura"
+            ]
+          }
+        ],
+        "textura": 0.851,
+        "psd": "TRUCKER.psd",
+        "cores_do_psd": {
+          "botao": "#DC288C",
+          "laterais": "#28AAAA",
+          "suador": "#823CA0",
+          "frente": "#E6A01E",
+          "aba-baixo": "#288C46",
+          "aba": "#2846AA",
+          "aba-sanduiche": "#C82828",
+          "costura": "#C81E1E"
+        }
+      }
     },
     "dad-hat": {
       "original": "assets/produtos/montagem/dad-hat-original.webp",

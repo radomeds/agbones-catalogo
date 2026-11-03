@@ -69,7 +69,8 @@ export const CAMPOS_DE_AJUSTE = {
    o que foge do padrão do tipo (medido nas fotos dos bonés da fábrica). */
 export const DESENHOS = {
   "trucker": {
-    tipo: "bone", gomos: 5, tela: true, fecho: "snap",
+    // montado no Photoshop (TRUCKER.psd): tem suador e linha da costura à parte
+    tipo: "bone", gomos: 5, tela: true, fecho: "snap", sanduiche: true, suador: true, costura: true,
     medidas: { copa: { altura: 1.12, frente: 3.1, tras: 2.0 }, aba: { curva: 0.34 }, arte: { altura: 0.52, tamanho: 0.66 } },
   },
   "americano-tela": {
@@ -170,6 +171,9 @@ export function partesDoDesenho(id) {
       // a beirada colorida entre a aba de cima e a de baixo
       ...(d.sanduiche ? [{ id: "aba-sanduiche", nome: "Aba sanduíche" }] : []),
       { id: "botao", nome: "Botão" },
+      ...(d.suador ? [{ id: "suador", nome: "Suador" }] : []),
+      // a linha não entra no "boné todo": sem cor escolhida, segue o tecido
+      ...(d.costura ? [{ id: "costura", nome: "Linha da costura", propria: true }] : []),
     ];
   }
   if (d.tipo === "viseira") {

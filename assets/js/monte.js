@@ -299,7 +299,7 @@ function desenharModelos() {
 function coresIniciais(id) {
   const cor = corPorId(COR_INICIAL[id] || "preto") || catalogo.cores[0];
   const cores = {};
-  partesDoDesenho(id).forEach((parte) => { cores[parte.id] = cor.hex; });
+  partesDoDesenho(id).forEach((parte) => { if (!parte.propria) cores[parte.id] = cor.hex; });
   // a tela do trucker sai branca, como a maioria dos pedidos
   if (DESENHOS[id] && DESENHOS[id].tela) {
     cores.laterais = "#FFFFFF";
@@ -415,10 +415,20 @@ function desenharCores() {
   }));
 
   const corDaParte = estado.parte === "todo" ? null : estado.cores[estado.parte];
-  const unica = [...new Set(partes.map((p) => String(estado.cores[p.id]).toLowerCase()))];
+  const unica = [...new Set(partes.filter((p) => !p.propria).map((p) => String(estado.cores[p.id]).toLowerCase()))];
   const corDoTodo = estado.parte === "todo" && unica.length === 1 ? unica[0] : null;
   const marcada = (corDaParte || corDoTodo || "").toLowerCase();
-  $("lista-cores").replaceChildren(...catalogo.cores.map((cor) => {
+  const daParte = partes.find((p) => p.id === estado.parte);
+  // a linha da costura pode voltar a seguir o tecido
+  const seguir = daParte && daParte.propria ? [(() => {
+    const amostra = botao("amostra", "", () => pintar(null));
+    amostra.style.background = "conic-gradient(#141414 0 25%, #fff 0 50%, #1B4FA0 0 75%, #B3202C 0)";
+    amostra.title = "Mesma cor do tecido";
+    amostra.setAttribute("aria-label", "Mesma cor do tecido");
+    amostra.setAttribute("aria-pressed", String(!corDaParte));
+    return amostra;
+  })()] : [];
+  $("lista-cores").replaceChildren(...seguir, ...catalogo.cores.map((cor) => {
     const amostra = botao("amostra", "", () => pintar(cor));
     amostra.style.background = cor.hex;
     amostra.title = cor.nome;
@@ -434,6 +444,10 @@ function desenharCores() {
   if (cor) {
     const forte = document.createElement("strong");
     forte.textContent = `: ${cor.nome}`;
+    rotulo.append(forte);
+  } else if (parte && parte.propria) {
+    const forte = document.createElement("strong");
+    forte.textContent = ": mesma do tecido";
     rotulo.append(forte);
   }
 
@@ -453,8 +467,12 @@ function desenharCores() {
 
 function pintar(cor) {
   if (estado.parte === "todo") {
-    partesAtuais().forEach((parte) => { estado.cores[parte.id] = cor.hex; });
+    if (!cor) return;
+    partesAtuais().forEach((parte) => { if (!parte.propria) estado.cores[parte.id] = cor.hex; });
     emTodos((palco) => palco.pintar("todo", cor.hex));
+  } else if (!cor) {
+    delete estado.cores[estado.parte];
+    emTodos((palco) => palco.pintar(estado.parte, null));
   } else {
     estado.cores[estado.parte] = cor.hex;
     emTodos((palco) => palco.pintar(estado.parte, cor.hex));
@@ -468,6 +486,7 @@ function aplicarCombinacao(combinacao) {
   const contraste = corPorId(combinacao.contraste).hex;
   const comTela = (DESENHOS[estado.modelo] || {}).tela;
   partesAtuais().forEach((parte) => {
+    if (parte.propria) return;
     let cor = principal;
     if (comTela && (parte.id === "laterais" || parte.id === "traseira")) cor = contraste;
     if (!comTela && (parte.id === "aba-baixo" || parte.id === "botao")) cor = contraste;
