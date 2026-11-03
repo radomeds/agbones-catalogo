@@ -5,6 +5,7 @@
     {
       "id": "premium",
       "nome": "Linha Premium",
+      "selo": { "texto": "Premium", "icone": "coroa" },
       "minimo": 25,
       "status": "definido",
       "recomendada": "bordado",
@@ -21,6 +22,7 @@
     {
       "id": "promocional",
       "nome": "Linha Promocional",
+      "selo": { "texto": "Promocional", "icone": "etiqueta" },
       "minimo": 50,
       "status": "definido",
       "recomendada": "dtf-direto"

@@ -197,7 +197,8 @@ function dentroDe(poligonos) {
 /** O ponto (u, v) da logo, de -0,5 a 0,5, no lugar dele na foto. Mesma conta
     da ferramenta que mediu o lugar da logo em cada foto. */
 export function pontoDaArte(arte, u, v) {
-  const x = u * arte.largura;
+  // dobra: o lado que foge da câmera encolhe na largura (o tecido faz a volta)
+  const x = u * arte.largura * (1 + (arte.dobra || 0) * u);
   const y = v * arte.altura * (1 + (arte.fuga || 0) * u)
     + (arte.curva || 0) * (1 - 4 * u * u)
     + Math.tan((arte.inclina || 0) * GRAU) * x;

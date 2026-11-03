@@ -23,7 +23,7 @@
   </a>
   <button type="button" class="monte-topo__modelo" id="trocar-modelo" aria-haspopup="dialog">
     <span class="monte-topo__rotulo">Modelo</span>
-    <strong id="nome-modelo">Escolher</strong>
+    <span class="monte-topo__nome"><strong id="nome-modelo">Escolher</strong><span id="selo-modelo"></span></span>
     <span class="monte-topo__seta" aria-hidden="true">▾</span>
   </button>
 </header>
@@ -35,6 +35,19 @@
     <canvas id="tela-3d" class="palco__tela" aria-label="Boné em 3D. Arraste para girar." hidden></canvas>
     <img id="foto-reserva" class="palco__reserva" alt="" hidden>
     <p class="palco__dica sumiu" id="dica-giro" aria-live="polite"></p>
+    <button type="button" class="palco__surpresa" id="surpreenda" aria-haspopup="true" aria-expanded="false" aria-controls="caixa-surpresa">
+      <span aria-hidden="true">✨</span> Surpreenda-me
+    </button>
+    <div class="palco__caixa" id="caixa-surpresa" hidden>
+      <button type="button" class="palco__opcao" id="surpresa-logo">
+        <strong>Com as cores da minha logo</strong>
+        <small>Envie a imagem e o boné sai nas cores dela</small>
+      </button>
+      <button type="button" class="palco__opcao" id="surpresa-sorteio">
+        <strong>Sem logo, me surpreenda</strong>
+        <small>As combinações mais pedidas deste modelo</small>
+      </button>
+    </div>
     <button type="button" class="palco__girar" id="girar-3d" aria-pressed="false">
       <span aria-hidden="true">⟲</span> <span id="girar-texto">3D</span>
     </button>

@@ -4,15 +4,15 @@
     "trucker": {
       "partes": {},
       "arte": {
-        "x": 335,
-        "y": 250,
-        "largura": 129,
-        "altura": 121,
-        "giro": 0,
+        "x": 338,
+        "y": 262,
+        "largura": 124,
+        "altura": 124,
+        "giro": 7,
         "inclina": 0,
-        "fuga": 0,
-        "curva": 0,
-        "malha": {
+        "fuga": 0.1,
+        "curva": -3,
+        "malha_psd": {
           "quad": [
             224.956,
             181.777,
@@ -64,7 +64,8 @@
               ]
             ]
           ]
-        }
+        },
+        "dobra": 0.18
       },
       "contraste": 1,
       "mockup": "chatgpt",
@@ -127,10 +128,11 @@
         "y": 255,
         "largura": 127,
         "altura": 120,
-        "giro": 0,
+        "giro": 6,
         "inclina": 0,
-        "fuga": 0,
-        "curva": 0
+        "fuga": 0.08,
+        "curva": -2,
+        "dobra": 0.15
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -153,10 +155,11 @@
         "y": 249,
         "largura": 123,
         "altura": 125,
-        "giro": 0,
+        "giro": 6,
         "inclina": 0,
-        "fuga": 0,
-        "curva": 0
+        "fuga": 0.08,
+        "curva": -2,
+        "dobra": 0.15
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -179,10 +182,11 @@
         "y": 266,
         "largura": 142,
         "altura": 137,
-        "giro": 0,
+        "giro": 3,
         "inclina": 0,
-        "fuga": 0,
-        "curva": 0
+        "fuga": 0.05,
+        "curva": -2,
+        "dobra": 0.08
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -205,10 +209,11 @@
         "y": 249,
         "largura": 131,
         "altura": 134,
-        "giro": 0,
+        "giro": 6,
         "inclina": 0,
-        "fuga": 0,
-        "curva": 0
+        "fuga": 0.08,
+        "curva": -2,
+        "dobra": 0.15
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -232,10 +237,11 @@
         "y": 249,
         "largura": 132,
         "altura": 128,
-        "giro": 0,
+        "giro": 6,
         "inclina": 0,
-        "fuga": 0,
-        "curva": 0
+        "fuga": 0.08,
+        "curva": -2,
+        "dobra": 0.15
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -258,10 +264,11 @@
         "y": 240,
         "largura": 115,
         "altura": 108,
-        "giro": 0,
+        "giro": -6,
         "inclina": 0,
-        "fuga": 0,
-        "curva": 0
+        "fuga": -0.08,
+        "curva": -2,
+        "dobra": -0.15
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -284,10 +291,11 @@
         "y": 274,
         "largura": 98,
         "altura": 111,
-        "giro": 0,
+        "giro": -6,
         "inclina": 0,
-        "fuga": 0,
-        "curva": 0
+        "fuga": -0.08,
+        "curva": -2,
+        "dobra": -0.15
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -309,10 +317,11 @@
         "y": 295,
         "largura": 162,
         "altura": 87,
-        "giro": 0,
+        "giro": -4,
         "inclina": 0,
         "fuga": 0,
-        "curva": 0
+        "curva": 0,
+        "dobra": -0.1
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -334,10 +343,11 @@
         "y": 283,
         "largura": 186,
         "altura": 94,
-        "giro": 0,
+        "giro": 4,
         "inclina": 0,
         "fuga": 0,
-        "curva": 0
+        "curva": 0,
+        "dobra": 0.1
       },
       "contraste": 1,
       "mockup": "chatgpt"
@@ -359,10 +369,11 @@
         "y": 271,
         "largura": 165,
         "altura": 92,
-        "giro": 0,
+        "giro": 3,
         "inclina": 0,
         "fuga": 0,
-        "curva": 0
+        "curva": 0,
+        "dobra": 0.08
       },
       "contraste": 1,
       "mockup": "chatgpt"

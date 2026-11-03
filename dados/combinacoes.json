@@ -1,0 +1,61 @@
+{
+  "_leia": "Combinações do botão Surpreenda-me e das combinações prontas. principal = frente e copa; contraste = a tela (trucker) ou embaixo da aba e botão; aba e sanduiche são opcionais (sem elas, aba segue a principal e o sanduíche segue o contraste). As cores são os ids de produtos.json > cores. 'geral' vale para todo boné; 'por_modelo' soma as mais pedidas de cada modelo.",
+  "geral": [
+    { "nome": "Todo preto", "principal": "preto", "contraste": "preto" },
+    { "nome": "Preto e branco", "principal": "preto", "contraste": "branco" },
+    { "nome": "Marinho e branco", "principal": "azul-marinho", "contraste": "branco" },
+    { "nome": "Royal e branco", "principal": "azul-royal", "contraste": "branco" },
+    { "nome": "Vermelho e preto", "principal": "vermelho", "contraste": "preto" },
+    { "nome": "Verde e branco", "principal": "verde-bandeira", "contraste": "branco" },
+    { "nome": "Bege e marrom", "principal": "bege", "contraste": "caqui" },
+    { "nome": "Cinza e preto", "principal": "chumbo", "contraste": "preto" }
+  ],
+  "por_modelo": {
+    "trucker": [
+      { "nome": "Agro bege", "principal": "bege", "contraste": "caqui", "aba": "caqui" },
+      { "nome": "Agro musgo", "principal": "verde-musgo", "contraste": "bege", "aba": "verde-musgo" },
+      { "nome": "Caqui e preto", "principal": "caqui", "contraste": "preto", "aba": "caqui" },
+      { "nome": "Chumbo e amarelo", "principal": "chumbo", "contraste": "chumbo", "sanduiche": "amarelo" },
+      { "nome": "Preto com tela branca", "principal": "preto", "contraste": "branco" },
+      { "nome": "Branco com tela preta", "principal": "branco", "contraste": "preto", "aba": "preto" },
+      { "nome": "Marinho e branco", "principal": "azul-marinho", "contraste": "branco" },
+      { "nome": "Vermelho e branco", "principal": "vermelho", "contraste": "branco" },
+      { "nome": "Verde e branco", "principal": "verde-bandeira", "contraste": "branco" },
+      { "nome": "Royal e branco", "principal": "azul-royal", "contraste": "branco" },
+      { "nome": "Laranja e preto", "principal": "laranja", "contraste": "preto", "aba": "preto" },
+      { "nome": "Todo preto", "principal": "preto", "contraste": "preto" }
+    ],
+    "americano-tela": [
+      { "nome": "Preto com tela branca", "principal": "preto", "contraste": "branco" },
+      { "nome": "Agro bege", "principal": "bege", "contraste": "caqui", "aba": "caqui" },
+      { "nome": "Marinho e branco", "principal": "azul-marinho", "contraste": "branco" },
+      { "nome": "Chumbo e preto", "principal": "chumbo", "contraste": "preto" }
+    ],
+    "dad-hat": [
+      { "nome": "Todo bege", "principal": "bege", "contraste": "bege" },
+      { "nome": "Todo preto", "principal": "preto", "contraste": "preto" },
+      { "nome": "Todo marinho", "principal": "azul-marinho", "contraste": "azul-marinho" },
+      { "nome": "Todo branco", "principal": "branco", "contraste": "branco" },
+      { "nome": "Todo musgo", "principal": "verde-musgo", "contraste": "verde-musgo" },
+      { "nome": "Todo vinho", "principal": "vinho", "contraste": "vinho" },
+      { "nome": "Todo rosa", "principal": "rosa", "contraste": "rosa" },
+      { "nome": "Todo cinza", "principal": "cinza", "contraste": "cinza" }
+    ],
+    "flex": [
+      { "nome": "Todo preto", "principal": "preto", "contraste": "preto" },
+      { "nome": "Todo branco", "principal": "branco", "contraste": "branco" },
+      { "nome": "Todo marinho", "principal": "azul-marinho", "contraste": "azul-marinho" },
+      { "nome": "Todo chumbo", "principal": "chumbo", "contraste": "chumbo" },
+      { "nome": "Todo royal", "principal": "azul-royal", "contraste": "azul-royal" },
+      { "nome": "Todo vermelho", "principal": "vermelho", "contraste": "vermelho" }
+    ],
+    "aba-reta": [
+      { "nome": "Todo preto", "principal": "preto", "contraste": "preto" },
+      { "nome": "Preto com aba vermelha", "principal": "preto", "contraste": "preto", "aba": "vermelho" },
+      { "nome": "Branco com aba preta", "principal": "branco", "contraste": "preto", "aba": "preto" },
+      { "nome": "Todo royal", "principal": "azul-royal", "contraste": "azul-royal" }
+    ]
+  },
+  "uma_cor": ["dad-hat", "flex"],
+  "_uma_cor_leia": "Modelos que costumam sair numa cor só. No Surpreenda-me, às vezes ganham a beirada da aba (sanduíche) em contraste, quando o modelo tem."
+}

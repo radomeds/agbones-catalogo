@@ -30,8 +30,9 @@ const REGUAS_DA_ARTE = [
   ["inclina", "Entortar (graus)", -40, 40, 0.5],
   ["fuga", "Um lado menor que o outro (o lado que foge)", -1, 1, 0.01],
   ["curva", "Curvar (o meio desce ou sobe)", -60, 60, 0.5],
+  ["dobra", "Um lado mais estreito (o tecido faz a volta)", -1, 1, 0.01],
 ];
-const ARTE_VAZIA = { x: LADO / 2, y: LADO / 2, largura: 120, altura: 120, giro: 0, inclina: 0, fuga: 0, curva: 0 };
+const ARTE_VAZIA = { x: LADO / 2, y: LADO / 2, largura: 120, altura: 120, giro: 0, inclina: 0, fuga: 0, curva: 0, dobra: 0 };
 
 let foto;
 let publicados = {};

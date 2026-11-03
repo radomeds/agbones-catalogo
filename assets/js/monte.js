@@ -16,6 +16,8 @@ import { abrirWhatsapp } from "./whatsapp.js";
 import { ESTILOS_DE_LETRA, carregarLetras, montarTexto } from "./letras.js";
 import { DESENHOS, partesDoDesenho } from "./desenhos.js";
 import { FotoDoBone, carregarFotos } from "./foto-bone.js";
+import { ligarZoom } from "./zoom-palco.js";
+import { coresDaLogo, combinacoesDaLogo } from "./cores-da-logo.js";
 
 const ABAS = ["cores", "logo", "pedido"];
 const ROTULO_DO_BOTAO = { cores: "Próximo: sua logo", logo: "Próximo: pedido" };
@@ -38,17 +40,24 @@ const COR_INICIAL = {
   bucket: "preto", cumbuca: "bege", "chapeu-australiano": "caqui",
 };
 
-/* Combinações prontas: a cor principal e a de contraste (a tela, ou a aba). */
-const COMBINACOES = [
-  { nome: "Todo preto", principal: "preto", contraste: "preto" },
-  { nome: "Preto e branco", principal: "preto", contraste: "branco" },
-  { nome: "Marinho e branco", principal: "azul-marinho", contraste: "branco" },
-  { nome: "Royal e branco", principal: "azul-royal", contraste: "branco" },
-  { nome: "Vermelho e preto", principal: "vermelho", contraste: "preto" },
-  { nome: "Verde e branco", principal: "verde-bandeira", contraste: "branco" },
-  { nome: "Bege e marrom", principal: "bege", contraste: "caqui" },
-  { nome: "Cinza e preto", principal: "chumbo", contraste: "preto" },
-];
+/* Combinações prontas (dados/combinacoes.json): a cor principal e a de contraste
+   (a tela, ou embaixo da aba). Se o arquivo não abrir, ficam estas. */
+let combinacoes = {
+  geral: [
+    { nome: "Todo preto", principal: "preto", contraste: "preto" },
+    { nome: "Preto e branco", principal: "preto", contraste: "branco" },
+    { nome: "Marinho e branco", principal: "azul-marinho", contraste: "branco" },
+  ],
+  por_modelo: {},
+  uma_cor: [],
+};
+/* O desenho do selo de cada linha (o texto e qual desenho vêm de produtos.json > linhas > selo). */
+const ICONES_DO_SELO = {
+  coroa: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="currentColor"/></svg>',
+  etiqueta: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="7.5" cy="8.5" r="1.6" fill="currentColor"/></svg>',
+};
+let ultimaSurpresa = "";
+let surpresaDepoisDaLogo = false;
 
 /* A área da logo (dados/produtos.json) e a parte do boné que a mostra. */
 const PARTE_DA_AREA = {
@@ -290,8 +299,10 @@ function desenharModelos() {
     const nome = document.createElement("strong");
     nome.textContent = produto.nome;
     const detalhe = document.createElement("small");
-    detalhe.textContent = `${linha ? linha.nome.replace(/^linha\s+/i, "") + " · " : ""}mín. ${minimoDoProduto(catalogo, produto)}`;
-    cartao.append(imagem, nome, detalhe);
+    detalhe.textContent = `mín. ${minimoDoProduto(catalogo, produto)} un.`;
+    const selo = seloDaLinha(produto);
+    if (!selo && linha) detalhe.textContent = `${linha.nome.replace(/^linha\s+/i, "")} · ${detalhe.textContent}`;
+    cartao.append(imagem, ...(selo ? [selo] : []), nome, detalhe);
     return cartao;
   }));
 }
@@ -330,6 +341,8 @@ function mostrarModelo() {
     estado.lugar = areaPrincipal(produto).id;
   }
   $("nome-modelo").textContent = produto.nome;
+  const selo = seloDaLinha(produto);
+  $("selo-modelo").replaceChildren(...(selo ? [selo] : []));
   document.title = `Monte seu boné: ${produto.nome} — AG Bonés`;
   if (foto) {
     foto.montar(produto.id, estado.cores).then(() => {
@@ -454,11 +467,11 @@ function desenharCores() {
   const temCombinacao = partes.length > 2;
   $("bloco-combinacoes").hidden = !temCombinacao;
   if (temCombinacao) {
-    $("lista-combinacoes").replaceChildren(...COMBINACOES.map((combinacao) => {
+    $("lista-combinacoes").replaceChildren(...combinacoesDoModelo(estado.modelo).map((combinacao) => {
       const item = botao("ficha ficha--combinacao", "", () => aplicarCombinacao(combinacao));
       const par = document.createElement("span");
       par.className = "par";
-      par.append(bolinha(corPorId(combinacao.principal).hex), bolinha(corPorId(combinacao.contraste).hex));
+      par.append(bolinha(corPorId(combinacao.principal).hex), bolinha(corPorId(combinacao.aba || combinacao.sanduiche || combinacao.contraste).hex));
       item.append(par, combinacao.nome);
       return item;
     }));
@@ -481,22 +494,95 @@ function pintar(cor) {
   guardar();
 }
 
+/** As combinações do modelo: as mais pedidas dele primeiro, depois as de todo boné. */
+function combinacoesDoModelo(id) {
+  const vistas = new Set();
+  return [...(combinacoes.por_modelo[id] || []), ...combinacoes.geral].filter((c) => {
+    const chave = `${c.principal}|${c.contraste}|${c.aba || ""}|${c.sanduiche || ""}`;
+    if (vistas.has(chave) || !corPorId(c.principal) || !corPorId(c.contraste)) return false;
+    vistas.add(chave);
+    return true;
+  });
+}
+
 function aplicarCombinacao(combinacao) {
   const principal = corPorId(combinacao.principal).hex;
   const contraste = corPorId(combinacao.contraste).hex;
+  const aba = combinacao.aba && corPorId(combinacao.aba) ? corPorId(combinacao.aba).hex : principal;
+  const sanduiche = combinacao.sanduiche && corPorId(combinacao.sanduiche) ? corPorId(combinacao.sanduiche).hex : contraste;
   const comTela = (DESENHOS[estado.modelo] || {}).tela;
   partesAtuais().forEach((parte) => {
     if (parte.propria) return;
     let cor = principal;
     if (comTela && (parte.id === "laterais" || parte.id === "traseira")) cor = contraste;
     if (!comTela && (parte.id === "aba-baixo" || parte.id === "botao")) cor = contraste;
-    if (parte.id === "aba-sanduiche") cor = contraste;
+    if (parte.id === "aba") cor = aba;
+    if (parte.id === "aba-sanduiche") cor = sanduiche;
     estado.cores[parte.id] = cor;
     emTodos((palco) => palco.pintar(parte.id, cor));
   });
   estado.parte = "todo";
   desenharCores();
   guardar();
+}
+
+/* ---------- Surpreenda-me ---------- */
+
+/** Sorteia uma combinação: com logo, das cores dela; sem logo, das mais pedidas do modelo. */
+function surpreender() {
+  fecharSurpresa();
+  const produto = produtoAtual();
+  if (!produto) return;
+  const partes = partesAtuais().filter((p) => !p.propria);
+  let lista = [];
+  let daLogo = false;
+  if (estado.logo && estado.logo.tipo === "arquivo" && estado.logo.imagem) {
+    lista = combinacoesDaLogo(coresDaLogo(estado.logo.imagem, catalogo.cores, { tirarFundo: estado.logo.tirarFundo }), catalogo.cores);
+    daLogo = lista.length > 0;
+  }
+  if (!lista.length) {
+    lista = combinacoesDoModelo(produto.id);
+    // dad hat e flex saem quase sempre de uma cor; às vezes com a beirada da aba em contraste
+    if ((combinacoes.uma_cor || []).includes(produto.id) && partes.some((p) => p.id === "aba-sanduiche")) {
+      lista = lista.concat(lista.slice(0, 3).map((c) => ({ ...c, sanduiche: c.principal === "branco" ? "preto" : "branco" })));
+    }
+  }
+  if (partes.length <= 2) {
+    // viseira e chapéu: uma cor só, sorteada entre as principais
+    lista = lista.map((c) => ({ ...c, contraste: c.principal, aba: undefined }));
+  }
+  const opcoes = lista.filter((c) => c.nome !== ultimaSurpresa);
+  const escolha = (opcoes.length ? opcoes : lista)[Math.floor(Math.random() * (opcoes.length || lista.length))];
+  if (!escolha) return;
+  ultimaSurpresa = escolha.nome;
+  aplicarCombinacao(escolha);
+  if (em3d && palco3d) palco3d.olharPara("frente");
+  avisar(daLogo ? `Com as cores da sua logo: ${escolha.nome}. Toque de novo para outra.` : `${escolha.nome}. Toque de novo para outra.`);
+}
+
+function abrirSurpresa() {
+  // já tem logo: sorteia direto com as cores dela
+  if (estado.logo && estado.logo.tipo === "arquivo") return surpreender();
+  const caixa = $("caixa-surpresa");
+  caixa.hidden = !caixa.hidden;
+  $("surpreenda").setAttribute("aria-expanded", String(!caixa.hidden));
+  if (!caixa.hidden) $("surpresa-logo").focus({ preventScroll: true });
+}
+
+function fecharSurpresa() {
+  $("caixa-surpresa").hidden = true;
+  $("surpreenda").setAttribute("aria-expanded", "false");
+}
+
+/** O selo da linha (Premium com coroa, Promocional com etiqueta), do produtos.json. */
+function seloDaLinha(produto) {
+  const linha = produto && linhaPorId(catalogo, produto.linha);
+  if (!linha || !linha.selo) return null;
+  const selo = document.createElement("span");
+  selo.className = `selo selo--${linha.id}`;
+  selo.innerHTML = ICONES_DO_SELO[linha.selo.icone] || "";
+  selo.append(linha.selo.texto);
+  return selo;
 }
 
 /* ---------- aba Logo ---------- */
@@ -625,9 +711,11 @@ async function receberArquivo(evento) {
     atualizarArte();
     atualizarMarcas();
     if (em3d && palco3d) palco3d.olharPara("frente");
+    if (surpresaDepoisDaLogo) surpreender();
   } catch {
     avisar("Não consegui abrir essa imagem. Tente uma foto em JPG ou PNG.", 5000);
   }
+  surpresaDepoisDaLogo = false;
   evento.target.value = "";
 }
 
@@ -911,6 +999,7 @@ function ligarEventos() {
   document.querySelectorAll("[data-fechar]").forEach((item) => item.addEventListener("click", () => fecharFolha()));
   document.addEventListener("keydown", (evento) => {
     if (evento.key === "Escape" && !$("folha-modelos").hidden) fecharFolha();
+    if (evento.key === "Escape" && !$("caixa-surpresa").hidden) fecharSurpresa();
   });
   window.addEventListener("popstate", (evento) => {
     const marca = evento.state || {};
@@ -922,10 +1011,32 @@ function ligarEventos() {
     item.addEventListener("click", () => palco3d && palco3d.olharPara(item.dataset.vista));
   });
   $("girar-3d").addEventListener("click", alternar3d);
+  $("surpreenda").addEventListener("click", abrirSurpresa);
+  $("surpresa-sorteio").addEventListener("click", surpreender);
+  $("surpresa-logo").addEventListener("click", () => {
+    fecharSurpresa();
+    surpresaDepoisDaLogo = true;
+    $("arquivo-logo").click();
+  });
+  document.addEventListener("click", (evento) => {
+    if ($("caixa-surpresa").hidden) return;
+    if (!evento.target.closest("#caixa-surpresa, #surpreenda")) fecharSurpresa();
+  });
+  ligarZoom($("tela-foto"), { aoUsar: () => $("dica-giro").classList.add("sumiu") });
+  // uma vez por aparelho: conta que dá para aproximar o boné
+  try {
+    if (!localStorage.getItem("agbones-dica-zoom") && matchMedia("(pointer: coarse)").matches) {
+      setTimeout(() => avisar("Dica: dois dedos ou dois toques no boné para ver de perto."), 1800);
+      localStorage.setItem("agbones-dica-zoom", "1");
+    }
+  } catch {
+    // sem armazenamento: a dica só não aparece
+  }
   $("tela-3d").addEventListener("pointerdown", () => $("dica-giro").classList.add("sumiu"));
 
   $("arquivo-logo").addEventListener("change", receberArquivo);
   $("arquivo-troca").addEventListener("change", receberArquivo);
+  $("arquivo-logo").addEventListener("cancel", () => { surpresaDepoisDaLogo = false; });
   $("tirar-fundo").addEventListener("change", () => {
     if (estado.logo && estado.logo.tipo === "arquivo") {
       estado.logo.tirarFundo = $("tirar-fundo").checked;
@@ -986,6 +1097,12 @@ function ligarEventos() {
 async function iniciar() {
   const tinhaEscolha = recuperar();
   catalogo = await carregarCatalogo();
+  try {
+    const resposta = await fetch("dados/combinacoes.json", { cache: "no-cache" });
+    if (resposta.ok) combinacoes = { ...combinacoes, ...(await resposta.json()) };
+  } catch {
+    // sem o arquivo, ficam as combinações de reserva
+  }
   try {
     foto = new FotoDoBone($("tela-foto"));
     // onde fica cada parte e a logo em cada foto (dados/montagem-fotos.json, e o rascunho do ADM)

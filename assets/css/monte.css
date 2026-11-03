@@ -7,7 +7,8 @@
 
 .corpo-monte {
   --altura-topo: 60px;
-  --altura-palco: min(38dvh, 360px);
+  /* o boné grande: metade da tela do celular (pedido do Rafael, 03/11/2026) */
+  --altura-palco: min(50dvh, 520px);
   --altura-abas: 52px;
   background: var(--fundo);
   min-height: 100dvh;
@@ -61,8 +62,14 @@
   color: var(--texto-fraco);
   line-height: 1.1;
 }
-#nome-modelo {
+.monte-topo__nome {
   grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  min-width: 0;
+}
+#nome-modelo {
   font-size: .95rem;
   line-height: 1.2;
   white-space: nowrap;
@@ -115,9 +122,13 @@
   top: 50%;
   width: min(100cqw, 100cqh);
   height: min(100cqw, 100cqh);
-  transform: translate(-50%, -50%);
+  /* o zoom (zoom-palco.js) só mexe nestas três variáveis */
+  transform: translate(calc(-50% + var(--zoom-x, 0px)), calc(-50% + var(--zoom-y, 0px))) scale(var(--zoom, 1));
   display: block;
+  touch-action: none;
+  cursor: zoom-in;
 }
+.palco__retrato.com-zoom { cursor: grab; }
 .palco__tela { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
 .palco__tela:active { cursor: grabbing; }
 .palco__reserva { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
@@ -790,3 +801,85 @@ body.com-folha { overflow: hidden; }
   .barra-monte { padding-block: var(--e2); }
   .barra-monte__acao { min-height: 44px; }
 }
+
+/* ---------- selo da linha: coroa no Premium, etiqueta no Promocional ---------- */
+
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  flex: none;
+  padding: .12rem .5rem .12rem .4rem;
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.selo svg { width: 13px; height: 13px; flex: none; }
+.selo--premium {
+  background: linear-gradient(135deg, #f7d774, #d4a72c);
+  color: #3b2a00;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 1px 3px rgba(120, 85, 0, .3);
+}
+.selo--promocional,
+.selo--intermediaria {
+  background: color-mix(in srgb, var(--destaque) 12%, transparent);
+  color: var(--destaque);
+}
+.folha .modelo { position: relative; }
+.folha .modelo .selo { position: absolute; top: .5rem; left: .5rem; }
+.monte-topo__nome .selo { font-size: .62rem; padding: .08rem .42rem .08rem .32rem; }
+.monte-topo__nome .selo svg { width: 11px; height: 11px; }
+
+/* ---------- Surpreenda-me ---------- */
+
+.palco__surpresa {
+  position: absolute;
+  left: var(--e3);
+  bottom: var(--e3);
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2F5FD0, #6699FF);
+  box-shadow: 0 4px 14px rgba(47, 95, 208, .35);
+  color: #fff;
+  font: 600 .85rem var(--fonte);
+  cursor: pointer;
+}
+.palco__surpresa:focus-visible { outline: 3px solid color-mix(in srgb, #2F5FD0 40%, transparent); outline-offset: 2px; }
+.palco__caixa {
+  position: absolute;
+  left: var(--e3);
+  bottom: calc(var(--e3) + 52px);
+  z-index: 3;
+  display: grid;
+  gap: .25rem;
+  width: min(300px, calc(100% - 2 * var(--e3)));
+  padding: .35rem;
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  background: var(--cartao);
+  box-shadow: 0 10px 30px rgba(18, 22, 29, .22);
+}
+.palco__opcao {
+  display: grid;
+  gap: .1rem;
+  padding: .65rem .8rem;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.palco__opcao:hover,
+.palco__opcao:focus-visible { background: color-mix(in srgb, var(--destaque) 10%, transparent); }
+.palco__opcao strong { font-size: .92rem; }
+.palco__opcao small { color: var(--texto-fraco); font-size: .78rem; }
