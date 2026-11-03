@@ -196,12 +196,42 @@ function dentroDe(poligonos) {
 
 /** O ponto (u, v) da logo, de -0,5 a 0,5, no lugar dele na foto. Mesma conta
     da ferramenta que mediu o lugar da logo em cada foto. */
+/** O ponto (u, v) da arte, de -0,5 a 0,5, na grade da forma (em unidades da
+    caixa). Fora da grade (logo maior que a caixa) segue a última casa. */
+function naForma(grade, u, v) {
+  const linhas = grade.length;
+  const colunas = grade[0].length;
+  const fx = (u + 0.5) * (colunas - 1);
+  const fy = (v + 0.5) * (linhas - 1);
+  const i = Math.max(0, Math.min(colunas - 2, Math.floor(fx)));
+  const j = Math.max(0, Math.min(linhas - 2, Math.floor(fy)));
+  const a = fx - i;
+  const b = fy - j;
+  return [0, 1].map((k) => (1 - a) * (1 - b) * grade[j][i][k] + a * (1 - b) * grade[j][i + 1][k]
+    + (1 - a) * b * grade[j + 1][i][k] + a * b * grade[j + 1][i + 1][k]);
+}
+
+function temForma(arte) {
+  const grade = arte.forma && arte.forma.grade;
+  return Array.isArray(grade) && grade.length > 1 && Array.isArray(grade[0]) && grade[0].length > 1;
+}
+
 export function pontoDaArte(arte, u, v) {
-  // dobra: o lado que foge da câmera encolhe na largura (o tecido faz a volta)
-  const x = u * arte.largura * (1 + (arte.dobra || 0) * u);
-  const y = v * arte.altura * (1 + (arte.fuga || 0) * u)
-    + (arte.curva || 0) * (1 - 4 * u * u)
-    + Math.tan((arte.inclina || 0) * GRAU) * x;
+  let x;
+  let y;
+  if (temForma(arte)) {
+    // a forma da peça (ferramentas/gerar-formas.py): o cilindro da frente visto
+    // de lado e o arco das linhas; a curva e o entortar do ADM vão por cima
+    const [gx, gy] = naForma(arte.forma.grade, u, v);
+    x = gx * arte.largura;
+    y = gy * arte.altura + (arte.curva || 0) * (1 - 4 * u * u) + Math.tan((arte.inclina || 0) * GRAU) * x;
+  } else {
+    // dobra: o lado que foge da câmera encolhe na largura (o tecido faz a volta)
+    x = u * arte.largura * (1 + (arte.dobra || 0) * u);
+    y = v * arte.altura * (1 + (arte.fuga || 0) * u)
+      + (arte.curva || 0) * (1 - 4 * u * u)
+      + Math.tan((arte.inclina || 0) * GRAU) * x;
+  }
   const giro = (arte.giro || 0) * GRAU;
   return [
     arte.x + x * Math.cos(giro) - y * Math.sin(giro),
@@ -539,6 +569,7 @@ export class FotoDoBone {
     this.rotulo = rotulo;
     this.luz = luz;
     this.luzLarga = luzLarga;
+    this.prepararTecido(luz, luzLarga, peso);
     this.chao = chao;
     this.sombreado = sombreado;
     this.camadaBone = this.camadaBone || quadro();
@@ -571,12 +602,79 @@ export class FotoDoBone {
       });
       rotulo[i] = melhor;
     }
+    // a luz da foto, para a logo pegar a sombra e as dobras do tecido
+    const foto = imagens.limpa.data;
+    const luz = new Float32Array(PIXELS);
+    const peso = new Float32Array(PIXELS);
+    for (let i = 0, p = 0; i < PIXELS; i++, p += 4) {
+      luz[i] = 0.2126 * PARA_LINEAR[foto[p]] + 0.7152 * PARA_LINEAR[foto[p + 1]] + 0.0722 * PARA_LINEAR[foto[p + 2]];
+      peso[i] = foto[p + 3] > 128 ? 1 : 0;
+    }
+    this.luz = luz;
+    this.luzLarga = borrar(luz, peso, 2);
+    this.prepararTecido(luz, this.luzLarga, peso);
     this.camadas = { mascaras, trama, forca: Number(conf.camadas.textura) || 0 };
     this.nomes = nomes;
     this.rotulo = rotulo;
     this.chao = new Uint8Array(PIXELS);
     this.camadaSombra = null;
     this.camadaBone = this.camadaBone || quadro();
+  }
+
+  /** O mapa de deslocamento, como o "Deslocar" do Photoshop: a luz da foto,
+      borrada (para a logo dobrar e não rasgar), contra a luz bem larga. Onde o
+      tecido faz dobra a luz muda, e a logo anda um tico junto. */
+  prepararTecido(luz, luzLarga, peso) {
+    const media = borrar(luz, peso, 1);
+    const larga = borrar(luz, peso, 9);
+    const relevo = new Float32Array(PIXELS);
+    for (let i = 0; i < PIXELS; i++) {
+      if (!peso[i]) continue;
+      // em luz que se vê (raiz), para a dobra no tecido escuro pesar igual
+      const h = Math.sqrt(media[i]) - Math.sqrt(larga[i]);
+      relevo[i] = Math.max(-1, Math.min(1, h / Math.max(0.05, Math.sqrt(larga[i]))));
+    }
+    this.dobras = relevo;
+    this.superficie = null;
+  }
+
+  /** A parte onde a logo fica (a frente, a copa, a fita), como a máscara de
+      recorte do PSD: a logo não passa da costura nem desce para a aba. A borda
+      sai suave, de um pixel, para não ter cara de adesivo. */
+  superficieDaArte(lugar) {
+    const chave = `${this.id}|${Math.round(lugar.x)}|${Math.round(lugar.y)}`;
+    if (this.superficie && this.superficie.chave === chave) return this.superficie.valores;
+    const limpa = this.atuais.limpa.data;
+    const contagem = new Uint32Array(this.nomes.length + 1);
+    const cx = Math.round(lugar.x);
+    const cy = Math.round(lugar.y);
+    for (let y = cy - 6; y <= cy + 6; y++) {
+      for (let x = cx - 6; x <= cx + 6; x++) {
+        if (x < 0 || y < 0 || x >= LADO || y >= LADO) continue;
+        const k = this.rotulo[y * LADO + x];
+        if (k) contagem[k]++;
+      }
+    }
+    let k = 0;
+    for (let n = 1; n < contagem.length; n++) if (contagem[n] > contagem[k]) k = n;
+    const nome = k ? this.nomes[k - 1] : null;
+    const costura = this.nomes.indexOf("costura") + 1;
+    const valores = new Float32Array(PIXELS);
+    const mascaras = this.camadas && this.camadas.mascaras;
+    for (let i = 0; i < PIXELS; i++) {
+      if (limpa[i * 4 + 3] < 128 || this.chao[i]) continue;
+      if (!nome) valores[i] = 1;
+      else if (mascaras) valores[i] = Math.min(1, mascaras[nome][i] + (mascaras.costura ? mascaras.costura[i] : 0));
+      // barra só as outras partes pintáveis (a aba, as laterais): o mapa de
+      // partes é desenhado à mão e erra nos cantos sem cor; a costura do meio da
+      // frente (boné de seis gomos) fica debaixo da logo
+      else valores[i] = !this.rotulo[i] || this.rotulo[i] === k || this.rotulo[i] === costura ? 1 : 0;
+    }
+    const uns = new Float32Array(PIXELS).fill(1);
+    const suave = borrar(valores, uns, 1);
+    for (let i = 0; i < PIXELS; i++) suave[i] = Math.min(valores[i], suave[i]) * 0.5 + suave[i] * 0.5;
+    this.superficie = { chave, valores: suave };
+    return suave;
   }
 
   desenharCamadas() {
@@ -675,7 +773,7 @@ export class FotoDoBone {
     const arte = this.arte;
     if (!arte || !arte.imagem || !this.pronto) return;
     const imagem = arte.imagem;
-    const passos = this.camadas ? 24 : 10;
+    const passos = 20;
     const malha = this.malhaDaArte(arte.proporcao || imagem.width / imagem.height, arte.escala || 1, passos);
     if (!malha) return;
     const tela = quadro();
@@ -687,68 +785,118 @@ export class FotoDoBone {
         triangulo(c, imagem, [origem(i, j), origem(i + 1, j + 1), origem(i, j + 1)], [malha[j][i], malha[j + 1][i + 1], malha[j + 1][i]]);
       }
     }
+    // só a área da logo, com folga para o deslocamento
+    let x0 = LADO;
+    let y0 = LADO;
+    let x1 = 0;
+    let y1 = 0;
+    malha.forEach((linha) => linha.forEach(([x, y]) => {
+      x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+    }));
+    x0 = Math.max(0, Math.floor(x0) - 4);
+    y0 = Math.max(0, Math.floor(y0) - 4);
+    x1 = Math.min(LADO - 1, Math.ceil(x1) + 4);
+    y1 = Math.min(LADO - 1, Math.ceil(y1) + 4);
+    if (x1 <= x0 || y1 <= y0) return;
 
-    if (this.camadas) {
-      this.acabarArteDasCamadas(c, tela);
-      return;
-    }
-    // a luz do tecido debaixo da logo, medida contra o meio da própria logo
     const dados = c.getImageData(0, 0, LADO, LADO);
     const p = dados.data;
+    const fonte = new Uint8ClampedArray(p);
     const limpa = this.atuais.limpa.data;
-    const amostra = new Float32Array(PIXELS);
+    const lugar = (this.ajustes[this.id] || {}).arte || {};
+    const superficie = this.superficieDaArte(lugar);
+
+    // a luz do tecido debaixo da logo, medida contra o meio da própria logo
+    const amostra = new Float32Array((x1 - x0 + 1) * (y1 - y0 + 1));
     let quantos = 0;
-    for (let i = 0; i < PIXELS; i++) if (p[i * 4 + 3] > 128) amostra[quantos++] = this.luzLarga[i];
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const i = y * LADO + x;
+        if (fonte[i * 4 + 3] > 128 && superficie[i] > 0.5) amostra[quantos++] = this.luzLarga[i];
+      }
+    }
     const referencia = mediana(amostra, quantos);
-    const curva = curvaDaLuz(referencia) * 0.8;
+    // a espuma do trucker é lisa e clara: a luz pesa um pouco menos
+    const curva = curvaDaLuz(referencia) * (this.camadas ? 0.7 : 0.8);
     // a tinta e a linha cobrem o grão do tecido: passa só um pouco dele
-    const grao = pesoDoGrao(referencia) * (arte.relevo ? 0.25 : 0.4);
-    const alfa = new Uint8Array(PIXELS);
-    for (let i = 0; i < PIXELS; i++) alfa[i] = p[i * 4 + 3];
-    for (let i = 0, q = 0; i < PIXELS; i++, q += 4) {
-      if (!p[q + 3]) continue;
-      const larga = Math.max(1e-4, this.luzLarga[i]);
-      const fino = Math.max(0.5, Math.min(1.8, this.luz[i] / larga)) ** grao;
-      let s = Math.max(0.45, Math.min(1.3, (larga / referencia) ** curva * fino));
-      if (arte.relevo) {
-        // bordado e aplique: a borda de cima pega luz e a de baixo faz sombra
-        const x = i % LADO;
-        const y = (i - x) / LADO;
-        if (x > 1 && y > 1 && x < LADO - 2 && y < LADO - 2) {
-          const subida = (alfa[i - LADO - 1] - alfa[i + LADO + 1]) / 255;
+    const grao = pesoDoGrao(referencia) * (arte.relevo ? 0.3 : 0.5);
+    // quanto a logo anda nas dobras: uns 2 pixels na dobra forte
+    const deslocar = 2.4;
+
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const i = y * LADO + x;
+        const q = i * 4;
+        const dentro = superficie[i];
+        if (dentro <= 0.01) {
+          p[q + 3] = 0;
+          continue;
+        }
+        // o "Deslocar": pega a arte um tico ao lado, conforme a dobra
+        const d = this.dobras[i] * deslocar;
+        const sx = Math.max(0, Math.min(LADO - 1.001, x - d));
+        const sy = Math.max(0, Math.min(LADO - 1.001, y - d * 0.6));
+        const ix = sx | 0;
+        const iy = sy | 0;
+        const fx = sx - ix;
+        const fy = sy - iy;
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        let a = 0;
+        [[0, 0, (1 - fx) * (1 - fy)], [1, 0, fx * (1 - fy)], [0, 1, (1 - fx) * fy], [1, 1, fx * fy]].forEach(([ox, oy, w]) => {
+          const k = ((iy + oy) * LADO + ix + ox) * 4;
+          const wa = w * fonte[k + 3];
+          r += PARA_LINEAR[fonte[k]] * wa;
+          g += PARA_LINEAR[fonte[k + 1]] * wa;
+          b += PARA_LINEAR[fonte[k + 2]] * wa;
+          a += wa;
+        });
+        if (a < 0.5) {
+          p[q + 3] = 0;
+          continue;
+        }
+        r /= a;
+        g /= a;
+        b /= a;
+        // a luz e a sombra da foto: multiplicar na sombra, clarear no brilho
+        const larga = Math.max(1e-4, this.luzLarga[i]);
+        const fino = Math.max(0.5, Math.min(1.8, this.luz[i] / larga)) ** grao;
+        let s = Math.max(0.4, Math.min(1.35, (larga / referencia) ** curva * fino));
+        if (arte.relevo && x > 1 && y > 1 && x < LADO - 2 && y < LADO - 2) {
+          // bordado e aplique: a borda de cima pega luz e a de baixo faz sombra
+          const subida = (fonte[q - LADO * 4 - 4 + 3] - fonte[q + LADO * 4 + 4 + 3]) / 255;
           s *= 1 - subida * 0.35;
         }
+        const brilho = s > 1 ? (s - 1) * 0.08 : 0;
+        p[q] = voltar(r * s + brilho * (1 - r));
+        p[q + 1] = voltar(g * s + brilho * (1 - g));
+        p[q + 2] = voltar(b * s + brilho * (1 - b));
+        // a logo não sai da parte dela nem do boné
+        p[q + 3] = Math.round(a * dentro * (limpa[q + 3] / 255));
       }
-      p[q] = voltar(PARA_LINEAR[p[q]] * s);
-      p[q + 1] = voltar(PARA_LINEAR[p[q + 1]] * s);
-      p[q + 2] = voltar(PARA_LINEAR[p[q + 2]] * s);
-      // a logo não sai do boné
-      p[q + 3] = this.chao[i] ? 0 : Math.round((p[q + 3] * limpa[q + 3]) / 255);
     }
-    c.putImageData(dados, 0, 0);
+    c.putImageData(dados, 0, 0, x0, y0, x1 - x0 + 1, y1 - y0 + 1);
+    // o que ficou fora da área (não deveria ter nada) sai
+    c.clearRect(0, 0, LADO, y0);
+    c.clearRect(0, y1 + 1, LADO, LADO);
+    c.clearRect(0, 0, x0, LADO);
+    c.clearRect(x1 + 1, 0, LADO, LADO);
     this.camadaArte = tela;
+    if (this.camadas) this.acabarArteDasCamadas(p);
   }
 
-  /** Como no PSD: a logo vai por cima, sem sair do boné, e a trama do tecido
-      escurece a logo (a camada de textura em multiplicar, só onde há logo). */
-  acabarArteDasCamadas(c, tela) {
-    const dados = c.getImageData(0, 0, LADO, LADO);
-    const p = dados.data;
-    const foto = this.atuais.limpa.data;
+  /** Como no PSD do trucker: a trama do tecido escurece a logo (a camada de
+      textura em multiplicar, só onde há logo). */
+  acabarArteDasCamadas(p) {
     const { trama, forca } = this.camadas;
+    if (!trama || !forca) return;
     const sombra = new ImageData(LADO, LADO);
     for (let i = 0, q = 0; i < PIXELS; i++, q += 4) {
-      if (!p[q + 3]) continue;
-      p[q + 3] = Math.round((p[q + 3] * foto[q + 3]) / 255);
-      if (trama) sombra.data[q + 3] = Math.round(p[q + 3] * forca * trama[i]);
+      if (p[q + 3]) sombra.data[q + 3] = Math.round(p[q + 3] * forca * trama[i]);
     }
-    c.putImageData(dados, 0, 0);
-    this.camadaArte = tela;
-    this.camadaTrama = null;
-    if (trama && forca) {
-      this.camadaTrama = quadro();
-      this.camadaTrama.getContext("2d").putImageData(sombra, 0, 0);
-    }
+    this.camadaTrama = quadro();
+    this.camadaTrama.getContext("2d").putImageData(sombra, 0, 0);
   }
 
   compor(alvo = this.c, comDestaque = true) {
