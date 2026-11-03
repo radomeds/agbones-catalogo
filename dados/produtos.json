@@ -1400,6 +1400,15 @@
       "assets/uso/uso-10.webp"
     ]
   },
+  "vitrine": {
+    "_leia": "Pagina inicial nova (03/11/2026). modelo_destaque: o modelo que o botao principal abre no editor. numeros: prova social que so a fabrica sabe — fica ESCONDIDA enquanto o valor for null. Preencher so com numero real (ex.: 120000), nunca estimado.",
+    "modelo_destaque": "trucker",
+    "numeros": [
+      { "id": "pecas", "valor": null, "sufixo": "+", "rotulo": "peças produzidas" },
+      { "id": "clientes", "valor": null, "sufixo": "+", "rotulo": "empresas atendidas" },
+      { "id": "cidades", "valor": null, "sufixo": "", "rotulo": "estados atendidos" }
+    ]
+  },
   "instagram": {
     "_leia": "Ultimos posts do perfil, como imagem propria. NAO e o widget do Instagram: aquele carrega script de terceiro e foi o que emperrou o site antigo. Para renovar, rodar ferramentas/atualizar-instagram.ps1 — ele baixa os posts novos, reduz e reescreve esta lista sozinho.",
     "atualizado_em": "2026-09-08",
