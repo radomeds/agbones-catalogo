@@ -196,42 +196,13 @@ function dentroDe(poligonos) {
 
 /** O ponto (u, v) da logo, de -0,5 a 0,5, no lugar dele na foto. Mesma conta
     da ferramenta que mediu o lugar da logo em cada foto. */
-/** O ponto (u, v) da arte, de -0,5 a 0,5, na grade da forma (em unidades da
-    caixa). Fora da grade (logo maior que a caixa) segue a última casa. */
-function naForma(grade, u, v) {
-  const linhas = grade.length;
-  const colunas = grade[0].length;
-  const fx = (u + 0.5) * (colunas - 1);
-  const fy = (v + 0.5) * (linhas - 1);
-  const i = Math.max(0, Math.min(colunas - 2, Math.floor(fx)));
-  const j = Math.max(0, Math.min(linhas - 2, Math.floor(fy)));
-  const a = fx - i;
-  const b = fy - j;
-  return [0, 1].map((k) => (1 - a) * (1 - b) * grade[j][i][k] + a * (1 - b) * grade[j][i + 1][k]
-    + (1 - a) * b * grade[j + 1][i][k] + a * b * grade[j + 1][i + 1][k]);
-}
-
-function temForma(arte) {
-  const grade = arte.forma && arte.forma.grade;
-  return Array.isArray(grade) && grade.length > 1 && Array.isArray(grade[0]) && grade[0].length > 1;
-}
-
 export function pontoDaArte(arte, u, v) {
-  let x;
-  let y;
-  if (temForma(arte)) {
-    // a forma da peça (ferramentas/gerar-formas.py): o cilindro da frente visto
-    // de lado e o arco das linhas; a curva e o entortar do ADM vão por cima
-    const [gx, gy] = naForma(arte.forma.grade, u, v);
-    x = gx * arte.largura;
-    y = gy * arte.altura + (arte.curva || 0) * (1 - 4 * u * u) + Math.tan((arte.inclina || 0) * GRAU) * x;
-  } else {
-    // dobra: o lado que foge da câmera encolhe na largura (o tecido faz a volta)
-    x = u * arte.largura * (1 + (arte.dobra || 0) * u);
-    y = v * arte.altura * (1 + (arte.fuga || 0) * u)
-      + (arte.curva || 0) * (1 - 4 * u * u)
-      + Math.tan((arte.inclina || 0) * GRAU) * x;
-  }
+  // a forma é a que o Rafael ajustou à mão no ADM, e só ela
+  // dobra: o lado que foge da câmera encolhe na largura (o tecido faz a volta)
+  const x = u * arte.largura * (1 + (arte.dobra || 0) * u);
+  const y = v * arte.altura * (1 + (arte.fuga || 0) * u)
+    + (arte.curva || 0) * (1 - 4 * u * u)
+    + Math.tan((arte.inclina || 0) * GRAU) * x;
   const giro = (arte.giro || 0) * GRAU;
   return [
     arte.x + x * Math.cos(giro) - y * Math.sin(giro),
@@ -820,8 +791,8 @@ export class FotoDoBone {
     const curva = curvaDaLuz(referencia) * (this.camadas ? 0.7 : 0.8);
     // a tinta e a linha cobrem o grão do tecido: passa só um pouco dele
     const grao = pesoDoGrao(referencia) * (arte.relevo ? 0.3 : 0.5);
-    // quanto a logo anda nas dobras: uns 2 pixels na dobra forte
-    const deslocar = 2.4;
+    // quanto a logo anda nas dobras: no máximo 1 pixel, para não entortar o desenho
+    const deslocar = 1;
 
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
