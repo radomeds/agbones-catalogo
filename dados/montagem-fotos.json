@@ -137,18 +137,19 @@
         "imagem": "assets/produtos/montagem/americano-tela-mapa.png",
         "cores": {
           "ff0000": "aba-baixo",
-          "00ff00": "aba",
-          "0000ff": "botao",
-          "ffff00": "frente",
-          "ff00ff": "laterais"
+          "00ff00": "aba-sanduiche",
+          "0000ff": "aba",
+          "ffff00": "botao",
+          "ff00ff": "frente",
+          "00ffff": "laterais"
         }
       },
       "partes": {},
       "arte": {
         "x": 339,
-        "y": 248,
+        "y": 249,
         "largura": 132,
-        "altura": 133,
+        "altura": 128,
         "giro": 0,
         "inclina": 0,
         "fuga": 0,

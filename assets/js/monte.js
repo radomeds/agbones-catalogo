@@ -471,6 +471,7 @@ function aplicarCombinacao(combinacao) {
     let cor = principal;
     if (comTela && (parte.id === "laterais" || parte.id === "traseira")) cor = contraste;
     if (!comTela && (parte.id === "aba-baixo" || parte.id === "botao")) cor = contraste;
+    if (parte.id === "aba-sanduiche") cor = contraste;
     estado.cores[parte.id] = cor;
     emTodos((palco) => palco.pintar(parte.id, cor));
   });

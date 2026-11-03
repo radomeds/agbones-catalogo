@@ -73,7 +73,7 @@ export const DESENHOS = {
     medidas: { copa: { altura: 1.12, frente: 3.1, tras: 2.0 }, aba: { curva: 0.34 }, arte: { altura: 0.52, tamanho: 0.66 } },
   },
   "americano-tela": {
-    tipo: "bone", gomos: 6, tela: true, fecho: "snap",
+    tipo: "bone", gomos: 6, tela: true, fecho: "snap", sanduiche: true,
     medidas: { copa: { altura: 1.04, frente: 2.7 } },
   },
   "americano": {
@@ -167,6 +167,8 @@ export function partesDoDesenho(id) {
       { id: "traseira", nome: d.tela ? "Tela de trás" : "Traseira" },
       { id: "aba", nome: "Aba" },
       { id: "aba-baixo", nome: "Embaixo da aba" },
+      // a beirada colorida entre a aba de cima e a de baixo
+      ...(d.sanduiche ? [{ id: "aba-sanduiche", nome: "Aba sanduíche" }] : []),
       { id: "botao", nome: "Botão" },
     ];
   }
