@@ -961,6 +961,32 @@
       "fita-couro": { "traco_minimo_mm": 0.8, "corte": true }
     }
   },
+  "cartelas": {
+    "_leia": "Cores de linha (bordado) e de tinta (silk) para o vetorizador encaixar a arte. PROVISÓRIO: cartela de partida com cores básicas, sem código de fabricante. Trocar pelas linhas e tintas que a fábrica tem de verdade (Rafael). Só o 'hex' é usado no encaixe; o 'nome' aparece para o cliente.",
+    "status": "provisorio",
+    "bordado": [
+      { "nome": "Preto", "hex": "#141414" }, { "nome": "Branco", "hex": "#FFFFFF" },
+      { "nome": "Cinza", "hex": "#8C9096" }, { "nome": "Prata", "hex": "#C4C7CC" },
+      { "nome": "Vermelho", "hex": "#C8102E" }, { "nome": "Vinho", "hex": "#7A1E2C" },
+      { "nome": "Laranja", "hex": "#F26B1D" }, { "nome": "Amarelo", "hex": "#FFC72C" },
+      { "nome": "Dourado", "hex": "#C99A2E" }, { "nome": "Verde-bandeira", "hex": "#00843D" },
+      { "nome": "Verde-limão", "hex": "#7AC143" }, { "nome": "Verde-musgo", "hex": "#4B5320" },
+      { "nome": "Azul-royal", "hex": "#1B4FA0" }, { "nome": "Azul-marinho", "hex": "#16264A" },
+      { "nome": "Azul-celeste", "hex": "#5FA8DD" }, { "nome": "Rosa", "hex": "#E85A9B" },
+      { "nome": "Roxo", "hex": "#5B2D86" }, { "nome": "Marrom", "hex": "#5C3A21" },
+      { "nome": "Bege", "hex": "#D8C3A0" }
+    ],
+    "silk": [
+      { "nome": "Preto", "hex": "#101010" }, { "nome": "Branco", "hex": "#FFFFFF" },
+      { "nome": "Cinza", "hex": "#808285" }, { "nome": "Vermelho", "hex": "#E10600" },
+      { "nome": "Vinho", "hex": "#861F41" }, { "nome": "Laranja", "hex": "#FF6A13" },
+      { "nome": "Amarelo", "hex": "#FFD100" }, { "nome": "Dourado", "hex": "#B58B3A" },
+      { "nome": "Verde", "hex": "#009A44" }, { "nome": "Verde-limão", "hex": "#97D700" },
+      { "nome": "Azul", "hex": "#0057B8" }, { "nome": "Azul-marinho", "hex": "#13294B" },
+      { "nome": "Azul-claro", "hex": "#41B6E6" }, { "nome": "Rosa", "hex": "#E10098" },
+      { "nome": "Roxo", "hex": "#5F259F" }, { "nome": "Marrom", "hex": "#6B4226" }
+    ]
+  },
   "cores": [
     {
       "id": "preto",

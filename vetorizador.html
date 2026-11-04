@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vetorizar minha logo | AG Bonés</title>
+<meta name="description" content="Transforme a imagem da sua logo em vetor pronto para bordado e silk, aqui no seu celular. Nada é enviado: a imagem fica no seu aparelho.">
+<link rel="canonical" href="https://radomeds.github.io/agbones-catalogo/vetorizador.html">
+<link rel="icon" href="assets/marca/icon-site-ag.png">
+<link rel="stylesheet" href="assets/css/estilo.css">
+<link rel="stylesheet" href="assets/css/vetorizador.css">
+<meta name="theme-color" content="#2F5FD0">
+</head>
+<body class="corpo-home">
+
+<a class="pular-para-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="cabecalho">
+  <div class="container cabecalho__interno">
+    <a class="cabecalho__logo" href="index.html" aria-label="AG Bonés — página inicial">
+      <img src="assets/marca/logo-agbones.svg" alt="AG Bonés" width="255" height="145">
+    </a>
+    <nav class="cabecalho__nav">
+      <a class="link-menu" href="index.html#modelos">Modelos</a>
+      <a class="botao" href="monte.html">Montar pedido</a>
+    </nav>
+  </div>
+</header>
+
+<main id="conteudo" class="container secao vetorizador">
+  <nav class="migalhas" aria-label="Você está em">
+    <a href="index.html">Início</a> › <span>Vetorizar minha logo</span>
+  </nav>
+
+  <h1>Vetorizar minha logo</h1>
+  <p class="etapa__apoio">
+    Sua imagem vira vetor aqui mesmo, no seu aparelho: nada é enviado. O vetor já sai
+    nas cores e na espessura que o bordado ou o silk conseguem fazer.
+  </p>
+
+  <label class="vz-enviar" id="vz-enviar">
+    <input type="file" id="vz-arquivo" accept="image/*" class="oculto-visual">
+    <span class="vz-enviar__icone" aria-hidden="true">⬆</span>
+    <span>Escolher a imagem da logo</span>
+    <small>PNG, JPG ou WEBP — print e foto também servem</small>
+  </label>
+
+  <section class="vz-painel" id="vz-painel" hidden>
+    <div class="vz-comparacao">
+      <figure class="vz-quadro"><img id="vz-original" alt="Sua imagem"><figcaption>Sua imagem</figcaption></figure>
+      <figure class="vz-quadro vz-quadro--vetor" id="vz-quadro-vetor"><img id="vz-vetor" alt="Sua logo em vetor"><figcaption>Em vetor</figcaption></figure>
+    </div>
+    <p class="vz-situacao" id="vz-situacao" aria-live="polite"></p>
+    <div class="vz-barra" id="vz-barra" hidden><div class="vz-barra__cheia" id="vz-barra-cheia"></div></div>
+
+    <div class="vz-opcoes">
+      <p class="rotulo">Como a logo vai ser feita</p>
+      <div class="fichas" id="vz-tecnica" role="radiogroup" aria-label="Técnica"></div>
+
+      <p class="rotulo">Quantas cores</p>
+      <div class="fichas" id="vz-cores" role="radiogroup" aria-label="Quantas cores"></div>
+
+      <label class="vz-linha">
+        <span>Largura da logo no boné</span>
+        <span><input type="number" id="vz-largura" min="2" max="30" step="0.5" value="10" inputmode="decimal"> cm</span>
+      </label>
+
+      <label class="vz-marcar"><input type="checkbox" id="vz-fundo" checked> Tirar o fundo branco</label>
+      <label class="vz-marcar"><input type="checkbox" id="vz-ia"> Limpar e ampliar com IA <small>(para imagem pequena, borrada ou de foto; baixa 27 MB uma vez)</small></label>
+
+      <details class="vz-avancado">
+        <summary>Ajustes avançados</summary>
+        <label class="vz-linha"><span>Motor do traço</span>
+          <select id="vz-motor">
+            <option value="artcraft">ArtCraft (borda mais fiel)</option>
+            <option value="vtracer">VTracer (mais leve)</option>
+          </select>
+        </label>
+        <label class="vz-marcar"><input type="checkbox" id="vz-formas" checked> Trocar por círculo e reta exatos quando der</label>
+        <label class="vz-marcar"><input type="checkbox" id="vz-fino" checked> Tirar o que é fino demais para a técnica</label>
+      </details>
+    </div>
+
+    <div class="vz-resumo" id="vz-resumo"></div>
+    <div class="vz-paleta" id="vz-paleta"></div>
+    <ul class="vz-avisos" id="vz-avisos"></ul>
+
+    <div class="vz-acoes">
+      <button type="button" class="botao" id="vz-baixar-svg" disabled>Baixar SVG</button>
+      <button type="button" class="botao botao--vazado" id="vz-baixar-png" disabled>Baixar PNG</button>
+      <a class="botao botao--vazado" href="monte.html">Montar meu boné</a>
+    </div>
+    <p class="nota">É uma prévia feita por máquina. Antes de produzir, a fábrica confere a arte e manda o layout para você aprovar.</p>
+  </section>
+
+  <section class="vz-creditos">
+    <h2>Com o que isto é feito</h2>
+    <p>Tudo roda no seu navegador, com programas de código aberto:</p>
+    <ul>
+      <li><strong>VectorCraft Image Trace</strong>, do ArtCraft (storytold) — MIT ou Apache-2.0.</li>
+      <li><strong>visioncortex</strong>, o motor do VTracer — MIT ou Apache-2.0.</li>
+      <li><strong>Real-ESRGAN</strong> (Xintao Wang e outros), modelo realesr-general-x4v3 — BSD-3-Clause.</li>
+      <li><strong>ONNX Runtime Web</strong> (Microsoft) — MIT.</li>
+    </ul>
+    <p>A escolha das cores, a limpeza do que é fino demais e o acabamento das curvas são da AG Bonés.</p>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="container rodape__grade">
+    <div>
+      <img src="assets/marca/logo-agbones.svg" alt="AG Bonés" width="130" height="74" loading="lazy">
+      <p>Fábrica de bonés e chapéus personalizados. Mais de 25 anos em Caicó/RN, atendendo todo o Brasil.</p>
+    </div>
+    <div>
+      <h3>Contato</h3>
+      <ul>
+        <li><a href="https://wa.me/5584996913662" rel="noopener">WhatsApp</a></li>
+        <li><a href="https://instagram.com/agbones_store" rel="noopener">Instagram</a></li>
+        <li><a href="https://facebook.com/agbonescaico" rel="noopener">Facebook</a></li>
+        <li><a href="mailto:agbonescomercial@gmail.com">agbonescomercial@gmail.com</a></li>
+        <li>Segunda a sexta, 7h às 18h</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Empresa</h3>
+      <ul>
+        <li>AG Bonés</li>
+        <li>CNPJ 03.813.918/0001-48</li>
+        <li>Granja Bulandeira, 5570, Caixa postal 144, Zona Rural, Caicó/RN</li>
+      </ul>
+    </div>
+  </div>
+  <div class="container rodape__creditos">© 2026 AG Bonés. Todos os direitos reservados.</div>
+</footer>
+
+<script type="module" src="assets/js/vetorizador-pagina.js"></script>
+</body>
+</html>

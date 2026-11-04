@@ -1,0 +1,38 @@
+/* Página do vetorizador próprio (vetorizador.html). */
+.vetorizador { max-width: 760px; }
+.vz-enviar { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .25rem;
+  min-height: 128px; margin: var(--e5) 0; padding: var(--e3); border: 2px dashed var(--borda); border-radius: var(--raio);
+  background: var(--fundo-alt); color: var(--texto); font: 700 1rem var(--fonte); text-align: center; cursor: pointer; }
+.vz-enviar:hover, .vz-enviar:focus-within { border-color: var(--destaque); }
+.vz-enviar small { font-weight: 400; font-size: .8rem; color: var(--texto-fraco); }
+.vz-enviar__icone { font-size: 1.6rem; }
+.vz-enviar--pequeno { min-height: 64px; }
+.vz-comparacao { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.vz-quadro { margin: 0; border: 1px solid var(--borda); border-radius: 12px; padding: var(--e2); background:
+  repeating-conic-gradient(#eef0f4 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
+.vz-quadro img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; }
+.vz-quadro figcaption { font-size: .8rem; color: #69738A; text-align: center; padding-top: var(--e1); }
+.vz-quadro--trabalhando img { opacity: .35; }
+.vz-situacao { min-height: 1.4em; margin: var(--e3) 0 var(--e2); }
+.vz-barra { height: 6px; border-radius: 3px; background: var(--borda); overflow: hidden; margin-bottom: var(--e3); }
+.vz-barra__cheia { height: 100%; width: 0; background: var(--destaque); transition: width .2s; }
+.vz-opcoes { display: grid; gap: var(--e2); margin: var(--e4) 0; }
+.vz-opcoes .fichas { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.vz-ficha { min-height: 44px; padding: 0 var(--e4); border: 2px solid var(--borda); border-radius: 22px;
+  background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.vz-ficha[aria-checked="true"] { border-color: var(--destaque); background: var(--destaque); color: var(--destaque-texto); }
+.vz-linha { display: flex; justify-content: space-between; align-items: center; gap: var(--e3); min-height: 44px; }
+.vz-linha input, .vz-linha select { font: inherit; min-height: 40px; }
+.vz-linha input { width: 5.5em; }
+.vz-marcar { display: flex; gap: var(--e2); align-items: baseline; min-height: 36px; }
+.vz-marcar small { color: #69738A; }
+.vz-avancado summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.vz-resumo { font-size: .95rem; color: #69738A; }
+.vz-paleta { display: flex; flex-wrap: wrap; gap: var(--e2); margin: var(--e2) 0; }
+.vz-cor { display: inline-flex; align-items: center; gap: var(--e1); font-size: .85rem; }
+.vz-cor i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.2); }
+.vz-avisos { font-size: .9rem; color: #69738A; padding-left: 1.2em; }
+.vz-acoes { display: flex; flex-wrap: wrap; gap: var(--e2); margin: var(--e4) 0 var(--e2); }
+.vz-creditos { margin-top: var(--e7); font-size: .9rem; color: #69738A; }
+.vz-creditos h2 { font-size: 1.1rem; color: var(--texto); }
+.vz-sugerido { background: var(--fundo-alt); border-radius: var(--raio); padding: var(--e2); }
