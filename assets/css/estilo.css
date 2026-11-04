@@ -1114,6 +1114,39 @@ p { margin: 0 0 var(--e4); }
 .vetor-usar input { width: 22px; height: 22px; accent-color: var(--destaque); }
 .vetor-credito { color: var(--texto-fraco); font-size: .8rem; line-height: 1.5; }
 
+/* ---------- Arquivo para a produção ---------- */
+
+.producao {
+  margin-top: var(--e4); padding: var(--e3) var(--e4);
+  border: 1px solid var(--borda); border-radius: var(--raio-p); background: var(--cartao);
+}
+.producao__titulo { min-height: 44px; display: flex; align-items: center; font-weight: 700; cursor: pointer; }
+.producao__campos { display: flex; flex-wrap: wrap; gap: var(--e3); margin: var(--e3) 0; }
+.producao__campo { display: flex; flex-direction: column; gap: var(--e1); flex: 1 1 140px; font-size: .9rem; font-weight: 600; }
+.producao__campo input, .producao__campo select {
+  min-height: 44px; padding: 0 var(--e2); font: inherit; font-weight: 400;
+  border: 2px solid var(--borda); border-radius: var(--raio-p); background: var(--fundo); color: var(--texto);
+}
+.producao__botoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--e2); }
+.producao__botao { min-height: 48px; }
+.producao__botao[aria-busy="true"] { opacity: .6; }
+.producao__situacao { margin: var(--e3) 0 0; font-size: .9rem; }
+.producao__situacao:empty { display: none; }
+.producao__resultado { margin-top: var(--e3); }
+.producao__aviso, .producao__certo { padding: var(--e2) var(--e3); border-radius: var(--raio-p); font-size: .9rem; }
+.producao__aviso { background: color-mix(in srgb, #D0342F 12%, var(--cartao)); border-left: 4px solid #D0342F; }
+.producao__certo { background: color-mix(in srgb, var(--azul) 10%, var(--cartao)); border-left: 4px solid var(--azul); }
+.producao__previa {
+  display: block; width: 100%; max-height: 220px; margin: var(--e3) 0;
+  background: repeating-conic-gradient(#eef1f6 0 25%, #fff 0 50%) 0 0 / 16px 16px; border-radius: var(--raio-p);
+}
+.producao__fino { fill: #D0342F; fill-opacity: .85; stroke: #D0342F; stroke-width: .3; }
+.producao__cores { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e2); font-size: .9rem; }
+.producao__cores li { display: flex; align-items: center; gap: var(--e2); }
+.producao__amostra { flex: none; width: 22px; height: 22px; }
+.producao__total { font-size: .9rem; color: var(--texto-fraco); }
+.producao__conferir { min-height: 44px; }
+
 /* ---------- Quantidade ---------- */
 
 .atalhos-quantidade { display: flex; flex-wrap: wrap; gap: var(--e2); margin-bottom: var(--e4); }

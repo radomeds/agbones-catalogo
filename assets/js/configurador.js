@@ -30,6 +30,7 @@ import { enderecoDoVetor, vetorizadorDisponivel, vetorizarArquivo } from "./veto
 import { prepararMedicao, registrar, registrarPedidoEnviado } from "./medicao.js";
 import { interpretarPedido, comporArte, descreverCamada, sugestoes } from "./montador.js";
 import { carregarLetras, contornar, contornoDisponivel } from "./letras.js";
+import { larguraDaParte, montarBlocoDeProducao, producaoDisponivel } from "./producao.js";
 
 const CHAVE_ARMAZENAMENTO = "agbones.pedido";
 const ULTIMO_PASSO = 3;
@@ -772,6 +773,28 @@ async function comporArteDaParte(parteId) {
   });
 }
 
+/** Primeira técnica escolhida para a parte (para o conferidor de produção). */
+function tecnicaDaParte(parteId) {
+  const escolhida = montagem.partes[parteId];
+  return escolhida && escolhida.tecnicas && escolhida.tecnicas[0];
+}
+
+/** Bloco "Arquivo para a produção" (PDF, EPS, DXF e conferidor), ou null se o aparelho
+    não roda o motor. `parteId` dá a largura e a técnica de partida. */
+function blocoDeProducao(parteId, obterSvg, nomeBase, dicaImagem) {
+  if (!producaoDisponivel()) return null;
+  return montarBlocoDeProducao({
+    obterSvg,
+    nomeBase,
+    producao: catalogo.producao,
+    tecnicas: catalogo.tecnicas,
+    larguraInicial: larguraDaParte(catalogo.producao, parteId),
+    tecnicaInicial: tecnicaDaParte(parteId),
+    aoBaixar: (formato) => registrar("baixou_producao", { parte: parteId, formato }),
+    dicaImagem,
+  });
+}
+
 /** Põe na parte a forma de aplicação recomendada, quando ainda não há nenhuma:
     o cliente leigo não sabe escolher, e a fábrica confirma no atendimento. */
 function garantirTecnica(parteId) {
@@ -976,13 +999,28 @@ function abrirPainelDeCriarArte(parteInicial) {
     desenharAbas();
     desenharCamadas();
     desenharChips();
-    if (desenharArte) atualizarArteDaParte(parteAtual, previa);
+    if (desenharArte) {
+      atualizarArteDaParte(parteAtual, previa);
+      if (producao) producao.conferir();
+    }
+  }
+
+  let producao = null;
+  function trocarBlocoDeProducao() {
+    const novo = blocoDeProducao(parteAtual, async () => {
+      const resultado = await comporArteDaParte(parteAtual).catch(() => null);
+      return resultado && resultado.svg;
+    }, `arte-${(produtoEscolhido.id || "bone")}-${parteAtual}`);
+    if (producao && novo) producao.replaceWith(novo);
+    else if (producao) producao.remove();
+    producao = novo;
   }
 
   function trocarParte(parteId) {
     parteAtual = parteId;
     const area = areaPorId(parteId);
     elementos.painelTitulo.textContent = `Criar arte · ${area.nome}`;
+    trocarBlocoDeProducao();
     redesenharTudo(true);
   }
 
@@ -1097,6 +1135,8 @@ function abrirPainelDeCriarArte(parteInicial) {
     nota.textContent = "É a arte em curvas, do jeito que a fábrica usa. Antes de produzir, a gente manda o layout para você aprovar.";
 
     corpo.append(abas, previa, conversa, chips, formulario, listaDeCamadas, nota);
+    trocarBlocoDeProducao();
+    if (producao) corpo.append(producao);
 
     if (!conversaDaArte.length) {
       conversaDaArte.push({
@@ -1550,17 +1590,30 @@ function abrirPainelDaLogo() {
         veredito.append(nota);
       }
       prepararVetor(blocoVetor);
+      mostrarProducaoDaLogo();
     });
 
     // a logo em vetor (motor ArtCraft): nasce escondida, aparece com a imagem
     const blocoVetor = document.createElement("div");
     blocoVetor.className = "bloco-vetor oculto";
 
+    // o arquivo de produção da logo, no tamanho da frente
+    const producaoDaLogo = blocoDeProducao("frente", svgDaLogo, "logo",
+      "Marque \"Ver no boné a versão em vetor\" acima para conferir.");
+    function mostrarProducaoDaLogo() {
+      if (!producaoDaLogo) return;
+      const pode = Boolean(logoNaTela && logoNaTela.arquivo && podeMostrarNaTela(logoNaTela.arquivo));
+      producaoDaLogo.classList.toggle("oculto", !pode);
+      if (pode) producaoDaLogo.conferir();
+    }
+
     blocoArquivo.append(titulo, nota, area, veredito, blocoVetor);
+    if (producaoDaLogo) blocoArquivo.append(producaoDaLogo);
     corpo.append(blocoArquivo);
 
     if (arteConferida) mostrarVeredito(veredito, arteConferida);
     prepararVetor(blocoVetor);
+    mostrarProducaoDaLogo();
   }, [{
     texto: "Pronto",
     classe: "botao--grande",
@@ -1576,6 +1629,22 @@ function abrirPainelDaLogo() {
       atualizarBarra();
     },
   }]);
+}
+
+/** Confere de novo os blocos de produção abertos (a logo mudou). */
+function reconferirProducao() {
+  document.querySelectorAll(".producao").forEach((bloco) => bloco.conferir && bloco.conferir());
+}
+
+/** A logo sozinha como SVG (a vetorizada, se o cliente escolheu vê-la assim), para o
+    arquivo de produção. */
+async function svgDaLogo() {
+  const logo = await logoParaArte().catch(() => null);
+  if (!logo) return null;
+  const largura = 1000;
+  const altura = Math.round(largura / (logo.proporcao || 1));
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${largura} ${altura}" width="${largura}" height="${altura}">` +
+    `<image href="${logo.endereco}" x="0" y="0" width="${largura}" height="${altura}" preserveAspectRatio="xMidYMid meet"/></svg>`;
 }
 
 /* ---------- A logo em vetor ---------- */
@@ -1664,6 +1733,7 @@ function prepararVetor(bloco) {
   caixa.addEventListener("change", () => {
     logoNaTela.usarVetor = caixa.checked;
     desenharAplicacoes();
+    reconferirProducao();
   });
   usar.append(caixa, document.createTextNode(" Ver no boné a versão em vetor"));
 
@@ -1701,6 +1771,7 @@ function prepararVetor(bloco) {
     if (alvo.vetor) URL.revokeObjectURL(alvo.vetor.endereco);
     alvo.vetor = { endereco: enderecoDoVetor(resultado.svg), cores: resultado.cores, modo: resultado.modo };
     imgVetor.src = alvo.vetor.endereco;
+    if (logoNaTela.usarVetor) reconferirProducao();
     const n = resultado.cores.length;
     const segundos = ((performance.now() - inicio) / 1000).toFixed(1).replace(".", ",");
     situacao.textContent = `${n} ${n === 1 ? "cor" : "cores"}, ${resultado.formas} formas — pronto em ${segundos} s.` +

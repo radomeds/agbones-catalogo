@@ -22,13 +22,16 @@ async function carregarMotor() {
 }
 
 self.onmessage = async (evento) => {
-  const { pedido, linhas, distancia } = evento.data;
+  const { pedido, tipo, linhas, distancia, minimo, modo } = evento.data;
   try {
     const m = await carregarMotor();
     const bytes = new TextEncoder().encode(linhas);
     const endereco = m.reservar(bytes.length);
     new Uint8Array(m.memory.buffer, endereco, bytes.length).set(bytes);
-    const tamanho = m.contornar(endereco, bytes.length, distancia);
+    // "conferir": área por cor e partes finas (minimo em centésimos de mm; modo 1 = silhueta)
+    const tamanho = tipo === "conferir"
+      ? m.conferir(endereco, bytes.length, minimo, modo)
+      : m.contornar(endereco, bytes.length, distancia);
     m.liberar(endereco, bytes.length);
     const texto = new TextDecoder().decode(new Uint8Array(m.memory.buffer, m.resultado_ptr(), tamanho));
     self.postMessage({ pedido, ...JSON.parse(texto) });

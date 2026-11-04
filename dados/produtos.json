@@ -939,6 +939,28 @@
       }
     ]
   },
+  "producao": {
+    "_leia": "Medidas de partida do arquivo de produção (PDF, EPS, DXF) e do conferidor. PROVISÓRIO: valores de referência do mercado, a fábrica precisa confirmar (Rafael). 'largura_mm' é a largura inicial da arte por parte do boné; o cliente pode mudar. 'traco_minimo_mm' é a parte mais fina que a técnica segura; 'corte' = a peça é recortada (aplique, patch, couro), então o conferidor olha a silhueta. Sem preço: a área por cor é só a base para o orçamento.",
+    "status": "provisorio",
+    "largura_mm": {
+      "frente": 100, "lateral-direita": 50, "lateral-esquerda": 50, "lado-a": 50, "lado-b": 50,
+      "traseira": 60, "aba": 70, "fita": 80, "padrao": 80
+    },
+    "padrao": { "traco_minimo_mm": 1.0 },
+    "tecnicas": {
+      "bordado": { "traco_minimo_mm": 1.0 },
+      "bordado-emborrachado": { "traco_minimo_mm": 1.5 },
+      "silk-direto": { "traco_minimo_mm": 0.3 },
+      "silk-alto": { "traco_minimo_mm": 0.5 },
+      "dtf-direto": { "traco_minimo_mm": 0.5 },
+      "pintura": { "traco_minimo_mm": 0.5 },
+      "aplique": { "traco_minimo_mm": 1.5, "corte": true },
+      "aplique-dtf": { "traco_minimo_mm": 0.8, "corte": true },
+      "aplique-silk": { "traco_minimo_mm": 0.8, "corte": true },
+      "aplique-relevo": { "traco_minimo_mm": 1.0, "corte": true },
+      "fita-couro": { "traco_minimo_mm": 0.8, "corte": true }
+    }
+  },
   "cores": [
     {
       "id": "preto",

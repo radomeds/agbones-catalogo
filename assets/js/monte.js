@@ -13,7 +13,8 @@ import {
   minimoDoProduto, precoUnitario, formatarMoeda, calcularPrazo, formatarData, gerarReferencia,
 } from "./comum.js";
 import { abrirWhatsapp } from "./whatsapp.js";
-import { ESTILOS_DE_LETRA, carregarLetras, montarTexto } from "./letras.js";
+import { ESTILOS_DE_LETRA, carregarLetras, montarTexto, matrizSvg } from "./letras.js";
+import { larguraDaParte, montarBlocoDeProducao, producaoDisponivel } from "./producao.js";
 import { DESENHOS, partesDoDesenho } from "./desenhos.js";
 import { FotoDoBone, carregarFotos } from "./foto-bone.js";
 import { ligarZoom } from "./zoom-palco.js";
@@ -694,6 +695,7 @@ function desenharLogo() {
   $("mais-tecnicas").setAttribute("aria-expanded", String(verTodasTecnicas));
   const escolhida = catalogo.tecnicas.find((t) => t.id === estado.tecnica);
   $("explica-tecnica").textContent = escolhida ? escolhida.explicacao || "" : "Essa área não aceita aplicação neste modelo.";
+  desenharProducao();
 }
 
 function lerImagem(arquivo) {
@@ -838,6 +840,7 @@ async function atualizarArte() {
     try { imagem = await desenharNome(logo); } catch { imagem = null; }
   }
   if (numero !== pedidoDeArte) return;
+  if (blocoProducao) blocoProducao.conferir();
   const produto = produtoAtual();
   const final = imagem ? acabarArte(imagem, estado.tecnica) : null;
   desenharMiniatura(final);
@@ -853,6 +856,53 @@ async function atualizarArte() {
   const acabamento = (tecnica && tecnica.acabamento) || "plano";
   ultimaArte = { imagem: final, proporcao: final.width / final.height, escala: estado.tamanho, acabamento };
   emTodos((palco) => palco.colocarArte(ultimaArte));
+}
+
+/* ---------- arquivo para a produção ---------- */
+
+let blocoProducao = null;
+
+/** A logo como SVG para o arquivo de produção: o nome escrito sai em curvas; a imagem
+    enviada vai como imagem (o PDF e o EPS levam; o DXF, que é só linha, não). */
+async function svgDaLogo() {
+  const logo = estado.logo;
+  if (!logo) return null;
+  if (logo.tipo === "nome") {
+    const texto = (logo.texto || "").trim();
+    if (!texto) return null;
+    const letras = await carregarLetras(logo.estilo || "forte");
+    const { formas, caixa } = montarTexto(letras, texto, { curva: texto.length > 6 ? 18 : 0 });
+    if (!formas.length || !caixa.largura) return null;
+    const folga = Math.round(caixa.altura * 0.02);
+    const vb = [caixa.x - folga, caixa.y - folga, caixa.largura + folga * 2, caixa.altura + folga * 2]
+      .map((n) => Math.round(n * 100) / 100).join(" ");
+    const caminhos = formas.map(({ matriz, d }) => `<path transform="matrix(${matrizSvg(matriz)})" d="${d}"/>`).join("");
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><g fill="${logo.cor || "#FFFFFF"}">${caminhos}</g></svg>`;
+  }
+  if (logo.tipo === "arquivo" && logo.imagem) {
+    const tela = prepararImagem(logo.imagem, logo.tirarFundo);
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${tela.width} ${tela.height}">` +
+      `<image href="${tela.toDataURL("image/png")}" x="0" y="0" width="${tela.width}" height="${tela.height}"/></svg>`;
+  }
+  return null;
+}
+
+/** O bloco nasce uma vez, no fim de "Onde vai", e acompanha o lugar e a técnica. */
+function desenharProducao() {
+  if (!producaoDisponivel() || !catalogo.producao) return;
+  if (!blocoProducao) {
+    blocoProducao = montarBlocoDeProducao({
+      obterSvg: svgDaLogo,
+      nomeBase: `logo-${estado.modelo || "bone"}`,
+      producao: catalogo.producao,
+      tecnicas: catalogo.tecnicas,
+      larguraInicial: larguraDaParte(catalogo.producao, estado.lugar),
+      tecnicaInicial: estado.tecnica,
+    });
+    $("ajuste-lugar").append(blocoProducao);
+    return;
+  }
+  blocoProducao.ajustar({ larguraInicial: larguraDaParte(catalogo.producao, estado.lugar), tecnicaInicial: estado.tecnica });
 }
 
 /* ---------- aba Pedido ---------- */
